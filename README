@@ -1,0 +1,16 @@
+This script will install all of the necessary programs and changes that need to be made to get ISPConfig running successfully. It uses the Perfect Server guido from Falko Timme as the
+guide. 
+
+There are some things to note.
+
+1. You must manually edit your fstab. There is no way to do this effectively in bash that I have found.
+2. Quotas don't really work on OpenVZ. There are a lot of things that the hosting provider has to have done properly. Sometimes they have. Sometimes they haven't.
+3. I make no guarantees that this will work for you. It should, but I am not responsible for anything that happens to your system. It should be installed on a clean install. If you choose
+not to follow these directions, you are responsible for the damage that you have done.
+
+Installation Instructions:
+
+1. Download the file 
+2. chmod +x install.sh
+3. ./install.sh
+4. Answer the onscreen prompts
