@@ -88,7 +88,7 @@ if [ "$1" != "--help" ]; then
 	echo "Please select Mail Server (Courier or Dovecot:"
 	read -p "(Default Mail Server: Courier):" mail_server
 	if [ "$mail_server" = "" ]; then
-		mail_server="22"
+		mail_server="Courier"
 	fi
 	echo "==========================="
 	echo "mail_server=$mail_server"
@@ -106,18 +106,29 @@ if [ "$1" != "--help" ]; then
 	echo "==========================="
 
 #set Quota
-	quota="No"
+	quota="Yes"
 	echo "Please select whether to install Quota or Not:"
-	read -p "(Default: No):" quota
+	read -p "(Default: Yes):" quota
 	if [ "$quota" = "" ]; then
-		quota="No"
+		quota="Yes"
 	fi
 	echo "==========================="
 	echo "quota=$quota"
 	echo "==========================="
+	
+#set Jailkit
+	jailkit="Yes"
+	echo "Please select whether to install Jailkit or Not:"
+	read -p "(Default: Yes):" jailkit
+	if [ "$jailkit" = "" ]; then
+		jailkit="Yes"
+	fi
+	echo "==========================="
+	echo "jailkit=$jailkit"
+	echo "==========================="
 
 
-echo "$1=install_$mail_server$dns_server$quota"
+echo "$1=install_$mail_server$dns_server$quota$jailkit"
 
 ###Functions Begin### 
 
@@ -496,8 +507,50 @@ php -q install.php
 } 
 
 #Execute functions#
-if [ "$1" = "install_CourierBindNo" ]; then
+if [ "$1" = "install_CourierBindNoNo" ]; then
     basic_server_setup
+    install_DashNTP
+	install_MYSQLCourier
+	install_Virus
+	install_Apache
+	install_PureFTPD
+	install_Bind
+	install_Stats
+	install_fail2banCourier
+	install_SquirrelMail
+	install_ISPConfig
+
+if [ "$1" = "install_CourierBindYesNo" ]; then
+	basic_server_setup
+    install_DashNTP
+	install_MYSQLCourier
+	install_Virus
+	install_Apache
+	install_PureFTPD
+	install_Quota
+	install_Bind
+	install_Stats
+	install_fail2banCourier
+	install_SquirrelMail
+	install_ISPConfig
+
+if [ "$1" = "install_CourierBindYesYes" ]; then
+	basic_server_setup
+    install_DashNTP
+	install_MYSQLCourier
+	install_Virus
+	install_Apache
+	install_PureFTPD
+	install_Quota
+	install_Bind
+	install_Stats
+	install_Jailkit
+	install_fail2banCourier
+	install_SquirrelMail
+	install_ISPConfig
+	
+if [ "$1" = "install_CourierBindNoYes" ]; then
+	basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
 	install_Virus
@@ -509,8 +562,62 @@ if [ "$1" = "install_CourierBindNo" ]; then
 	install_fail2banCourier
 	install_SquirrelMail
 	install_ISPConfig
+	
+if [ "$1" = "install_DovecotBindNoNo" ]; then
+    basic_server_setup
+    install_DashNTP
+	install_MYSQLDovecot
+	install_Virus
+	install_Apache
+	install_PureFTPD
+	install_Bind
+	install_Stats
+	install_fail2banDovecot
+	install_SquirrelMail
+	install_ISPConfig
 
-    
+if [ "$1" = "install_DovecotBindYesNo" ]; then
+	basic_server_setup
+    install_DashNTP
+	install_MYSQLDovecot
+	install_Virus
+	install_Apache
+	install_PureFTPD
+	install_Quota
+	install_Bind
+	install_Stats
+	install_fail2banDovecot
+	install_SquirrelMail
+	install_ISPConfig
+
+if [ "$1" = "install_DovecotBindYesYes" ]; then
+	basic_server_setup
+    install_DashNTP
+	install_MYSQLDovecot
+	install_Virus
+	install_Apache
+	install_PureFTPD
+	install_Quota
+	install_Bind
+	install_Stats
+	install_Jailkit
+	install_fail2banDovecot
+	install_SquirrelMail
+	install_ISPConfig
+	
+if [ "$1" = "install_DovecotBindNoYes" ]; then
+	basic_server_setup
+    install_DashNTP
+	install_MYSQLDovecot
+	install_Virus
+	install_Apache
+	install_PureFTPD
+	install_Bind
+	install_Stats
+	install_Jailkit
+	install_fail2banDovecot
+	install_SquirrelMail
+	install_ISPConfig
     
 
 fi
