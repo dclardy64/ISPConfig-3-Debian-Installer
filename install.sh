@@ -85,7 +85,7 @@ if [ "$1" != "--help" ]; then
 #set Mail Server
 
 	mail_server="Courier"
-	echo "Please select Mail Server:"
+	echo "Please select Mail Server (Courier or Dovecot:"
 	read -p "(Default Mail Server: Courier):" mail_server
 	if [ "$mail_server" = "" ]; then
 		mail_server="22"
@@ -96,10 +96,10 @@ if [ "$1" != "--help" ]; then
 
 #set DNS Server
 	dns_server="Bind"
-	echo "Please select DNS Server:"
+	echo "Please select DNS Server (Bind for now):"
 	read -p "(Default DNS Server: Bind):" dns_server
 	if [ "$dns_server" = "" ]; then
-		dns_server="22"
+		dns_server="Bind"
 	fi
 	echo "==========================="
 	echo "dns_server=$dns_server"
@@ -115,6 +115,9 @@ if [ "$1" != "--help" ]; then
 	echo "==========================="
 	echo "quota=$quota"
 	echo "==========================="
+
+
+echo "$1=install_$mail_server$dns_server$quota"
 
 ###Functions Begin### 
 
@@ -172,7 +175,7 @@ mkpop3dcert
 
 }
 
-function install_MYSQLDoveCot {
+function install_MYSQLDovecot {
 
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
 echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
@@ -493,18 +496,22 @@ php -q install.php
 } 
 
 #Execute functions#
-if [ "$1" = "basic" ]; then
+if [ "$1" = "install_CourierBindNo" ]; then
     basic_server_setup
+    install_DashNTP
+	install_MYSQLCourier
+	install_Virus
+	install_Apache
+	install_PureFTPD
+	install_Bind
+	install_Stats
+	install_Jailkit
+	install_fail2banCourier
+	install_SquirrelMail
+	install_ISPConfig
+
     
-
-elif [ "$1" = "ISPConfigBCNQ" ]; then
-    install_ISPConfigBCNQ
-    echo -e "\033[35;1m Installation of ISPConfig with Bind/Courier No Quota complete! Enjoy! \033[0m"
-
-elif [ "$1" = "ISPConfigBC" ]; then
-    install_ISPConfigBC
-    echo -e "\033[35;1m Installation of ISPConfig with Bind/Courier-Quota complete! Enjoy! \033[0m"
-
+    
 
 fi
 #End execute functions#
