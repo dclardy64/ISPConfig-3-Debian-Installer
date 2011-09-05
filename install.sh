@@ -128,7 +128,7 @@ if [ "$1" != "--help" ]; then
 	echo "==========================="
 
 
-$1=install_$mail_server$dns_server$quota$jailkit
+$installchoices=install_$mail_server$dns_server$quota$jailkit
 
 ###Functions Begin### 
 
@@ -507,7 +507,7 @@ php -q install.php
 } 
 
 #Execute functions#
-if [ "$1" = "install_CourierBindNoNo" ]; then
+if [ "$installchoices" = "install_CourierBindNoNo" ]; then
     basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -520,7 +520,7 @@ if [ "$1" = "install_CourierBindNoNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-elif [ "$1" = "install_CourierBindYesNo" ]; then
+elif [ "$installchoices" = "install_CourierBindYesNo" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -534,7 +534,7 @@ elif [ "$1" = "install_CourierBindYesNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-elif [ "$1" = "install_CourierBindYesYes" ]; then
+elif [ "$installchoices" = "install_CourierBindYesYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -549,7 +549,7 @@ elif [ "$1" = "install_CourierBindYesYes" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 	
-elif [ "$1" = "install_CourierBindNoYes" ]; then
+elif [ "$installchoices" = "install_CourierBindNoYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -563,7 +563,7 @@ elif [ "$1" = "install_CourierBindNoYes" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 	
-elif [ "$1" = "install_DovecotBindNoNo" ]; then
+elif [ "$installchoices" = "install_DovecotBindNoNo" ]; then
     basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -576,7 +576,7 @@ elif [ "$1" = "install_DovecotBindNoNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-elif [ "$1" = "install_DovecotBindYesNo" ]; then
+elif [ "$installchoices" = "install_DovecotBindYesNo" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -590,7 +590,7 @@ elif [ "$1" = "install_DovecotBindYesNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-elif [ "$1" = "install_DovecotBindYesYes" ]; then
+elif [ "$installchoices" = "install_DovecotBindYesYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -605,7 +605,7 @@ elif [ "$1" = "install_DovecotBindYesYes" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 	
-elif [ "$1" = "install_DovecotBindNoYes" ]; then
+elif [ "$installchoices" = "install_DovecotBindNoYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -619,8 +619,4 @@ elif [ "$1" = "install_DovecotBindNoYes" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 fi
-
-echo "========================== Installation Complete ================================"
-
-echo "========================================================================="
 #End execute functions#
