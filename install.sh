@@ -13,7 +13,7 @@ fi
 
 clear
 echo "========================================================================="
-echo "ISPConfig 3 Setup Script ,  Written by Drew Clardy "
+echo "ISPConfig 3 Setup Script ,  Written by Drew Clardy with help from other scripts!"
 echo "========================================================================="
 echo "A tool to auto-install ISPConfig and its dependencies "
 echo ""
@@ -128,7 +128,7 @@ if [ "$1" != "--help" ]; then
 	echo "==========================="
 
 
-echo "$1=install_$mail_server$dns_server$quota$jailkit"
+$1=install_$mail_server$dns_server$quota$jailkit
 
 ###Functions Begin### 
 
@@ -520,7 +520,7 @@ if [ "$1" = "install_CourierBindNoNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-if [ "$1" = "install_CourierBindYesNo" ]; then
+elif [ "$1" = "install_CourierBindYesNo" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -534,7 +534,7 @@ if [ "$1" = "install_CourierBindYesNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-if [ "$1" = "install_CourierBindYesYes" ]; then
+elif [ "$1" = "install_CourierBindYesYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -549,7 +549,7 @@ if [ "$1" = "install_CourierBindYesYes" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 	
-if [ "$1" = "install_CourierBindNoYes" ]; then
+elif [ "$1" = "install_CourierBindNoYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -563,7 +563,7 @@ if [ "$1" = "install_CourierBindNoYes" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 	
-if [ "$1" = "install_DovecotBindNoNo" ]; then
+elif [ "$1" = "install_DovecotBindNoNo" ]; then
     basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -576,7 +576,7 @@ if [ "$1" = "install_DovecotBindNoNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-if [ "$1" = "install_DovecotBindYesNo" ]; then
+elif [ "$1" = "install_DovecotBindYesNo" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -590,7 +590,7 @@ if [ "$1" = "install_DovecotBindYesNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-if [ "$1" = "install_DovecotBindYesYes" ]; then
+elif [ "$1" = "install_DovecotBindYesYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -605,7 +605,7 @@ if [ "$1" = "install_DovecotBindYesYes" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 	
-if [ "$1" = "install_DovecotBindNoYes" ]; then
+elif [ "$1" = "install_DovecotBindNoYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -618,7 +618,9 @@ if [ "$1" = "install_DovecotBindNoYes" ]; then
 	install_fail2banDovecot
 	install_SquirrelMail
 	install_ISPConfig
-    
-
 fi
+
+echo "========================== Installation Complete ================================"
+
+echo "========================================================================="
 #End execute functions#
