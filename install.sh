@@ -24,11 +24,11 @@ if [ "$1" != "--help" ]; then
 
 #set mysql root password
 
-	MYSQL_ROOT_PASSWORD="root"
+	MYSQL_ROOT_PASSWORD="123456789"
 	echo "Please input the root password of mysql:"
-	read -p "(Default password: root):" MYSQL_ROOT_PASSWORD
+	read -p "(Default password: 123456789):" MYSQL_ROOT_PASSWORD
 	if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
-		MYSQL_ROOT_PASSWORD="root"
+		MYSQL_ROOT_PASSWORD="123456789"
 	fi
 	echo "==========================="
 	echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
@@ -52,7 +52,7 @@ if [ "$1" != "--help" ]; then
 	echo "Please input the Full Hostname:"
 	read -p "(Default Full Hostname: server1.example.com):" HOSTNAMEFQDN
 	if [ "$HOSTNAMEFQDN" = "" ]; then
-		HOSTNAMEFQDN="server1"
+		HOSTNAMEFQDN="server1.example.com"
 	fi
 	echo "==========================="
 	echo "HOSTNAMEFQDN=$HOSTNAMEFQDN"
@@ -85,7 +85,7 @@ if [ "$1" != "--help" ]; then
 #set Mail Server
 
 	mail_server="Courier"
-	echo "Please select Mail Server (Courier or Dovecot:"
+	echo "Please select Mail Server (Courier or Dovecot):"
 	read -p "(Default Mail Server: Courier):" mail_server
 	if [ "$mail_server" = "" ]; then
 		mail_server="Courier"
@@ -128,7 +128,9 @@ if [ "$1" != "--help" ]; then
 	echo "==========================="
 
 
-$installchoices=install_$mail_server$dns_server$quota$jailkit
+	1="install_$mail_server$dns_server$quota$jailkit"
+	exit
+fi
 
 ###Functions Begin### 
 
@@ -507,7 +509,7 @@ php -q install.php
 } 
 
 #Execute functions#
-if [ "$installchoices" = "install_CourierBindNoNo" ]; then
+if [ "$1" = "install_CourierBindNoNo" ]; then
     basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -520,7 +522,7 @@ if [ "$installchoices" = "install_CourierBindNoNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-elif [ "$installchoices" = "install_CourierBindYesNo" ]; then
+elif [ "$1" = "install_CourierBindYesNo" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -534,7 +536,7 @@ elif [ "$installchoices" = "install_CourierBindYesNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-elif [ "$installchoices" = "install_CourierBindYesYes" ]; then
+elif [ "$1" = "install_CourierBindYesYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -549,7 +551,7 @@ elif [ "$installchoices" = "install_CourierBindYesYes" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 	
-elif [ "$installchoices" = "install_CourierBindNoYes" ]; then
+elif [ "$1" = "install_CourierBindNoYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLCourier
@@ -563,7 +565,7 @@ elif [ "$installchoices" = "install_CourierBindNoYes" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 	
-elif [ "$installchoices" = "install_DovecotBindNoNo" ]; then
+elif [ "$1" = "install_DovecotBindNoNo" ]; then
     basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -576,7 +578,7 @@ elif [ "$installchoices" = "install_DovecotBindNoNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-elif [ "$installchoices" = "install_DovecotBindYesNo" ]; then
+elif [ "$1" = "install_DovecotBindYesNo" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -590,7 +592,7 @@ elif [ "$installchoices" = "install_DovecotBindYesNo" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 
-elif [ "$installchoices" = "install_DovecotBindYesYes" ]; then
+elif [ "$1" = "install_DovecotBindYesYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
@@ -605,7 +607,7 @@ elif [ "$installchoices" = "install_DovecotBindYesYes" ]; then
 	install_SquirrelMail
 	install_ISPConfig
 	
-elif [ "$installchoices" = "install_DovecotBindNoYes" ]; then
+elif [ "$1" = "install_DovecotBindNoYes" ]; then
 	basic_server_setup
     install_DashNTP
 	install_MYSQLDovecot
