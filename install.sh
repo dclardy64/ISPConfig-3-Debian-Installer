@@ -154,8 +154,8 @@ aptitude -y install vim-nox dnsutils unzip
 
 install_DashNTP (){
 
-echo -e "\033[35;1m Select No when prompted. \033[0m"
-read -p "\033[35;1m Hit enter to continue... \033[0m"
+echo "\033[35;1m Select No when prompted. \033[0m"
+sleep 10
 
 #Reconfigure Dash
 dpkg-reconfigure dash
@@ -172,8 +172,8 @@ install_MYSQLCourier (){
 echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 
-echo -e "\033[35;1m When prompted select No for web-based directories. Select Internet Site for Postfix. Then hit enter twice. \033[0m"
-read -p "Hit enter to continue..."
+echo "\033[35;1m When prompted select No for web-based directories. Select Internet Site for Postfix. Then hit enter twice. \033[0m"
+sleep 10
 
 apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4 rkhunter binutils sudo
 
@@ -200,8 +200,8 @@ install_MYSQLDovecot (){
 echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 
-echo -e "\033[35;1m Please select Internet Site when prompted. \033[0m"
-read -p "Hit enter to continue..."
+echo "\033[35;1m Please select Internet Site when prompted. \033[0m"
+sleep 10
 
 apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server openssl getmail4 rkhunter binutils dovecot-imapd dovecot-pop3d sudo  
 
@@ -222,8 +222,8 @@ install_Apache (){
 
 #Install Apache2, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 
-echo -e "\033[35;1m Please select apache2 and no for db-config. \033[0m"
-read -p "\033[35;1m Hit enter to continue... \033[0m"
+echo "\033[35;1m Please select apache2 and no for db-config. \033[0m"
+sleep 10
 
 apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby
 
@@ -248,8 +248,8 @@ sed -i 's/ftp    stream  tcp     nowait  root    /usr/sbin/tcpd /usr/sbin/pure-f
 /etc/init.d/openbsd-inetd restart
 echo 1 > /etc/pure-ftpd/conf/TLS
 mkdir -p /etc/ssl/private/
-echo -e "\033[35;1m Generating SSL certs, you do not have to enter any details when asked. But recommended to enter Hostname FQDN for 'Common Name'! \033[0m"
-read -p "Hit enter to continue..."
+echo "\033[35;1m Generating SSL certs, you do not have to enter any details when asked. But recommended to enter Hostname FQDN for 'Common Name'! \033[0m"
+sleep 10
 openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
 chmod 600 /etc/ssl/private/pure-ftpd.pem
 /etc/init.d/pure-ftpd-mysql restart
@@ -502,8 +502,8 @@ EOF
 
 install_SquirrelMail (){
 
-echo -e "\033[35;1m When prompted, type D! Then type the mailserver you choose ($mail_server), and hit enter. Type S, Hit Enter. Type Q, Hit Enter.  \033[0m"
-read -p "Hit enter to continue..."
+echo "\033[35;1m When prompted, type D! Then type the mailserver you choose ($mail_server), and hit enter. Type S, Hit Enter. Type Q, Hit Enter.  \033[0m"
+sleep 10
 #Install SquirrelMail
 apt-get -y install squirrelmail
 ln -s /usr/share/squirrelmail/ /var/www/webmail
