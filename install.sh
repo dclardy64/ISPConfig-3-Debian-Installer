@@ -18,130 +18,130 @@ echo "========================================================================="
 echo "A tool to auto-install ISPConfig and its dependencies "
 echo ""
 echo "========================================================================="
-cur_dir=$(pwd)
+
 
 if [ "$1" != "--help" ]; then
 
 #set mysql root password
 
-	MYSQL_ROOT_PASSWORD="123456789"
-	echo "Please input the root password of mysql:"
-	read -p "(Default password: 123456789):" MYSQL_ROOT_PASSWORD
-	if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
-		MYSQL_ROOT_PASSWORD="123456789"
-	fi
-	echo "==========================="
-	echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
-	echo "==========================="
+    MYSQL_ROOT_PASSWORD="123456789"
+    echo "Please input the root password of mysql:"
+    read -p "(Default password: 123456789):" MYSQL_ROOT_PASSWORD
+    if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
+        MYSQL_ROOT_PASSWORD="123456789"
+    fi
+    echo "==========================="
+    echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
+    echo "==========================="
 
 #set Hostname
 
-	HOSTNAME="server1"
-	echo "Please input the Hostname:"
-	read -p "(Default Hostname: server1):" HOSTNAME
-	if [ "$HOSTNAME" = "" ]; then
-		HOSTNAME="server1"
-	fi
-	echo "==========================="
-	echo "HOSTNAME=$HOSTNAME"
-	echo "==========================="
+    HOSTNAME="server1"
+    echo "Please input the Hostname:"
+    read -p "(Default Hostname: server1):" HOSTNAME
+    if [ "$HOSTNAME" = "" ]; then
+        HOSTNAME="server1"
+    fi
+    echo "==========================="
+    echo "HOSTNAME=$HOSTNAME"
+    echo "==========================="
 
 #set Fully Qualified Hostname
 
-	HOSTNAMEFQDN="server1.example.com"
-	echo "Please input the Full Hostname:"
-	read -p "(Default Full Hostname: server1.example.com):" HOSTNAMEFQDN
-	if [ "$HOSTNAMEFQDN" = "" ]; then
-		HOSTNAMEFQDN="server1.example.com"
-	fi
-	echo "==========================="
-	echo "HOSTNAMEFQDN=$HOSTNAMEFQDN"
-	echo "==========================="
-	
+    HOSTNAMEFQDN="server1.example.com"
+    echo "Please input the Full Hostname:"
+    read -p "(Default Full Hostname: server1.example.com):" HOSTNAMEFQDN
+    if [ "$HOSTNAMEFQDN" = "" ]; then
+        HOSTNAMEFQDN="server1.example.com"
+    fi
+    echo "==========================="
+    echo "HOSTNAMEFQDN=$HOSTNAMEFQDN"
+    echo "==========================="
+    
 #set Server IP
 
-	serverIP="123.156.78.9"
-	echo "Please input the Server IP:"
-	read -p "(Default Server IP: 123.456.78.9):" serverIP
-	if [ "$serverIP" = "" ]; then
-		serverIP="123.456.78.9"
-	fi
-	echo "==========================="
-	echo "serverIP=$serverIP"
-	echo "==========================="
+    serverIP="123.156.78.9"
+    echo "Please input the Server IP:"
+    read -p "(Default Server IP: 123.456.78.9):" serverIP
+    if [ "$serverIP" = "" ]; then
+        serverIP="123.456.78.9"
+    fi
+    echo "==========================="
+    echo "serverIP=$serverIP"
+    echo "==========================="
 
 #set SSH Port
 
-	sshd_port="22"
-	echo "Please input the SSH Port:"
-	read -p "(Default SSH Port: 22):" sshd_port
-	if [ "$sshd_port" = "" ]; then
-		sshd_port="22"
-	fi
-	echo "==========================="
-	echo "sshd_port=$sshd_port"
-	echo "==========================="
-	
+    sshd_port="22"
+    echo "Please input the SSH Port:"
+    read -p "(Default SSH Port: 22):" sshd_port
+    if [ "$sshd_port" = "" ]; then
+        sshd_port="22"
+    fi
+    echo "==========================="
+    echo "sshd_port=$sshd_port"
+    echo "==========================="
+    
 #set Mail Server
 
-	mail_server="Courier"
-	echo "Please select Mail Server (Courier or Dovecot):"
-	read -p "(Default Mail Server: Courier):" mail_server
-	if [ "$mail_server" = "" ]; then
-		mail_server="Courier"
-	fi
-	echo "==========================="
-	echo "mail_server=$mail_server"
-	echo "==========================="
+    mail_server="Courier"
+    echo "Please select Mail Server (Courier or Dovecot):"
+    read -p "(Default Mail Server: Courier):" mail_server
+    if [ "$mail_server" = "" ]; then
+        mail_server="Courier"
+    fi
+    echo "==========================="
+    echo "mail_server=$mail_server"
+    echo "==========================="
 
 #set DNS Server
-	dns_server="Bind"
-	echo "Please select DNS Server (Bind for now):"
-	read -p "(Default DNS Server: Bind):" dns_server
-	if [ "$dns_server" = "" ]; then
-		dns_server="Bind"
-	fi
-	echo "==========================="
-	echo "dns_server=$dns_server"
-	echo "==========================="
+    dns_server="Bind"
+    echo "Please select DNS Server (Bind for now):"
+    read -p "(Default DNS Server: Bind):" dns_server
+    if [ "$dns_server" = "" ]; then
+        dns_server="Bind"
+    fi
+    echo "==========================="
+    echo "dns_server=$dns_server"
+    echo "==========================="
 
 #set Quota
-	quota="Yes"
-	echo "Please select whether to install Quota or Not:"
-	read -p "(Default: Yes):" quota
-	if [ "$quota" = "" ]; then
-		quota="Yes"
-	fi
-	echo "==========================="
-	echo "quota=$quota"
-	echo "==========================="
-	
+    quota="Yes"
+    echo "Please select whether to install Quota or Not:"
+    read -p "(Default: Yes):" quota
+    if [ "$quota" = "" ]; then
+        quota="Yes"
+    fi
+    echo "==========================="
+    echo "quota=$quota"
+    echo "==========================="
+    
 #set Jailkit
-	jailkit="Yes"
-	echo "Please select whether to install Jailkit or Not:"
-	read -p "(Default: Yes):" jailkit
-	if [ "$jailkit" = "" ]; then
-		jailkit="Yes"
-	fi
-	echo "==========================="
-	echo "jailkit=$jailkit"
-	echo "==========================="
+    jailkit="Yes"
+    echo "Please select whether to install Jailkit or Not:"
+    read -p "(Default: Yes):" jailkit
+    if [ "$jailkit" = "" ]; then
+        jailkit="Yes"
+    fi
+    echo "==========================="
+    echo "jailkit=$jailkit"
+    echo "==========================="
 
 
-	1="install_$mail_server$dns_server$quota$jailkit"
-	exit
+    installchoices="install_$mail_server$dns_server$quota$jailkit"
+    
 fi
 
 ###Functions Begin### 
 
-function basic_server_setup {
+install_basic (){
 
 #Reconfigure sshd - change port
-sed -i 's/^Port [0-9]*/Port '${sshd_port}'/' /etc/ssh/sshd_config
+sed -i "s/^Port [0-9]*/Port ${sshd_port}/" /etc/ssh/sshd_config
 /etc/init.d/ssh reload
 
 #Set hostname and FQDN
-sed -i 's/'${serverIP}'.*/'${serverIP}' '${HOSTNAMEFQDN}' '${HOSTNAME}'/' /etc/hosts
+sed -i "s/${serverIP}.*/${serverIP} ${HOSTNAMEFQDN} ${HOSTNAME}/" /etc/hosts
 echo "$HOSTNAME" > /etc/hostname
 /etc/init.d/hostname.sh start >/dev/null 2>&1
 
@@ -150,10 +150,13 @@ aptitude update
 aptitude -y safe-upgrade
 aptitude -y install vim-nox dnsutils unzip 
 
-} #end function basic_server_setup
+} #end function install_basic
 
+install_DashNTP (){
 
-function install_DashNTP {
+echo -e "\033[35;1m Select No when prompted. \033[0m"
+read -p "\033[35;1m Hit enter to continue... \033[0m"
+
 #Reconfigure Dash
 dpkg-reconfigure dash
 #Use dash as the default system shell (/bin/sh)? <-- No
@@ -161,13 +164,16 @@ dpkg-reconfigure dash
 #Synchronize the System Clock
 apt-get -y install ntp ntpdate
 
-}
+} #end function install_DashNTP
 
-function install_MYSQLCourier {
+install_MYSQLCourier (){
 
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
 echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+
+echo -e "\033[35;1m When prompted select No for web-based directories. Select Internet Site for Postfix. Then hit enter twice. \033[0m"
+read -p "Hit enter to continue..."
 
 apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4 rkhunter binutils sudo
 
@@ -179,8 +185,8 @@ sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1
 cd /etc/courier
 rm -f /etc/courier/imapd.pem
 rm -f /etc/courier/pop3d.pem
-sed -i 's/CN=localhost/CN='${HOSTNAMEFQDN}'/' /etc/courier/imapd.cnf
-sed -i 's/CN=localhost/CN='${HOSTNAMEFQDN}'/' /etc/courier/pop3d.cnf
+sed -i "s/CN=localhost/CN=${HOSTNAMEFQDN}/" /etc/courier/imapd.cnf
+sed -i "s/CN=localhost/CN=${HOSTNAMEFQDN}/" /etc/courier/pop3d.cnf
 mkimapdcert
 mkpop3dcert
 /etc/init.d/courier-imap-ssl restart
@@ -188,11 +194,14 @@ mkpop3dcert
 
 }
 
-function install_MYSQLDovecot {
+install_MYSQLDovecot (){
 
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
 echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+
+echo -e "\033[35;1m Please select Internet Site when prompted. \033[0m"
+read -p "Hit enter to continue..."
 
 apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server openssl getmail4 rkhunter binutils dovecot-imapd dovecot-pop3d sudo  
 
@@ -202,20 +211,20 @@ sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1
 
 }
 
-function install_Virus {
+install_Virus (){
 
 #Install Amavisd-new, SpamAssassin, And Clamav
 apt-get -y install amavisd-new spamassassin clamav clamav-daemon zoo unzip bzip2 arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl zip libnet-dns-perl
 
 }
 
-function install_Apache {
-
-echo "phpmyadmin      phpmyadmin/dbconfig-install     boolean false" | debconf-set-selections
-echo "phpmyadmin      phpmyadmin/reconfigure-webserver        multiselect     apache2" | debconf-set-selections
+install_Apache (){
 
 #Install Apache2, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
-echo -e "\033[35;1m Select Apache 2 for automatic setup. Select No for using database db-config-common! \033[0m"
+
+echo -e "\033[35;1m Please select apache2 and no for db-config. \033[0m"
+read -p "\033[35;1m Hit enter to continue... \033[0m"
+
 apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby
 
 #Web server to reconfigure automatically: <-- apache2
@@ -228,7 +237,7 @@ a2enmod dav_fs dav auth_digest
 
 }
 
-function install_PureFTPD {
+install_PureFTPD (){
 #Install PureFTPd
 apt-get -y install pure-ftpd-common pure-ftpd-mysql
 
@@ -240,13 +249,14 @@ sed -i 's/ftp    stream  tcp     nowait  root    /usr/sbin/tcpd /usr/sbin/pure-f
 echo 1 > /etc/pure-ftpd/conf/TLS
 mkdir -p /etc/ssl/private/
 echo -e "\033[35;1m Generating SSL certs, you do not have to enter any details when asked. But recommended to enter Hostname FQDN for 'Common Name'! \033[0m"
+read -p "Hit enter to continue..."
 openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
 chmod 600 /etc/ssl/private/pure-ftpd.pem
 /etc/init.d/pure-ftpd-mysql restart
 
 }
 
-function install_Quota {
+install_Quota (){
 #Setting up Quota
 
 apt-get -y install quota quotatool
@@ -256,30 +266,30 @@ quotaon -avug
 
 }
 
-function install_Bind {
+install_Bind (){
 #Install BIND DNS Server
 apt-get -y install bind9 dnsutils
 
 }
 
-function install_Stats {
+install_Stats (){
 
 #Install Vlogger, Webalizer, And AWstats
 apt-get -y install vlogger webalizer awstats
 
-sed -i 's/*/10 * * * * www-data [ -x /usr/share/awstats/tools/update.sh ] && /usr/share/awstats/tools/update.sh/#*/10 * * * * www-data [ -x /usr/share/awstats/tools/update.sh ] && /usr/share/awstats/tools/update.sh/' /etc/cron.d/awstats
-sed -i 's/10 03 * * * www-data [ -x /usr/share/awstats/tools/buildstatic.sh ] && /usr/share/awstats/tools/buildstatic.sh/#10 03 * * * www-data [ -x /usr/share/awstats/tools/buildstatic.sh ] && /usr/share/awstats/tools/buildstatic.sh/' /etc/cron.d/awstats
+sed -i "s/*/10 * * * * www-data/#*/10 * * * * www-data/" /etc/cron.d/awstats
+sed -i "s/10 03 * * * www-data/#10 03 * * * www-data/" /etc/cron.d/awstats
 
 }
 
-function install_Jailkit {
+install_Jailkit (){
 #Install Jailkit
 apt-get -y install build-essential autoconf automake1.9 libtool flex bison debhelper
 
 cd /tmp
-wget http://olivier.sessink.nl/jailkit/jailkit-2.13.tar.gz
-tar xvfz jailkit-2.13.tar.gz
-cd jailkit-2.13
+wget http://olivier.sessink.nl/jailkit/jailkit-2.14.tar.gz
+tar xvfz jailkit-2.14.tar.gz
+cd jailkit-2.14
 ./debian/rules binary
 cd ..
 dpkg -i jailkit_2.14-1_*.deb
@@ -287,7 +297,7 @@ rm -rf jailkit-2.14*
 
 }
 
-function install_fail2banCourier {
+install_fail2banCourier (){
 #Install fail2ban
 apt-get -y install fail2ban
 
@@ -451,7 +461,7 @@ EOF
 
 }
 
-function install_fail2banDovecot {
+install_fail2banDovecot (){
 #Install fail2ban
 apt-get -y install fail2ban
 
@@ -490,7 +500,10 @@ EOF
 
 }
 
-function install_SquirrelMail {
+install_SquirrelMail (){
+
+echo -e "\033[35;1m When prompted, type D! Then type the mailserver you choose ($mail_server), and hit enter. Type S, Hit Enter. Type Q, Hit Enter.  \033[0m"
+read -p "Hit enter to continue..."
 #Install SquirrelMail
 apt-get -y install squirrelmail
 ln -s /usr/share/squirrelmail/ /var/www/webmail
@@ -498,7 +511,7 @@ squirrelmail-configure
 
 }
 
-function install_ISPConfig {
+install_ISPConfig (){
 #Install ISPConfig 3
 cd /tmp
 wget http://www.ispconfig.org/downloads/ISPConfig-3-stable.tar.gz
@@ -509,116 +522,116 @@ php -q install.php
 } 
 
 #Execute functions#
-if [ "$1" = "install_CourierBindNoNo" ]; then
-    basic_server_setup
+if [ "$installchoices" = "install_CourierBindNoNo" ]; then
+    install_basic
     install_DashNTP
-	install_MYSQLCourier
-	install_Virus
-	install_Apache
-	install_PureFTPD
-	install_Bind
-	install_Stats
-	install_fail2banCourier
-	install_SquirrelMail
-	install_ISPConfig
+    install_MYSQLCourier
+    install_Virus
+    install_Apache
+    install_PureFTPD
+    install_Bind
+    install_Stats
+    install_fail2banCourier
+    install_SquirrelMail
+    install_ISPConfig
 
-elif [ "$1" = "install_CourierBindYesNo" ]; then
-	basic_server_setup
+elif [ "$installchoices" = "install_CourierBindYesNo" ]; then
+    install_basic
     install_DashNTP
-	install_MYSQLCourier
-	install_Virus
-	install_Apache
-	install_PureFTPD
-	install_Quota
-	install_Bind
-	install_Stats
-	install_fail2banCourier
-	install_SquirrelMail
-	install_ISPConfig
+    install_MYSQLCourier
+    install_Virus
+    install_Apache
+    install_PureFTPD
+    install_Quota
+    install_Bind
+    install_Stats
+    install_fail2banCourier
+    install_SquirrelMail
+    install_ISPConfig
 
-elif [ "$1" = "install_CourierBindYesYes" ]; then
-	basic_server_setup
+elif [ "$installchoices" = "install_CourierBindYesYes" ]; then
+    install_basic
     install_DashNTP
-	install_MYSQLCourier
-	install_Virus
-	install_Apache
-	install_PureFTPD
-	install_Quota
-	install_Bind
-	install_Stats
-	install_Jailkit
-	install_fail2banCourier
-	install_SquirrelMail
-	install_ISPConfig
-	
-elif [ "$1" = "install_CourierBindNoYes" ]; then
-	basic_server_setup
+    install_MYSQLCourier
+    install_Virus
+    install_Apache
+    install_PureFTPD
+    install_Quota
+    install_Bind
+    install_Stats
+    install_Jailkit
+    install_fail2banCourier
+    install_SquirrelMail
+    install_ISPConfig
+    
+elif [ "$installchoices" = "install_CourierBindNoYes" ]; then
+    install_basic
     install_DashNTP
-	install_MYSQLCourier
-	install_Virus
-	install_Apache
-	install_PureFTPD
-	install_Bind
-	install_Stats
-	install_Jailkit
-	install_fail2banCourier
-	install_SquirrelMail
-	install_ISPConfig
-	
-elif [ "$1" = "install_DovecotBindNoNo" ]; then
-    basic_server_setup
+    install_MYSQLCourier
+    install_Virus
+    install_Apache
+    install_PureFTPD
+    install_Bind
+    install_Stats
+    install_Jailkit
+    install_fail2banCourier
+    install_SquirrelMail
+    install_ISPConfig
+    
+elif [ "$installchoices" = "install_DovecotBindNoNo" ]; then
+    install_basic
     install_DashNTP
-	install_MYSQLDovecot
-	install_Virus
-	install_Apache
-	install_PureFTPD
-	install_Bind
-	install_Stats
-	install_fail2banDovecot
-	install_SquirrelMail
-	install_ISPConfig
+    install_MYSQLDovecot
+    install_Virus
+    install_Apache
+    install_PureFTPD
+    install_Bind
+    install_Stats
+    install_fail2banDovecot
+    install_SquirrelMail
+    install_ISPConfig
 
-elif [ "$1" = "install_DovecotBindYesNo" ]; then
-	basic_server_setup
+elif [ "$installchoices" = "install_DovecotBindYesNo" ]; then
+    install_basic
     install_DashNTP
-	install_MYSQLDovecot
-	install_Virus
-	install_Apache
-	install_PureFTPD
-	install_Quota
-	install_Bind
-	install_Stats
-	install_fail2banDovecot
-	install_SquirrelMail
-	install_ISPConfig
+    install_MYSQLDovecot
+    install_Virus
+    install_Apache
+    install_PureFTPD
+    install_Quota
+    install_Bind
+    install_Stats
+    install_fail2banDovecot
+    install_SquirrelMail
+    install_ISPConfig
 
-elif [ "$1" = "install_DovecotBindYesYes" ]; then
-	basic_server_setup
+elif [ "$installchoices" = "install_DovecotBindYesYes" ]; then
+    install_basic
     install_DashNTP
-	install_MYSQLDovecot
-	install_Virus
-	install_Apache
-	install_PureFTPD
-	install_Quota
-	install_Bind
-	install_Stats
-	install_Jailkit
-	install_fail2banDovecot
-	install_SquirrelMail
-	install_ISPConfig
-	
-elif [ "$1" = "install_DovecotBindNoYes" ]; then
-	basic_server_setup
+    install_MYSQLDovecot
+    install_Virus
+    install_Apache
+    install_PureFTPD
+    install_Quota
+    install_Bind
+    install_Stats
+    install_Jailkit
+    install_fail2banDovecot
+    install_SquirrelMail
+    install_ISPConfig
+    
+elif [ "$installchoices" = "install_DovecotBindNoYes" ]; then
+    install_basic
     install_DashNTP
-	install_MYSQLDovecot
-	install_Virus
-	install_Apache
-	install_PureFTPD
-	install_Bind
-	install_Stats
-	install_Jailkit
-	install_fail2banDovecot
-	install_SquirrelMail
-	install_ISPConfig
+    install_MYSQLDovecot
+    install_Virus
+    install_Apache
+    install_PureFTPD
+    install_Bind
+    install_Stats
+    install_Jailkit
+    install_fail2banDovecot
+    install_SquirrelMail
+    install_ISPConfig
 fi
 #End execute functions#
