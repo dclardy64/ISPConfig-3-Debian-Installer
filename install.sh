@@ -16,9 +16,10 @@ echo "========================================================================="
 echo "ISPConfig 3 Setup Script ,  Written by Drew Clardy with help from other scripts!"
 echo "========================================================================="
 echo "A tool to auto-install ISPConfig and its dependencies "
-echo ""
+echo "Script is using the DotDeb repo for updated packages"
 echo "========================================================================="
-
+echo "Press ENTER to continue.."
+read DUMMY
 
 if [ "$1" != "--help" ]; then
 
@@ -82,6 +83,18 @@ if [ "$1" != "--help" ]; then
     echo "sshd_port=$sshd_port"
     echo "==========================="
     
+#set Web Server
+
+	web_server="Apache"
+	echo "Please select Web Server (Apache or NginX):"
+	read -p "(Default Mail Server: NginX):" web_server
+    if [ "$web_server" = "" ]; then
+    	web_server="Apache"
+    fi
+    echo "==========================="
+    echo "web_server=$web_server"
+    echo "==========================="
+	
 #set Mail Server
 
     mail_server="Courier"
@@ -128,7 +141,7 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
 
 
-    installchoices="install_$mail_server$dns_server$quota$jailkit"
+    installchoices="install_$web_$mail_server$dns_server$quota$jailkit"
     
 fi
 
@@ -146,20 +159,24 @@ echo "$HOSTNAME" > /etc/hostname
 /etc/init.d/hostname.sh start >/dev/null 2>&1
 
 #Updates server and install commonly used utilities
-aptitude update
-aptitude -y safe-upgrade
-aptitude -y install vim-nox dnsutils unzip 
+cp /etc/apt/sources.list /etc/apt/sources.list.backup
+cat > /etc/apt/sources.list <<EOF
+deb http://ftp.us.debian.org/debian/ squeeze main contrib non-free
+deb http://ftp.us.debian.org/debian/ squeeze-updates main contrib non-free
+deb http://security.debian.org/ squeeze/updates main contrib non-free
+deb http://packages.dotdeb.org squeeze all
+EOF
+
+apt-get update
+apt-get -y safe-upgrade
+apt-get -y install vim-nox dnsutils unzip 
 
 } #end function install_basic
 
 install_DashNTP (){
 
-echo "\033[35;1m Select No when prompted. \033[0m"
-sleep 10
-
-#Reconfigure Dash
-dpkg-reconfigure dash
-#Use dash as the default system shell (/bin/sh)? <-- No
+echo "dash dash/sh boolean false" | debconf-set-selections
+dpkg-reconfigure -f noninteractive dash > /dev/null 2>&1
 
 #Synchronize the System Clock
 apt-get -y install ntp ntpdate
@@ -171,9 +188,10 @@ install_MYSQLCourier (){
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
 echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
-
-echo "\033[35;1m When prompted select No for web-based directories. Select Internet Site for Postfix. Then hit enter twice. \033[0m"
-sleep 10
+echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
+echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
+echo "courier-base courier-base/webadmin-configmode boolean false" | debconf-set-selections
+echo "courier-ssl courier-ssl/certnotice note" | debconf-set-selections
 
 apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4 rkhunter binutils sudo
 
@@ -199,9 +217,8 @@ install_MYSQLDovecot (){
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
 echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
-
-echo "\033[35;1m Please select Internet Site when prompted. \033[0m"
-sleep 10
+echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
+echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 
 apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server openssl getmail4 rkhunter binutils dovecot-imapd dovecot-pop3d sudo  
 
@@ -221,9 +238,9 @@ apt-get -y install amavisd-new spamassassin clamav clamav-daemon zoo unzip bzip2
 install_Apache (){
 
 #Install Apache2, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
-
-echo "\033[35;1m Please select apache2 and no for db-config. \033[0m"
-sleep 10
+echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
+#DISABLED DUE TO A BUG IN DBCONFIG - echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
+echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 
 apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby
 
@@ -234,6 +251,27 @@ a2enmod suexec rewrite ssl actions include
 a2enmod dav_fs dav auth_digest
 
 /etc/init.d/apache2 restart
+
+}
+
+install_NginX (){
+
+#Install NginX, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
+echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
+# - DISABLED DUE TO A BUG IN DBCONFIG - echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
+echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
+apt-get -y install nginx
+/etc/init.d/apache2 stop
+insserv -r apache2
+/etc/init.d/nginx start
+
+apt-get install php5-fpm
+apt-get install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
+apt-get install php-apc
+apt-get install fcgiwrap
+apt-get install phpmyadmin
+
+/etc/init.d/php5-fpm restart
 
 }
 
@@ -248,8 +286,12 @@ sed -i 's/ftp    stream  tcp     nowait  root    /usr/sbin/tcpd /usr/sbin/pure-f
 /etc/init.d/openbsd-inetd restart
 echo 1 > /etc/pure-ftpd/conf/TLS
 mkdir -p /etc/ssl/private/
-echo "\033[35;1m Generating SSL certs, you do not have to enter any details when asked. But recommended to enter Hostname FQDN for 'Common Name'! \033[0m"
-sleep 10
+echo "==========================================================================================="
+echo "The following questions can be left as default (just press enter), but when"
+echo "asked for 'Common Name', enter your FQDN hostname ($HOSTNAMEFQDN)."
+echo "==========================================================================================="
+echo "Press ENTER to continue.."
+read DUMMY
 openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
 chmod 600 /etc/ssl/private/pure-ftpd.pem
 /etc/init.d/pure-ftpd-mysql restart
@@ -503,7 +545,12 @@ EOF
 install_SquirrelMail (){
 
 echo "\033[35;1m When prompted, type D! Then type the mailserver you choose ($mail_server), and hit enter. Type S, Hit Enter. Type Q, Hit Enter.  \033[0m"
-sleep 10
+echo "==========================================================================================="
+echo "When prompted, type D! Then type the mailserver you choose ($mail_server),"
+echo "and hit enter. Type S, Hit Enter. Type Q, Hit Enter."
+echo "==========================================================================================="
+echo "Press ENTER to continue.."
+read DUMMY
 #Install SquirrelMail
 apt-get -y install squirrelmail
 ln -s /usr/share/squirrelmail/ /var/www/webmail
@@ -522,7 +569,7 @@ php -q install.php
 } 
 
 #Execute functions#
-if [ "$installchoices" = "install_CourierBindNoNo" ]; then
+if [ "$installchoices" = "install_ApacheCourierBindNoNo" ]; then
     install_basic
     install_DashNTP
     install_MYSQLCourier
@@ -535,7 +582,7 @@ if [ "$installchoices" = "install_CourierBindNoNo" ]; then
     install_SquirrelMail
     install_ISPConfig
 
-elif [ "$installchoices" = "install_CourierBindYesNo" ]; then
+elif [ "$installchoices" = "install_ApacheCourierBindYesNo" ]; then
     install_basic
     install_DashNTP
     install_MYSQLCourier
@@ -549,7 +596,7 @@ elif [ "$installchoices" = "install_CourierBindYesNo" ]; then
     install_SquirrelMail
     install_ISPConfig
 
-elif [ "$installchoices" = "install_CourierBindYesYes" ]; then
+elif [ "$installchoices" = "install_ApacheCourierBindYesYes" ]; then
     install_basic
     install_DashNTP
     install_MYSQLCourier
@@ -564,7 +611,7 @@ elif [ "$installchoices" = "install_CourierBindYesYes" ]; then
     install_SquirrelMail
     install_ISPConfig
     
-elif [ "$installchoices" = "install_CourierBindNoYes" ]; then
+elif [ "$installchoices" = "install_ApacheCourierBindNoYes" ]; then
     install_basic
     install_DashNTP
     install_MYSQLCourier
@@ -578,7 +625,7 @@ elif [ "$installchoices" = "install_CourierBindNoYes" ]; then
     install_SquirrelMail
     install_ISPConfig
     
-elif [ "$installchoices" = "install_DovecotBindNoNo" ]; then
+elif [ "$installchoices" = "install_ApacheDovecotBindNoNo" ]; then
     install_basic
     install_DashNTP
     install_MYSQLDovecot
@@ -591,7 +638,7 @@ elif [ "$installchoices" = "install_DovecotBindNoNo" ]; then
     install_SquirrelMail
     install_ISPConfig
 
-elif [ "$installchoices" = "install_DovecotBindYesNo" ]; then
+elif [ "$installchoices" = "install_ApacheDovecotBindYesNo" ]; then
     install_basic
     install_DashNTP
     install_MYSQLDovecot
@@ -605,7 +652,7 @@ elif [ "$installchoices" = "install_DovecotBindYesNo" ]; then
     install_SquirrelMail
     install_ISPConfig
 
-elif [ "$installchoices" = "install_DovecotBindYesYes" ]; then
+elif [ "$installchoices" = "install_ApacheDovecotBindYesYes" ]; then
     install_basic
     install_DashNTP
     install_MYSQLDovecot
@@ -620,12 +667,124 @@ elif [ "$installchoices" = "install_DovecotBindYesYes" ]; then
     install_SquirrelMail
     install_ISPConfig
     
-elif [ "$installchoices" = "install_DovecotBindNoYes" ]; then
+elif [ "$installchoices" = "install_ApacheDovecotBindNoYes" ]; then
     install_basic
     install_DashNTP
     install_MYSQLDovecot
     install_Virus
     install_Apache
+    install_PureFTPD
+    install_Bind
+    install_Stats
+    install_Jailkit
+    install_fail2banDovecot
+    install_SquirrelMail
+    install_ISPConfig
+
+elif [ "$installchoices" = "install_NginXCourierBindNoNo" ]; then
+    install_basic
+    install_DashNTP
+    install_MYSQLCourier
+    install_Virus
+    install_NginX
+    install_PureFTPD
+    install_Bind
+    install_Stats
+    install_fail2banCourier
+    install_SquirrelMail
+    install_ISPConfig
+
+elif [ "$installchoices" = "install_NginXCourierBindYesNo" ]; then
+    install_basic
+    install_DashNTP
+    install_MYSQLCourier
+    install_Virus
+    install_NginX
+    install_PureFTPD
+    install_Quota
+    install_Bind
+    install_Stats
+    install_fail2banCourier
+    install_SquirrelMail
+    install_ISPConfig
+
+elif [ "$installchoices" = "install_NginXCourierBindYesYes" ]; then
+    install_basic
+    install_DashNTP
+    install_MYSQLCourier
+    install_Virus
+    install_NginX
+    install_PureFTPD
+    install_Quota
+    install_Bind
+    install_Stats
+    install_Jailkit
+    install_fail2banCourier
+    install_SquirrelMail
+    install_ISPConfig
+    
+elif [ "$installchoices" = "install_NginXCourierBindNoYes" ]; then
+    install_basic
+    install_DashNTP
+    install_MYSQLCourier
+    install_Virus
+    install_NginX
+    install_PureFTPD
+    install_Bind
+    install_Stats
+    install_Jailkit
+    install_fail2banCourier
+    install_SquirrelMail
+    install_ISPConfig
+    
+elif [ "$installchoices" = "install_NginXDovecotBindNoNo" ]; then
+    install_basic
+    install_DashNTP
+    install_MYSQLDovecot
+    install_Virus
+    install_NginX
+    install_PureFTPD
+    install_Bind
+    install_Stats
+    install_fail2banDovecot
+    install_SquirrelMail
+    install_ISPConfig
+
+elif [ "$installchoices" = "install_NginXDovecotBindYesNo" ]; then
+    install_basic
+    install_DashNTP
+    install_MYSQLDovecot
+    install_Virus
+    install_NginX
+    install_PureFTPD
+    install_Quota
+    install_Bind
+    install_Stats
+    install_fail2banDovecot
+    install_SquirrelMail
+    install_ISPConfig
+
+elif [ "$installchoices" = "install_NginXDovecotBindYesYes" ]; then
+    install_basic
+    install_DashNTP
+    install_MYSQLDovecot
+    install_Virus
+    install_NginX
+    install_PureFTPD
+    install_Quota
+    install_Bind
+    install_Stats
+    install_Jailkit
+    install_fail2banDovecot
+    install_SquirrelMail
+    install_ISPConfig
+    
+elif [ "$installchoices" = "install_NginXDovecotBindNoYes" ]; then
+    install_basic
+    install_DashNTP
+    install_MYSQLDovecot
+    install_Virus
+    install_NginX
     install_PureFTPD
     install_Bind
     install_Stats
