@@ -141,7 +141,7 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
 
 
-    installchoices="install_$web_$mail_server$dns_server$quota$jailkit"
+    installchoices="install_$web$mail_server$dns_server$quota$jailkit"
     
 fi
 
