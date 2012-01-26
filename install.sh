@@ -85,7 +85,7 @@ if [ "$1" != "--help" ]; then
     
 #set Web Server
 
-	web_server="Apache"
+    web_server="Apache"
 	echo "Please select Web Server (Apache or NginX):"
 	read -p "(Default Mail Server: NginX):" web_server
     if [ "$web_server" = "" ]; then
@@ -141,7 +141,7 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
 
 
-    installchoices="install_$web$mail_server$dns_server$quota$jailkit"
+    installchoices="install_$web_server$mail_server$dns_server$quota$jailkit"
     
 fi
 
