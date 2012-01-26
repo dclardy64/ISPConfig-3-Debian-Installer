@@ -167,6 +167,8 @@ deb http://security.debian.org/ squeeze/updates main contrib non-free
 deb http://packages.dotdeb.org squeeze all
 EOF
 
+wget http://www.dotdeb.org/dotdeb.gpg
+cat dotdeb.gpg | apt-key add -
 apt-get update
 apt-get -y safe-upgrade
 apt-get -y install vim-nox dnsutils unzip 
