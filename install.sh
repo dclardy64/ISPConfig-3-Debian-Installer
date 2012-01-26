@@ -89,7 +89,7 @@ if [ "$1" != "--help" ]; then
 	echo "Please select Web Server (Apache or NginX):"
 	read -p "(Default Mail Server: NginX):" web_server
     if [ "$web_server" = "" ]; then
-    	web_server="Apache"
+    	web_server="NginX"
     fi
     echo "==========================="
     echo "web_server=$web_server"
@@ -265,11 +265,11 @@ apt-get -y install nginx
 insserv -r apache2
 /etc/init.d/nginx start
 
-apt-get install php5-fpm
-apt-get install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
-apt-get install php-apc
-apt-get install fcgiwrap
-apt-get install phpmyadmin
+apt-get -y install php5-fpm
+apt-get -y install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
+apt-get -y install php-apc
+apt-get -y install fcgiwrap
+apt-get -y install phpmyadmin
 
 /etc/init.d/php5-fpm restart
 
@@ -292,6 +292,7 @@ echo "asked for 'Common Name', enter your FQDN hostname ($HOSTNAMEFQDN)."
 echo "==========================================================================================="
 echo "Press ENTER to continue.."
 read DUMMY
+
 openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
 chmod 600 /etc/ssl/private/pure-ftpd.pem
 /etc/init.d/pure-ftpd-mysql restart
