@@ -87,9 +87,9 @@ if [ "$1" != "--help" ]; then
 
     web_server="Apache"
 	echo "Please select Web Server (Apache or NginX):"
-	read -p "(Default Mail Server: NginX):" web_server
+	read -p "(Default Web Server: Apache):" web_server
     if [ "$web_server" = "" ]; then
-    	web_server="NginX"
+    	web_server="Apache"
     fi
     echo "==========================="
     echo "web_server=$web_server"
