@@ -18,6 +18,7 @@ echo "========================================================================="
 echo "A tool to auto-install ISPConfig and its dependencies "
 echo "Script is using the DotDeb repo for updated packages"
 echo "========================================================================="
+echo "Please have Server IP and Hostname Ready!"
 echo "Press ENTER to continue.."
 read DUMMY
 
@@ -107,17 +108,6 @@ if [ "$1" != "--help" ]; then
     echo "mail_server=$mail_server"
     echo "==========================="
 
-#set DNS Server
-    dns_server="Bind"
-    echo "Please select DNS Server (Bind for now):"
-    read -p "(Default DNS Server: Bind):" dns_server
-    if [ "$dns_server" = "" ]; then
-        dns_server="Bind"
-    fi
-    echo "==========================="
-    echo "dns_server=$dns_server"
-    echo "==========================="
-
 #set Quota
     quota="Yes"
     echo "Please select whether to install Quota or Not:"
@@ -139,9 +129,6 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
     echo "jailkit=$jailkit"
     echo "==========================="
-
-
-    installchoices="install_$web_server$mail_server$dns_server$quota$jailkit"
     
 fi
 
@@ -241,7 +228,7 @@ install_Apache (){
 
 #Install Apache2, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
-#DISABLED DUE TO A BUG IN DBCONFIG - echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
 echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 
 apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby
@@ -260,7 +247,7 @@ install_NginX (){
 
 #Install NginX, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
-# - DISABLED DUE TO A BUG IN DBCONFIG - echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
 echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 apt-get -y install nginx
 /etc/init.d/apache2 stop
@@ -572,228 +559,38 @@ php -q install.php
 } 
 
 #Execute functions#
-if [ "$installchoices" = "install_ApacheCourierBindNoNo" ]; then
-    install_basic
+if [ -f /etc/debian_version ]; then 
+	install_basic
     install_DashNTP
-    install_MYSQLCourier
-    install_Virus
-    install_Apache
-    install_PureFTPD
-    install_Bind
+    if [ $mail_server == "Courier" ]; then
+		install_MysqlCourier
+	elif
+  		install_MysqlDovecot
+	fi
+	install_Virus
+	if [ $web_server == "Apache" ]; then
+		install_Apache
+	elif
+		install_NginX
+	fi
+	install_PureFTPD
+	if [ $quota == "Yes" ]; then
+		install_Quota
+	fi
+	install_Bind
     install_Stats
-    install_fail2banCourier
+    if [ $jailkit == "Yes" ]; then
+		install_Jailkit
+	fi
+	if [ $mail_server == "Courier" ]; then
+		install_fail2banCourier
+	elif
+		install_fail2banDovecot
+	fi
     install_SquirrelMail
     install_ISPConfig
-
-elif [ "$installchoices" = "install_ApacheCourierBindYesNo" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLCourier
-    install_Virus
-    install_Apache
-    install_PureFTPD
-    install_Quota
-    install_Bind
-    install_Stats
-    install_fail2banCourier
-    install_SquirrelMail
-    install_ISPConfig
-
-elif [ "$installchoices" = "install_ApacheCourierBindYesYes" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLCourier
-    install_Virus
-    install_Apache
-    install_PureFTPD
-    install_Quota
-    install_Bind
-    install_Stats
-    install_Jailkit
-    install_fail2banCourier
-    install_SquirrelMail
-    install_ISPConfig
-    
-elif [ "$installchoices" = "install_ApacheCourierBindNoYes" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLCourier
-    install_Virus
-    install_Apache
-    install_PureFTPD
-    install_Bind
-    install_Stats
-    install_Jailkit
-    install_fail2banCourier
-    install_SquirrelMail
-    install_ISPConfig
-    
-elif [ "$installchoices" = "install_ApacheDovecotBindNoNo" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLDovecot
-    install_Virus
-    install_Apache
-    install_PureFTPD
-    install_Bind
-    install_Stats
-    install_fail2banDovecot
-    install_SquirrelMail
-    install_ISPConfig
-
-elif [ "$installchoices" = "install_ApacheDovecotBindYesNo" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLDovecot
-    install_Virus
-    install_Apache
-    install_PureFTPD
-    install_Quota
-    install_Bind
-    install_Stats
-    install_fail2banDovecot
-    install_SquirrelMail
-    install_ISPConfig
-
-elif [ "$installchoices" = "install_ApacheDovecotBindYesYes" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLDovecot
-    install_Virus
-    install_Apache
-    install_PureFTPD
-    install_Quota
-    install_Bind
-    install_Stats
-    install_Jailkit
-    install_fail2banDovecot
-    install_SquirrelMail
-    install_ISPConfig
-    
-elif [ "$installchoices" = "install_ApacheDovecotBindNoYes" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLDovecot
-    install_Virus
-    install_Apache
-    install_PureFTPD
-    install_Bind
-    install_Stats
-    install_Jailkit
-    install_fail2banDovecot
-    install_SquirrelMail
-    install_ISPConfig
-
-elif [ "$installchoices" = "install_NginXCourierBindNoNo" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLCourier
-    install_Virus
-    install_NginX
-    install_PureFTPD
-    install_Bind
-    install_Stats
-    install_fail2banCourier
-    install_SquirrelMail
-    install_ISPConfig
-
-elif [ "$installchoices" = "install_NginXCourierBindYesNo" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLCourier
-    install_Virus
-    install_NginX
-    install_PureFTPD
-    install_Quota
-    install_Bind
-    install_Stats
-    install_fail2banCourier
-    install_SquirrelMail
-    install_ISPConfig
-
-elif [ "$installchoices" = "install_NginXCourierBindYesYes" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLCourier
-    install_Virus
-    install_NginX
-    install_PureFTPD
-    install_Quota
-    install_Bind
-    install_Stats
-    install_Jailkit
-    install_fail2banCourier
-    install_SquirrelMail
-    install_ISPConfig
-    
-elif [ "$installchoices" = "install_NginXCourierBindNoYes" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLCourier
-    install_Virus
-    install_NginX
-    install_PureFTPD
-    install_Bind
-    install_Stats
-    install_Jailkit
-    install_fail2banCourier
-    install_SquirrelMail
-    install_ISPConfig
-    
-elif [ "$installchoices" = "install_NginXDovecotBindNoNo" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLDovecot
-    install_Virus
-    install_NginX
-    install_PureFTPD
-    install_Bind
-    install_Stats
-    install_fail2banDovecot
-    install_SquirrelMail
-    install_ISPConfig
-
-elif [ "$installchoices" = "install_NginXDovecotBindYesNo" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLDovecot
-    install_Virus
-    install_NginX
-    install_PureFTPD
-    install_Quota
-    install_Bind
-    install_Stats
-    install_fail2banDovecot
-    install_SquirrelMail
-    install_ISPConfig
-
-elif [ "$installchoices" = "install_NginXDovecotBindYesYes" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLDovecot
-    install_Virus
-    install_NginX
-    install_PureFTPD
-    install_Quota
-    install_Bind
-    install_Stats
-    install_Jailkit
-    install_fail2banDovecot
-    install_SquirrelMail
-    install_ISPConfig
-    
-elif [ "$installchoices" = "install_NginXDovecotBindNoYes" ]; then
-    install_basic
-    install_DashNTP
-    install_MYSQLDovecot
-    install_Virus
-    install_NginX
-    install_PureFTPD
-    install_Bind
-    install_Stats
-    install_Jailkit
-    install_fail2banDovecot
-    install_SquirrelMail
-    install_ISPConfig
+else echo "Unsupported Linux Distribution."
 fi
+	
+		
 #End execute functions#
