@@ -591,7 +591,7 @@ if [ -f /etc/debian_version ]; then
 		debian_install_fail2banDovecot
 	fi
     debian_install_SquirrelMail
-    debian_install_ISPConfig
+    install_ISPConfig
 else echo "Unsupported Linux Distribution."
 fi
 	
