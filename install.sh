@@ -160,7 +160,7 @@ apt-get update
 apt-get -y safe-upgrade
 apt-get -y install vim-nox dnsutils unzip 
 
-} #end function install_basic
+} #end function debian_install_basic
 
 debian_install_DashNTP (){
 
@@ -170,7 +170,7 @@ dpkg-reconfigure -f noninteractive dash > /dev/null 2>&1
 #Synchronize the System Clock
 apt-get -y install ntp ntpdate
 
-} #end function install_DashNTP
+} #end function debian_install_DashNTP
 
 debian_install_MYSQLCourier (){
 
@@ -203,7 +203,7 @@ mkpop3dcert
 
 debian_install_MYSQLDovecot (){
 
-#Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
+#Install Postfix, Dovecot, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
 echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
@@ -563,10 +563,10 @@ if [ -f /etc/debian_version ]; then
 	debian_install_basic
     debian_install_DashNTP
     if [ $mail_server == "Courier" ]; then
-		debian_install_MysqlCourier
+		debian_install_MYSQLCourier
 	fi
 	if [ $mail_server == "Dovecot" ]; then
-  		debian_install_MysqlDovecot
+  		debian_install_MYSQLDovecot
 	fi
 	debian_install_Virus
 	if [ $web_server == "Apache" ]; then
