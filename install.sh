@@ -1,6 +1,6 @@
 #!/bin/bash
 ###############################################################################################
-# Complete ISPConfig setup script for Debian 6.		 										  #
+# Complete ISPConfig setup script for Debian 6.									  #
 # Drew Clardy																				  #
 # http://drewclardy.com							                                              #
 ###############################################################################################
@@ -132,9 +132,9 @@ if [ "$1" != "--help" ]; then
     
 fi
 
-###Functions Begin### 
+###DEBIAN Functions Begin### 
 
-install_basic (){
+debian_install_basic (){
 
 #Reconfigure sshd - change port
 sed -i "s/^Port [0-9]*/Port ${sshd_port}/" /etc/ssh/sshd_config
@@ -162,7 +162,7 @@ apt-get -y install vim-nox dnsutils unzip
 
 } #end function install_basic
 
-install_DashNTP (){
+debian_install_DashNTP (){
 
 echo "dash dash/sh boolean false" | debconf-set-selections
 dpkg-reconfigure -f noninteractive dash > /dev/null 2>&1
@@ -172,7 +172,7 @@ apt-get -y install ntp ntpdate
 
 } #end function install_DashNTP
 
-install_MYSQLCourier (){
+debian_install_MYSQLCourier (){
 
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
 echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
@@ -201,7 +201,7 @@ mkpop3dcert
 
 }
 
-install_MYSQLDovecot (){
+debian_install_MYSQLDovecot (){
 
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
 echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
@@ -217,14 +217,14 @@ sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1
 
 }
 
-install_Virus (){
+debian_install_Virus (){
 
 #Install Amavisd-new, SpamAssassin, And Clamav
 apt-get -y install amavisd-new spamassassin clamav clamav-daemon zoo unzip bzip2 arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl zip libnet-dns-perl
 
 }
 
-install_Apache (){
+debian_install_Apache (){
 
 #Install Apache2, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
@@ -243,7 +243,7 @@ a2enmod dav_fs dav auth_digest
 
 }
 
-install_NginX (){
+debian_install_NginX (){
 
 #Install NginX, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
@@ -264,7 +264,7 @@ apt-get -y install phpmyadmin
 
 }
 
-install_PureFTPD (){
+debian_install_PureFTPD (){
 #Install PureFTPd
 apt-get -y install pure-ftpd-common pure-ftpd-mysql
 
@@ -288,7 +288,7 @@ chmod 600 /etc/ssl/private/pure-ftpd.pem
 
 }
 
-install_Quota (){
+debian_install_Quota (){
 #Setting up Quota
 
 apt-get -y install quota quotatool
@@ -298,13 +298,13 @@ quotaon -avug
 
 }
 
-install_Bind (){
+debian_install_Bind (){
 #Install BIND DNS Server
 apt-get -y install bind9 dnsutils
 
 }
 
-install_Stats (){
+debian_install_Stats (){
 
 #Install Vlogger, Webalizer, And AWstats
 apt-get -y install vlogger webalizer awstats
@@ -314,7 +314,7 @@ sed -i "s/10 03 * * * www-data/#10 03 * * * www-data/" /etc/cron.d/awstats
 
 }
 
-install_Jailkit (){
+debian_install_Jailkit (){
 #Install Jailkit
 apt-get -y install build-essential autoconf automake1.9 libtool flex bison debhelper
 
@@ -329,7 +329,7 @@ rm -rf jailkit-2.14*
 
 }
 
-install_fail2banCourier (){
+debian_install_fail2banCourier (){
 #Install fail2ban
 apt-get -y install fail2ban
 
@@ -493,7 +493,7 @@ EOF
 
 }
 
-install_fail2banDovecot (){
+debian_install_fail2banDovecot (){
 #Install fail2ban
 apt-get -y install fail2ban
 
@@ -532,7 +532,7 @@ EOF
 
 }
 
-install_SquirrelMail (){
+debian_install_SquirrelMail (){
 
 echo "\033[35;1m When prompted, type D! Then type the mailserver you choose ($mail_server), and hit enter. Type S, Hit Enter. Type Q, Hit Enter.  \033[0m"
 echo "==========================================================================================="
@@ -560,35 +560,38 @@ php -q install.php
 
 #Execute functions#
 if [ -f /etc/debian_version ]; then 
-	install_basic
-    install_DashNTP
+	debian_install_basic
+    debian_install_DashNTP
     if [ $mail_server == "Courier" ]; then
-		install_MysqlCourier
-	elif
-  		install_MysqlDovecot
+		debian_install_MysqlCourier
 	fi
-	install_Virus
+	if [ $mail_server == "Dovecot" ]; then
+  		debian_install_MysqlDovecot
+	fi
+	debian_install_Virus
 	if [ $web_server == "Apache" ]; then
-		install_Apache
-	elif
-		install_NginX
+		debian_install_Apache
 	fi
-	install_PureFTPD
+	if [ $web_server == "NginX" ]; then
+		debian_install_NginX
+	fi
+	debian_install_PureFTPD
 	if [ $quota == "Yes" ]; then
-		install_Quota
+		debian_install_Quota
 	fi
-	install_Bind
-    install_Stats
+	debian_install_Bind
+    debian_install_Stats
     if [ $jailkit == "Yes" ]; then
-		install_Jailkit
+		debian_install_Jailkit
 	fi
 	if [ $mail_server == "Courier" ]; then
-		install_fail2banCourier
-	elif
-		install_fail2banDovecot
+		debian_install_fail2banCourier
 	fi
-    install_SquirrelMail
-    install_ISPConfig
+	if [ $mail_server == "Dovecot" ]; then
+		debian_install_fail2banDovecot
+	fi
+    debian_install_SquirrelMail
+    debian_install_ISPConfig
 else echo "Unsupported Linux Distribution."
 fi
 	
