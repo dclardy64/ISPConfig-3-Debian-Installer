@@ -119,6 +119,17 @@ if [ "$1" != "--help" ]; then
     echo "quota=$quota"
     echo "==========================="
     
+#set Mailman
+    mailman="Yes"
+    echo "Please select whether to install Mailman or Not:"
+    read -p "(Default: Yes):" mailman
+    if [ "$mailman" = "" ]; then
+        mailmam="Yes"
+    fi
+    echo "==========================="
+    echo "mailman=$mailman"
+    echo "==========================="
+    
 #set Jailkit
     jailkit="Yes"
     echo "Please select whether to install Jailkit or Not:"
@@ -264,6 +275,40 @@ apt-get -y install phpmyadmin
 
 }
 
+debian_install_Mailman (){
+#Install Mailman
+apt-get -y install mailman
+
+echo "========================================================================="
+echo "You will be prompted for two pieces of information during the install."
+echo "Email address of person running the list & password for the list."
+echo "Please enter them where needed."
+echo "========================================================================="
+echo "Press ENTER to continue.."
+read DUMMY
+
+mv /etc/aliases /etc/aliases-back
+
+cat > /etc/aliases-mailman <<EOF
+mailman:              "|/var/lib/mailman/mail/mailman post mailman"
+mailman-admin:        "|/var/lib/mailman/mail/mailman admin mailman"
+mailman-bounces:      "|/var/lib/mailman/mail/mailman bounces mailman"
+mailman-confirm:      "|/var/lib/mailman/mail/mailman confirm mailman"
+mailman-join:         "|/var/lib/mailman/mail/mailman join mailman"
+mailman-leave:        "|/var/lib/mailman/mail/mailman leave mailman"
+mailman-owner:        "|/var/lib/mailman/mail/mailman owner mailman"
+mailman-request:      "|/var/lib/mailman/mail/mailman request mailman"
+mailman-subscribe:    "|/var/lib/mailman/mail/mailman subscribe mailman"
+mailman-unsubscribe:  "|/var/lib/mailman/mail/mailman unsubscribe mailman"
+EOF
+
+cat /etc/aliases-back /etc/aliases-mailman > /etc/aliases
+newaliases
+/etc/init.d/postfix restart
+/etc/init.d/mailman start
+
+}
+
 debian_install_PureFTPD (){
 #Install PureFTPd
 apt-get -y install pure-ftpd-common pure-ftpd-mysql
@@ -289,6 +334,10 @@ chmod 600 /etc/ssl/private/pure-ftpd.pem
 }
 
 debian_install_Quota (){
+
+#Editing FStab
+sed -i "s/errors=remount-ro/errors=remount-ro,usrjquota=quota.user,grpjquota=quota.group,jqfmt=vfsv0/" /etc/fstab
+
 #Setting up Quota
 
 apt-get -y install quota quotatool
@@ -574,6 +623,9 @@ if [ -f /etc/debian_version ]; then
 	fi
 	if [ $web_server == "NginX" ]; then
 		debian_install_NginX
+	fi
+	if [ $mailman == "Yes" ]; then
+		debian_install_Mailman
 	fi
 	debian_install_PureFTPD
 	if [ $quota == "Yes" ]; then
