@@ -1,6 +1,6 @@
 #!/bin/bash
 ###############################################################################################
-# Complete ISPConfig setup script for Debian 6.									  #
+# Complete ISPConfig setup script for Debian 6.									 			  #
 # Drew Clardy																				  #
 # http://drewclardy.com							                                              #
 ###############################################################################################
