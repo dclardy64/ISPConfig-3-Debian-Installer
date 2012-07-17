@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 ###############################################################################################
 # Complete ISPConfig setup script for Debian 6.									 			  #
 # Drew Clardy																				  #
@@ -242,7 +242,7 @@ echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf
 echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
 echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 
-apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby
+apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby php5-curl curl
 
 #Web server to reconfigure automatically: <-- apache2
 #Configure database for phpmyadmin with dbconfig-common? <-- No
@@ -368,13 +368,13 @@ debian_install_Jailkit (){
 apt-get -y install build-essential autoconf automake1.9 libtool flex bison debhelper
 
 cd /tmp
-wget http://olivier.sessink.nl/jailkit/jailkit-2.14.tar.gz
-tar xvfz jailkit-2.14.tar.gz
-cd jailkit-2.14
+wget http://olivier.sessink.nl/jailkit/jailkit-2.15.tar.gz
+tar xvfz jailkit-2.15.tar.gz
+cd jailkit-2.15
 ./debian/rules binary
 cd ..
-dpkg -i jailkit_2.14-1_*.deb
-rm -rf jailkit-2.14*
+dpkg -i jailkit_2.15-1_*.deb
+rm -rf jailkit-2.15*
 
 }
 
@@ -435,6 +435,17 @@ port     = imaps
 filter   = courierimaps
 logpath  = /var/log/mail.log
 maxretry = 5/etc/fail2ban/jail.local
+
+[dovecot-pop3imap]
+
+enabled = true
+filter = dovecot-pop3imap
+action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps", protocol=tcp]
+# optionaly mail notification # mail[name=dovecot-pop3imap, dest=root@domain] # see /etc/fail2ban/action.d/ or Fail2Ban doc
+logpath = /var/log/maillog
+maxretry = 20
+findtime = 1200
+bantime = 1200
 
 cat > /etc/fail2ban/filter.d/pureftpd.conf <<EOF
 [Definition]
@@ -537,6 +548,13 @@ failregex = imapd-ssl: LOGIN FAILED.*ip=\[.*:<HOST>\]
 #
 ignoreregex =
 EOF
+
+cat > /etc/fail2ban/filter.d/dovecot-pop3imap <<EOF
+[Definition]
+failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted login \(auth failed|Aborted login \(tried to use disabled|Disconnected \(auth failed|Aborted login \(\d+ attempts).*rip=(?P<host>\S*),.*
+ignoreregex =
+EOF
+
 
 /etc/init.d/fail2ban restart
 
