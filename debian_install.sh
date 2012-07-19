@@ -72,18 +72,7 @@ if [ "$1" != "--help" ]; then
     echo "serverIP=$serverIP"
     echo "==========================="
 
-#set SSH Port
 
-    sshd_port="22"
-    echo "Please input the SSH Port:"
-    read -p "(Default SSH Port: 22):" sshd_port
-    if [ "$sshd_port" = "" ]; then
-        sshd_port="22"
-    fi
-    echo "==========================="
-    echo "sshd_port=$sshd_port"
-    echo "==========================="
-    
 #set Web Server
 
     web_server="Apache"
@@ -146,10 +135,6 @@ fi
 ###DEBIAN Functions Begin### 
 
 debian_install_basic (){
-
-#Reconfigure sshd - change port
-sed -i "s/^Port [0-9]*/Port ${sshd_port}/" /etc/ssh/sshd_config
-/etc/init.d/ssh reload
 
 #Set hostname and FQDN
 sed -i "s/${serverIP}.*/${serverIP} ${HOSTNAMEFQDN} ${HOSTNAME}/" /etc/hosts
@@ -378,7 +363,7 @@ rm -rf jailkit-2.15*
 
 }
 
-debian_install_fail2banCourier (){
+debian_install_fail2ban (){
 #Install fail2ban
 apt-get -y install fail2ban
 
@@ -560,45 +545,6 @@ EOF
 
 }
 
-debian_install_fail2banDovecot (){
-#Install fail2ban
-apt-get -y install fail2ban
-
-cat > /etc/fail2ban/jail.local <<EOF
-[pureftpd]
-
-enabled  = true
-port     = ftp
-filter   = pureftpd
-logpath  = /var/log/syslog
-maxretry = 3
-
-
-[dovecot-pop3imap]
-
-enabled = true
-filter = dovecot-pop3imap
-action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps", protocol=tcp]
-logpath = /var/log/mail.log
-maxretry = 5
-EOF
-
-cat > /etc/fail2ban/filter.d/pureftpd.conf <<EOF
-[Definition]
-failregex = .*pure-ftpd: \(.*@<HOST>\) \[WARNING\] Authentication failed for user.*
-ignoreregex =
-EOF
-
-cat > /etc/fail2ban/filter.d/dovecot-pop3imap.conf <<EOF
-[Definition]
-failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted login \(auth failed|Aborted login \(tried to use disabled|Disconnected \(auth failed|Aborted login \(\d+ authentication attempts).*rip=(?P<host>\S*),.*
-ignoreregex =
-EOF
-
-/etc/init.d/fail2ban restart
-
-}
-
 debian_install_SquirrelMail (){
 
 echo "\033[35;1m When prompted, type D! Then type the mailserver you choose ($mail_server), and hit enter. Type S, Hit Enter. Type Q, Hit Enter.  \033[0m"
@@ -654,16 +600,12 @@ if [ -f /etc/debian_version ]; then
     if [ $jailkit == "Yes" ]; then
 		debian_install_Jailkit
 	fi
-	if [ $mail_server == "Courier" ]; then
-		debian_install_fail2banCourier
-	fi
-	if [ $mail_server == "Dovecot" ]; then
-		debian_install_fail2banDovecot
-	fi
+	debian_install_fail2ban
     debian_install_SquirrelMail
     install_ISPConfig
 else echo "Unsupported Linux Distribution."
 fi
 	
 		
+
 #End execute functions#
