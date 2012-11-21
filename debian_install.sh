@@ -1,4 +1,5 @@
 ﻿#!/bin/bash
+
 ###############################################################################################
 # Complete ISPConfig setup script for Debian 6.									 			  #
 # Drew Clardy																				  #
@@ -604,8 +605,6 @@ if [ -f /etc/debian_version ]; then
     debian_install_SquirrelMail
     install_ISPConfig
 else echo "Unsupported Linux Distribution."
-fi
-	
-		
+fi		
 
 #End execute functions#
