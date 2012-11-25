@@ -244,8 +244,10 @@ debian_install_NginX (){
 
 #Install NginX, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
-echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
-echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
+#Still Not Working 
+#echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
+#Still Not working
+#echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 apt-get -y install nginx
 /etc/init.d/apache2 stop
 insserv -r apache2
@@ -302,7 +304,8 @@ apt-get -y install pure-ftpd-common pure-ftpd-mysql
 #Setting up Pure-Ftpd
 
 sed -i 's/VIRTUALCHROOT=false/VIRTUALCHROOT=true/' /etc/default/pure-ftpd-common
-sed -i 's/ftp    stream  tcp     nowait  root    /usr/sbin/tcpd /usr/sbin/pure-ftpd-wrapper/#ftp    stream  tcp     nowait  root    /usr/sbin/tcpd /usr/sbin/pure-ftpd-wrapper/' /etc/inetd.conf
+#Does not appear to be used in Squeeze
+#sed -i 's/ftp    stream  tcp     nowait  root    /usr/sbin/tcpd /usr/sbin/pure-ftpd-wrapper/#ftp    stream  tcp     nowait  root    /usr/sbin/tcpd /usr/sbin/pure-ftpd-wrapper/' /etc/inetd.conf
 /etc/init.d/openbsd-inetd restart
 echo 1 > /etc/pure-ftpd/conf/TLS
 mkdir -p /etc/ssl/private/
@@ -432,6 +435,7 @@ logpath = /var/log/maillog
 maxretry = 20
 findtime = 1200
 bantime = 1200
+EOF
 
 cat > /etc/fail2ban/filter.d/pureftpd.conf <<EOF
 [Definition]
