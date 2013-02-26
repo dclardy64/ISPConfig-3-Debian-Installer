@@ -13,12 +13,12 @@ if [ $(id -u) != "0" ]; then
 fi
 
 clear
-echo "========================================================================="
+echo "================================================================================"
 echo "ISPConfig 3 Setup Script ,  Written by Drew Clardy with help from other scripts!"
-echo "========================================================================="
+echo "================================================================================"
 echo "A tool to auto-install ISPConfig and its dependencies "
 echo "Script is using the DotDeb repo for updated packages"
-echo "========================================================================="
+echo "================================================================================"
 echo "Please have Server IP and Hostname Ready!"
 echo "Press ENTER to continue.."
 read DUMMY
@@ -249,15 +249,17 @@ echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf
 #Still Not working
 #echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 apt-get -y install nginx
-/etc/init.d/apache2 stop
-insserv -r apache2
-/etc/init.d/nginx start
 
 apt-get -y install php5-fpm
 apt-get -y install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
 apt-get -y install php-apc
 apt-get -y install fcgiwrap
 apt-get -y install phpmyadmin
+
+#Remove the Apache2 Stuff for NginX
+/etc/init.d/apache2 stop
+insserv -r apache2
+/etc/init.d/nginx start
 
 /etc/init.d/php5-fpm restart
 
@@ -430,7 +432,7 @@ maxretry = 5/etc/fail2ban/jail.local
 enabled = true
 filter = dovecot-pop3imap
 action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps", protocol=tcp]
-# optionaly mail notification # mail[name=dovecot-pop3imap, dest=root@domain] # see /etc/fail2ban/action.d/ or Fail2Ban doc
+#optionaly mail notification # mail[name=dovecot-pop3imap, dest=root@domain] # see /etc/fail2ban/action.d/ or Fail2Ban doc
 logpath = /var/log/maillog
 maxretry = 20
 findtime = 1200
@@ -552,7 +554,6 @@ EOF
 
 debian_install_SquirrelMail (){
 
-echo "\033[35;1m When prompted, type D! Then type the mailserver you choose ($mail_server), and hit enter. Type S, Hit Enter. Type Q, Hit Enter.  \033[0m"
 echo "==========================================================================================="
 echo "When prompted, type D! Then type the mailserver you choose ($mail_server),"
 echo "and hit enter. Type S, Hit Enter. Type Q, Hit Enter."
