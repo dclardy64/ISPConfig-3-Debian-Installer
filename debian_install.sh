@@ -14,7 +14,7 @@ fi
 
 clear
 echo "================================================================================"
-echo "ISPConfig 3 Setup Script ,  Written by Drew Clardy with help from other scripts!"
+echo "ISPConfig 3 Setup Script,  Written by Drew Clardy with help from other scripts!"
 echo "================================================================================"
 echo "A tool to auto-install ISPConfig and its dependencies "
 echo "Script is using the DotDeb repo for updated packages"
