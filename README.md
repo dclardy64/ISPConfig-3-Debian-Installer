@@ -20,6 +20,16 @@ Debian Installation Instructions:
 2. Answer the onscreen prompts. The script stops so that you can see the appropriate answers.
 3. Enjoy the completed installation.
 
+Ubuntu Installation Instructions:
+---------------------------------
+
+1. Run this command (Remove the single quotes from around Installer. It will produce an error, but Markdown italicizes the star character.) :
+
+    cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd '*Installer*'; bash ubuntu_install.sh
+
+2. Answer the onscreen prompts. The script stops so that you can see the appropriate answers.
+3. Enjoy the completed installation.
+
 CentOS Installation Instructions: 
 ---------------------------------
 
