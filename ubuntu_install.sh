@@ -454,6 +454,7 @@ chmod 600 /etc/ssl/private/pure-ftpd.pem
 ubuntu_install_Quota (){
 
 #Editing FStab
+cp /etc/fstab /etc/fstab.backup
 sed -i "s/errors=remount-ro/errors=remount-ro,usrjquota=quota.user,grpjquota=quota.group,jqfmt=vfsv0/" /etc/fstab
 
 #Setting up Quota
@@ -546,7 +547,10 @@ EOF
 }
 
 ubuntu_install_Fail2BanDovecot() {
+#Install fail2ban
+apt-get -y install fail2ban
 
+cat > /etc/fail2ban/jail.local <<EOF
 [pureftpd]
 
 enabled  = true
@@ -562,6 +566,7 @@ filter = dovecot-pop3imap
 action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps", protocol=tcp]
 logpath = /var/log/mail.log
 maxretry = 5
+EOF
 
 }
 

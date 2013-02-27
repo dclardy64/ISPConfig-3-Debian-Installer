@@ -182,6 +182,7 @@ echo "courier-ssl courier-ssl/certnotice note" | debconf-set-selections
 apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4 rkhunter binutils sudo
 
 #Allow MySQL to listen on all interfaces
+cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
 sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
 /etc/init.d/mysql restart
 
@@ -209,6 +210,7 @@ echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server openssl getmail4 rkhunter binutils dovecot-imapd dovecot-pop3d sudo  
 
 #Allow MySQL to listen on all interfaces
+cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
 sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
 /etc/init.d/mysql restart
 
@@ -229,9 +231,6 @@ echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-select
 echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 
 apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby php5-curl curl
-
-#Web server to reconfigure automatically: <-- apache2
-#Configure database for phpmyadmin with dbconfig-common? <-- No
 
 a2enmod suexec rewrite ssl actions include
 a2enmod dav_fs dav auth_digest
@@ -277,9 +276,9 @@ echo "========================================================================="
 echo "Press ENTER to continue.."
 read DUMMY
 
-mv /etc/aliases /etc/aliases-back
+mv /etc/aliases /etc/aliases.backup
 
-cat > /etc/aliases-mailman <<EOF
+cat > /etc/aliases.mailman <<EOF
 mailman:              "|/var/lib/mailman/mail/mailman post mailman"
 mailman-admin:        "|/var/lib/mailman/mail/mailman admin mailman"
 mailman-bounces:      "|/var/lib/mailman/mail/mailman bounces mailman"
@@ -292,7 +291,7 @@ mailman-subscribe:    "|/var/lib/mailman/mail/mailman subscribe mailman"
 mailman-unsubscribe:  "|/var/lib/mailman/mail/mailman unsubscribe mailman"
 EOF
 
-cat /etc/aliases-back /etc/aliases-mailman > /etc/aliases
+cat /etc/aliases.backup /etc/aliases.mailman > /etc/aliases
 newaliases
 /etc/init.d/postfix restart
 /etc/init.d/mailman start
@@ -304,11 +303,7 @@ debian_install_PureFTPD (){
 apt-get -y install pure-ftpd-common pure-ftpd-mysql
 
 #Setting up Pure-Ftpd
-
 sed -i 's/VIRTUALCHROOT=false/VIRTUALCHROOT=true/' /etc/default/pure-ftpd-common
-#Does not appear to be used in Squeeze
-#sed -i 's/ftp    stream  tcp     nowait  root    /usr/sbin/tcpd /usr/sbin/pure-ftpd-wrapper/#ftp    stream  tcp     nowait  root    /usr/sbin/tcpd /usr/sbin/pure-ftpd-wrapper/' /etc/inetd.conf
-/etc/init.d/openbsd-inetd restart
 echo 1 > /etc/pure-ftpd/conf/TLS
 mkdir -p /etc/ssl/private/
 echo "==========================================================================================="
@@ -327,10 +322,10 @@ chmod 600 /etc/ssl/private/pure-ftpd.pem
 debian_install_Quota (){
 
 #Editing FStab
+cp /etc/fstab /etc/fstab.backup
 sed -i "s/errors=remount-ro/errors=remount-ro,usrjquota=quota.user,grpjquota=quota.group,jqfmt=vfsv0/" /etc/fstab
 
 #Setting up Quota
-
 apt-get -y install quota quotatool
 mount -o remount /
 quotacheck -avugm
@@ -375,52 +370,41 @@ apt-get -y install fail2ban
 
 cat > /etc/fail2ban/jail.local <<EOF
 [pureftpd]
-
 enabled  = true
 port     = ftp
 filter   = pureftpd
 logpath  = /var/log/syslog
 maxretry = 3
 
-
 [sasl]
-
 enabled  = true
 port     = smtp
 filter   = sasl
 logpath  = /var/log/mail.log
 maxretry = 5
 
-
 [courierpop3]
-
 enabled  = true
 port     = pop3
 filter   = courierpop3
 logpath  = /var/log/mail.log
 maxretry = 5
 
-
 [courierpop3s]
-
 enabled  = true
 port     = pop3s
 filter   = courierpop3s
 logpath  = /var/log/mail.log
 maxretry = 5
 
-
 [courierimap]
-
 enabled  = true
 port     = imap2
 filter   = courierimap
 logpath  = /var/log/mail.log
 maxretry = 5
 
-
 [courierimaps]
-
 enabled  = true
 port     = imaps
 filter   = courierimaps
@@ -428,11 +412,9 @@ logpath  = /var/log/mail.log
 maxretry = 5/etc/fail2ban/jail.local
 
 [dovecot-pop3imap]
-
 enabled = true
 filter = dovecot-pop3imap
 action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps", protocol=tcp]
-#optionaly mail notification # mail[name=dovecot-pop3imap, dest=root@domain] # see /etc/fail2ban/action.d/ or Fail2Ban doc
 logpath = /var/log/maillog
 maxretry = 20
 findtime = 1200
@@ -446,98 +428,26 @@ ignoreregex =
 EOF
 
 cat > /etc/fail2ban/filter.d/courierpop3.conf <<EOF
-# Fail2Ban configuration file
-#
-# $Revision: 100 $
-#
-
 [Definition]
-
-# Option:  failregex
-# Notes.:  regex to match the password failures messages in the logfile. The
-#          host must be matched by a group named "host". The tag "<HOST>" can
-#          be used for standard IP/hostname matching and is only an alias for
-#          (?:::f{4,6}:)?(?P<host>\S+)
-# Values:  TEXT
-#
 failregex = pop3d: LOGIN FAILED.*ip=\[.*:<HOST>\]
-
-# Option:  ignoreregex
-# Notes.:  regex to ignore. If this regex matches, the line is ignored.
-# Values:  TEXT
-#
 ignoreregex =
 EOF
 
 cat > /etc/fail2ban/filter.d/courierpop3s.conf <<EOF
-# Fail2Ban configuration file
-#
-# $Revision: 100 $
-#
-
 [Definition]
-
-# Option:  failregex
-# Notes.:  regex to match the password failures messages in the logfile. The
-#          host must be matched by a group named "host". The tag "<HOST>" can
-#          be used for standard IP/hostname matching and is only an alias for
-#          (?:::f{4,6}:)?(?P<host>\S+)
-# Values:  TEXT
-#
 failregex = pop3d-ssl: LOGIN FAILED.*ip=\[.*:<HOST>\]
-
-# Option:  ignoreregex
-# Notes.:  regex to ignore. If this regex matches, the line is ignored.
-# Values:  TEXT
-#
 ignoreregex =
 EOF
 
 cat > /etc/fail2ban/filter.d/courierimap.conf <<EOF
-# Fail2Ban configuration file
-#
-# $Revision: 100 $
-#
-
 [Definition]
-
-# Option:  failregex
-# Notes.:  regex to match the password failures messages in the logfile. The
-#          host must be matched by a group named "host". The tag "<HOST>" can
-#          be used for standard IP/hostname matching and is only an alias for
-#          (?:::f{4,6}:)?(?P<host>\S+)
-# Values:  TEXT
-#
 failregex = imapd: LOGIN FAILED.*ip=\[.*:<HOST>\]
-
-# Option:  ignoreregex
-# Notes.:  regex to ignore. If this regex matches, the line is ignored.
-# Values:  TEXT
-#
 ignoreregex =
 EOF
 
 cat > /etc/fail2ban/filter.d/courierimaps.conf <<EOF
-# Fail2Ban configuration file
-#
-# $Revision: 100 $
-#
-
 [Definition]
-
-# Option:  failregex
-# Notes.:  regex to match the password failures messages in the logfile. The
-#          host must be matched by a group named "host". The tag "<HOST>" can
-#          be used for standard IP/hostname matching and is only an alias for
-#          (?:::f{4,6}:)?(?P<host>\S+)
-# Values:  TEXT
-#
 failregex = imapd-ssl: LOGIN FAILED.*ip=\[.*:<HOST>\]
-
-# Option:  ignoreregex
-# Notes.:  regex to ignore. If this regex matches, the line is ignored.
-# Values:  TEXT
-#
 ignoreregex =
 EOF
 
@@ -546,7 +456,6 @@ cat > /etc/fail2ban/filter.d/dovecot-pop3imap <<EOF
 failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted login \(auth failed|Aborted login \(tried to use disabled|Disconnected \(auth failed|Aborted login \(\d+ attempts).*rip=(?P<host>\S*),.*
 ignoreregex =
 EOF
-
 
 /etc/init.d/fail2ban restart
 
