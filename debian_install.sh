@@ -364,7 +364,7 @@ rm -rf jailkit-2.15*
 
 }
 
-debian_install_fail2ban (){
+debian_install_Fail2BanCourier (){
 #Install fail2ban
 apt-get -y install fail2ban
 
@@ -409,17 +409,33 @@ enabled  = true
 port     = imaps
 filter   = courierimaps
 logpath  = /var/log/mail.log
-maxretry = 5/etc/fail2ban/jail.local
+maxretry = 5
+EOF
+}
+
+debian_install_Fail2BanDovecot() {
+#Install fail2ban
+apt-get -y install fail2ban
+
+cat > /etc/fail2ban/jail.local <<EOF
+[pureftpd]
+enabled  = true
+port     = ftp
+filter   = pureftpd
+logpath  = /var/log/syslog
+maxretry = 3
 
 [dovecot-pop3imap]
 enabled = true
 filter = dovecot-pop3imap
 action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps", protocol=tcp]
-logpath = /var/log/maillog
-maxretry = 20
-findtime = 1200
-bantime = 1200
+logpath = /var/log/mail.log
+maxretry = 5
 EOF
+
+}
+
+debian_install_Fail2BanRulesCourier() {
 
 cat > /etc/fail2ban/filter.d/pureftpd.conf <<EOF
 [Definition]
@@ -451,9 +467,21 @@ failregex = imapd-ssl: LOGIN FAILED.*ip=\[.*:<HOST>\]
 ignoreregex =
 EOF
 
+/etc/init.d/fail2ban restart
+
+}
+
+debian_install_Fail2BanRulesDovecot() {
+
+cat > /etc/fail2ban/filter.d/pureftpd.conf <<EOF
+[Definition]
+failregex = .*pure-ftpd: \(.*@<HOST>\) \[WARNING\] Authentication failed for user.*
+ignoreregex =
+EOF
+
 cat > /etc/fail2ban/filter.d/dovecot-pop3imap <<EOF
 [Definition]
-failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted login \(auth failed|Aborted login \(tried to use disabled|Disconnected \(auth failed|Aborted login \(\d+ attempts).*rip=(?P<host>\S*),.*
+failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted login \(auth failed|Aborted login \(tried to use disabled|Disconnected \(auth failed|Aborted login \(\d+ authentication attempts).*rip=(?P<host>\S*),.*
 ignoreregex =
 EOF
 
@@ -515,7 +543,14 @@ if [ -f /etc/debian_version ]; then
     if [ $jailkit == "Yes" ]; then
 		debian_install_Jailkit
 	fi
-	debian_install_fail2ban
+	if [ $mail_server == "Courier" ]; then
+        debian_install_Fail2BanCourier
+        debian_install_Fail2BanRulesCourier
+    fi
+    if [ $mail_server == "Dovecot" ]; then
+        debian_install_Fail2BanDovecot
+        debian_install_Fail2BanRulesDovecot
+    fi
     debian_install_SquirrelMail
     install_ISPConfig
 else echo "Unsupported Linux Distribution."
