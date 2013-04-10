@@ -614,7 +614,7 @@ failregex = .*pure-ftpd: \(.*@<HOST>\) \[WARNING\] Authentication failed for use
 ignoreregex =
 EOF
 
-cat > /etc/fail2ban/filter.d/dovecot-pop3imap <<EOF
+cat > /etc/fail2ban/filter.d/dovecot-pop3imap.conf <<EOF
 [Definition]
 failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted login \(auth failed|Aborted login \(tried to use disabled|Disconnected \(auth failed|Aborted login \(\d+ authentication attempts).*rip=(?P<host>\S*),.*
 ignoreregex =
