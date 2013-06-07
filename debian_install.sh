@@ -354,13 +354,13 @@ debian_install_Jailkit (){
 apt-get -y install build-essential autoconf automake1.9 libtool flex bison debhelper
 
 cd /tmp
-wget http://olivier.sessink.nl/jailkit/jailkit-2.15.tar.gz
-tar xvfz jailkit-2.15.tar.gz
-cd jailkit-2.15
+wget http://olivier.sessink.nl/jailkit/jailkit-2.16.tar.gz
+tar xvfz jailkit-2.16.tar.gz
+cd jailkit-2.16
 ./debian/rules binary
 cd ..
-dpkg -i jailkit_2.15-1_*.deb
-rm -rf jailkit-2.15*
+dpkg -i jailkit_2.16-1_*.deb
+rm -rf jailkit-2.16*
 
 }
 
