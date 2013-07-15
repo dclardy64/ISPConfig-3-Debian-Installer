@@ -1,7 +1,7 @@
 ﻿#!/bin/bash
 
 ###############################################################################################
-# Complete ISPConfig setup script for Debian 6.									 			  #
+# Complete ISPConfig setup script for Debian 7.         						 			  #
 # Drew Clardy																				  #
 # http://drewclardy.com							                                              #
 ###############################################################################################
@@ -98,6 +98,17 @@ if [ "$1" != "--help" ]; then
     echo "mail_server=$mail_server"
     echo "==========================="
 
+#set Mail Client
+    web_mail="SquirrelMail"
+    echo "Please select which Web Mail Client to install (SquirrelMail or RoundCube):"
+    read -p "(Default Web Mail Client: SquirrelMail):" web_mail
+    if [ "$web_mail" = "" ]; then
+        web_mail="SquirrelMail"
+    fi
+    echo "==========================="
+    echo "web_mail=$web_mail"
+    echo "==========================="
+
 #set Quota
     quota="Yes"
     echo "Please select whether to install Quota or Not:"
@@ -145,10 +156,19 @@ echo "$HOSTNAME" > /etc/hostname
 #Updates server and install commonly used utilities
 cp /etc/apt/sources.list /etc/apt/sources.list.backup
 cat > /etc/apt/sources.list <<EOF
-deb http://ftp.us.debian.org/debian/ squeeze main contrib non-free
-deb http://ftp.us.debian.org/debian/ squeeze-updates main contrib non-free
-deb http://security.debian.org/ squeeze/updates main contrib non-free
-deb http://packages.dotdeb.org squeeze all
+deb http://ftp.de.debian.org/debian/ wheezy main contrib non-free
+deb-src http://ftp.de.debian.org/debian/ wheezy main contrib non-free
+
+deb http://security.debian.org/ wheezy/updates main contrib non-free
+deb-src http://security.debian.org/ wheezy/updates main contrib non-free
+
+# wheezy-updates, previously known as 'volatile'
+deb http://ftp.de.debian.org/debian/ wheezy-updates main contrib non-free
+deb-src http://ftp.de.debian.org/debian/ wheezy-updates main contrib non-free
+
+# DotDeb
+deb http://packages.dotdeb.org wheezy all
+deb-src http://packages.dotdeb.org wheezy all
 EOF
 
 wget http://www.dotdeb.org/dotdeb.gpg
@@ -172,8 +192,8 @@ apt-get -y install ntp ntpdate
 debian_install_MYSQLCourier (){
 
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
-echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
-echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
 echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 echo "courier-base courier-base/webadmin-configmode boolean false" | debconf-set-selections
@@ -202,8 +222,8 @@ mkpop3dcert
 debian_install_MYSQLDovecot (){
 
 #Install Postfix, Dovecot, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
-echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
-echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
 echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 
@@ -230,8 +250,9 @@ echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf
 echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
 echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 
-apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby php5-curl curl
+apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libapache2-mod-fastcgi libruby libapache2-mod-ruby php5-curl curl
 
+a2enmod actions fastcgi alias
 a2enmod suexec rewrite ssl actions include
 a2enmod dav_fs dav auth_digest
 
@@ -504,6 +525,47 @@ squirrelmail-configure
 
 }
 
+#debian_install_RoundCube_NginX (){
+
+#}
+
+#debian_install_RoundCube_Apache (){
+
+#echo "==========================================================================================="
+#echo "When prompted, type D! Then type the mailserver you choose ($mail_server),"
+#echo "and hit enter. Type S, Hit Enter. Type Q, Hit Enter."
+#echo "==========================================================================================="
+#echo "Press ENTER to continue.."
+#read DUMMY
+
+
+#echo "roundcube-core  roundcube/dbconfig-upgrade  boolean true" | debconf-set-selections
+#echo "roundcube-core  roundcube/database-type select  mysql" | debconf-set-selections
+#echo "roundcube-core  roundcube/mysql/admin-pass  $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+
+#echo "roundcube/reconfigure-webserver: apache2" | debconf-set-selections
+
+
+#apt-get install -y roundcube roundcube-plugins roundcube-plugins-extra
+
+#sed -i 's/$rcmail_config['default_host'] = '';/$rcmail_config['default_host'] = 'localhost';/' /etc/roundcube/main.inc.php
+
+#Install RoundCube Plugins for ISPConfig3 
+
+#cd /tmp
+#wget --no-check-certificate -O RCPlugins.zip https://github.com/w2c/ispconfig3_roundcube/archive/master.zip
+#unzip RCPlugins.zip
+#cd ispconfig3_roundcube-master
+#mv ispconfig3_* /var/lib/roundcube/plugins
+#cd /var/lib/roundcube/plugins
+#mv ispconfig3_account/config/config.inc.php.dist ispconfig3_account/config/config.inc.php
+
+#sed -i 's/$rcmail_config['plugins'] = array();///$rcmail_config['plugins'] = array();/' /etc/roundcube/main.inc.php
+#sed 's/.*//$rcmail_config['plugins'] = array();'
+
+
+#}
+
 install_ISPConfig (){
 #Install ISPConfig 3
 cd /tmp
@@ -551,7 +613,17 @@ if [ -f /etc/debian_version ]; then
         debian_install_Fail2BanDovecot
         debian_install_Fail2BanRulesDovecot
     fi
-    debian_install_SquirrelMail
+    if [ $web_mail == "RoundCube" ]; then
+        if [ $web_mail == "Apache" ]; then
+            debian_install_RoundCube_Apache
+        fi
+        if [ $web_mail == "NginX" ]; then
+            debian_install_RoundCube_NginX
+        fi
+    fi
+    if [ $web_mail == "SquirrelMail" ]; then
+        debian_install_SquirrelMail
+    fi    
     install_ISPConfig
 else echo "Unsupported Linux Distribution."
 fi		
