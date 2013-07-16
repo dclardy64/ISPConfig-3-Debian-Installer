@@ -99,15 +99,15 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
 
 #set Mail Client
-    web_mail="SquirrelMail"
-    echo "Please select which Web Mail Client to install (SquirrelMail or RoundCube):"
-    read -p "(Default Web Mail Client: SquirrelMail):" web_mail
-    if [ "$web_mail" = "" ]; then
-        web_mail="SquirrelMail"
-    fi
-    echo "==========================="
-    echo "web_mail=$web_mail"
-    echo "==========================="
+#    web_mail="SquirrelMail"
+#    echo "Please select which Web Mail Client to install (SquirrelMail or RoundCube):"
+#    read -p "(Default Web Mail Client: SquirrelMail):" web_mail
+#    if [ "$web_mail" = "" ]; then
+#        web_mail="SquirrelMail"
+#    fi
+#    echo "==========================="
+#    echo "web_mail=$web_mail"
+#    echo "==========================="
 
 #set Quota
     quota="Yes"
@@ -174,7 +174,7 @@ EOF
 wget http://www.dotdeb.org/dotdeb.gpg
 cat dotdeb.gpg | apt-key add -
 apt-get update
-apt-get -y safe-upgrade
+apt-get -y upgrade
 apt-get -y install vim-nox dnsutils unzip 
 
 } #end function debian_install_basic
@@ -227,11 +227,27 @@ echo "mysql-server-5.5 mysql-server/root_password_again password $MYSQL_ROOT_PAS
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
 echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 
-apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server openssl getmail4 rkhunter binutils dovecot-imapd dovecot-pop3d sudo  
+apt-get install postfix postfix-mysql postfix-doc mysql-client mysql-server openssl getmail4 rkhunter binutils dovecot-imapd dovecot-pop3d dovecot-mysql dovecot-sieve sudo 
+
+#Uncommenting some Postfix configuration files
+cp /etc/postfix/master.cf /etc/postfix/master.cf.backup
+sed -i 's|#submission inet n       -       -       -       -       smtpd|submission inet n       -       -       -       -       smtpd|' /etc/postfix/master.cf
+sed -i 's|#  -o syslog_name=postfix/submission|  -o syslog_name=postfix/submission|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_tls_security_level=encrypt|  -o smtpd_tls_security_level=encrypt|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_client_restrictions=permit_sasl_authenticated,reject|  -o smtpd_client_restrictions=permit_sasl_authenticated,reject|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#smtps     inet  n       -       -       -       -       smtpd|smtps     inet  n       -       -       -       -       smtpd|' /etc/postfix/master.cf
+sed -1 's|#  -o syslog_name=postfix/smtps|  -o syslog_name=postfix/smtps|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_tls_wrappermode=yes|  -o smtpd_tls_wrappermode=yes|' /etc/postfix/master.cf
 
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
-sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
+sed -i 's|bind-address           = 127.0.0.1|#bind-address           = 127.0.0.1|' /etc/mysql/my.cnf
+
+/etc/init.d/postfix restart
 /etc/init.d/mysql restart
 
 }
@@ -239,7 +255,10 @@ sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1
 debian_install_Virus (){
 
 #Install Amavisd-new, SpamAssassin, And Clamav
-apt-get -y install amavisd-new spamassassin clamav clamav-daemon zoo unzip bzip2 arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl zip libnet-dns-perl
+apt-get install amavisd-new spamassassin clamav clamav-daemon zoo unzip bzip2 arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl zip libnet-dns-perl
+
+/etc/init.d/spamassassin stop
+update-rc.d -f spamassassin remove
 
 }
 
@@ -250,12 +269,47 @@ echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf
 echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
 echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 
-apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libapache2-mod-fastcgi libruby libapache2-mod-ruby php5-curl curl
+apt-get install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby libapache2-mod-python php5-curl php5-intl php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached libapache2-mod-fastcgi php5-fpm
 
-a2enmod actions fastcgi alias
 a2enmod suexec rewrite ssl actions include
 a2enmod dav_fs dav auth_digest
+a2enmod actions fastcgi alias
 
+#Fix SuPHP
+cp /etc/apache2/mods-available/suphp.conf /etc/apache2/mods-available/suphp.conf.backup
+rm /etc/apache2/mods-available/suphp.conf
+cat > /etc/apache2/mods-available/suphp.conf <<EOF
+<IfModule mod_suphp.c>
+    #<FilesMatch "\.ph(p3?|tml)$">
+    #    SetHandler application/x-httpd-suphp
+    #</FilesMatch>
+        AddType application/x-httpd-suphp .php .php3 .php4 .php5 .phtml
+        suPHP_AddHandler application/x-httpd-suphp
+
+    <Directory />
+        suPHP_Engine on
+    </Directory>
+
+    # By default, disable suPHP for debian packaged web applications as files
+    # are owned by root and cannot be executed by suPHP because of min_uid.
+    <Directory /usr/share>
+        suPHP_Engine off
+    </Directory>
+
+# # Use a specific php config file (a dir which contains a php.ini file)
+#       suPHP_ConfigPath /etc/php5/cgi/suphp/
+# # Tells mod_suphp NOT to handle requests with the type <mime-type>.
+#       suPHP_RemoveHandler <mime-type>
+</IfModule>
+EOF
+
+#Enable Ruby Support
+sed -i 's|application/x-ruby|#application/x-ruby|' /etc/mime.types
+
+#Install XCache
+apt-get -y install php5-xcache
+
+#Restart Apache
 /etc/init.d/apache2 restart
 
 }
@@ -264,15 +318,17 @@ debian_install_NginX (){
 
 #Install NginX, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
-#Still Not Working 
-#echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
-#Still Not working
-#echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
+echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 apt-get -y install nginx
+/etc/init.d/apache2 stop
+update-rc.d -f apache2 remove
+/etc/init.d/nginx start
 
 apt-get -y install php5-fpm
-apt-get -y install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
+apt-get -y install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
 apt-get -y install php-apc
+#PHP Configuration Stuff Goes Here
 apt-get -y install fcgiwrap
 apt-get -y install phpmyadmin
 
@@ -288,14 +344,7 @@ insserv -r apache2
 debian_install_Mailman (){
 #Install Mailman
 apt-get -y install mailman
-
-echo "========================================================================="
-echo "You will be prompted for two pieces of information during the install."
-echo "Email address of person running the list & password for the list."
-echo "Please enter them where needed."
-echo "========================================================================="
-echo "Press ENTER to continue.."
-read DUMMY
+newlist mailman
 
 mv /etc/aliases /etc/aliases.backup
 
@@ -315,6 +364,8 @@ EOF
 cat /etc/aliases.backup /etc/aliases.mailman > /etc/aliases
 newaliases
 /etc/init.d/postfix restart
+ln -s /etc/mailman/apache.conf /etc/apache2/conf.d/mailman.conf
+/etc/init.d/apache2 restart
 /etc/init.d/mailman start
 
 }
@@ -363,7 +414,7 @@ apt-get -y install bind9 dnsutils
 debian_install_Stats (){
 
 #Install Vlogger, Webalizer, And AWstats
-apt-get -y install vlogger webalizer awstats
+apt-get -y install vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl
 
 sed -i "s/*/10 * * * * www-data/#*/10 * * * * www-data/" /etc/cron.d/awstats
 sed -i "s/10 03 * * * www-data/#10 03 * * * www-data/" /etc/cron.d/awstats
@@ -372,7 +423,7 @@ sed -i "s/10 03 * * * www-data/#10 03 * * * www-data/" /etc/cron.d/awstats
 
 debian_install_Jailkit (){
 #Install Jailkit
-apt-get -y install build-essential autoconf automake1.9 libtool flex bison debhelper
+apt-get -y install build-essential autoconf automake1.9 libtool flex bison debhelper binutils-gold
 
 cd /tmp
 wget http://olivier.sessink.nl/jailkit/jailkit-2.16.tar.gz
@@ -452,6 +503,13 @@ filter = dovecot-pop3imap
 action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps", protocol=tcp]
 logpath = /var/log/mail.log
 maxretry = 5
+
+[sasl]
+enabled  = true
+port     = smtp
+filter   = sasl
+logpath  = /var/log/mail.log
+maxretry = 3
 EOF
 
 }
@@ -520,51 +578,66 @@ echo "Press ENTER to continue.."
 read DUMMY
 #Install SquirrelMail
 apt-get -y install squirrelmail
-ln -s /usr/share/squirrelmail/ /var/www/webmail
 squirrelmail-configure
 
+mv /etc/squirrelmail/apache.conf /etc/squirrelmail/apache.conf.backup
+cat /etc/squirrelmail/apache.conf <<EOF
+Alias /squirrelmail /usr/share/squirrelmail
+Alias /webmail /usr/share/squirrelmail
+
+<Directory /usr/share/squirrelmail>
+  Options FollowSymLinks
+  <IfModule mod_php5.c>
+    AddType application/x-httpd-php .php
+    php_flag magic_quotes_gpc Off
+    php_flag track_vars On
+    php_admin_flag allow_url_fopen Off
+    php_value include_path .
+    php_admin_value upload_tmp_dir /var/lib/squirrelmail/tmp
+    php_admin_value open_basedir /usr/share/squirrelmail:/etc/squirrelmail:/var/lib/squirrelmail:/etc/hostname:/etc/mailname
+    php_flag register_globals off
+  </IfModule>
+  <IfModule mod_dir.c>
+    DirectoryIndex index.php
+  </IfModule>
+
+  # access to configtest is limited by default to prevent information leak
+  <Files configtest.php>
+    order deny,allow
+    deny from all
+    allow from 127.0.0.1
+  </Files>
+</Directory>
+
+# users will prefer a simple URL like http://webmail.example.com
+#<VirtualHost 1.2.3.4>
+#  DocumentRoot /usr/share/squirrelmail
+#  ServerName webmail.example.com
+#</VirtualHost>
+
+# redirect to https when available (thanks omen@descolada.dartmouth.edu)
+#
+#  Note: There are multiple ways to do this, and which one is suitable for
+#  your site's configuration depends. Consult the apache documentation if
+#  you're unsure, as this example might not work everywhere.
+#
+#<IfModule mod_rewrite.c>
+#  <IfModule mod_ssl.c>
+#    <Location /squirrelmail>
+#      RewriteEngine on
+#      RewriteCond %{HTTPS} !^on$ [NC]
+#      RewriteRule . https://%{HTTP_HOST}%{REQUEST_URI}  [L]
+#    </Location>
+#  </IfModule>
+#</IfModule>
+EOF
+
+mkdir /var/lib/squirrelmail/tmp
+chown www-data /var/lib/squirrelmail/tmp
+ln -s /etc/squirrelmail/apache.conf /etc/apache2/conf.d/squirrelmail.conf
+/etc/init.d/apache2 reload
+
 }
-
-#debian_install_RoundCube_NginX (){
-
-#}
-
-#debian_install_RoundCube_Apache (){
-
-#echo "==========================================================================================="
-#echo "When prompted, type D! Then type the mailserver you choose ($mail_server),"
-#echo "and hit enter. Type S, Hit Enter. Type Q, Hit Enter."
-#echo "==========================================================================================="
-#echo "Press ENTER to continue.."
-#read DUMMY
-
-
-#echo "roundcube-core  roundcube/dbconfig-upgrade  boolean true" | debconf-set-selections
-#echo "roundcube-core  roundcube/database-type select  mysql" | debconf-set-selections
-#echo "roundcube-core  roundcube/mysql/admin-pass  $MYSQL_ROOT_PASSWORD" | debconf-set-selections
-
-#echo "roundcube/reconfigure-webserver: apache2" | debconf-set-selections
-
-
-#apt-get install -y roundcube roundcube-plugins roundcube-plugins-extra
-
-#sed -i 's/$rcmail_config['default_host'] = '';/$rcmail_config['default_host'] = 'localhost';/' /etc/roundcube/main.inc.php
-
-#Install RoundCube Plugins for ISPConfig3 
-
-#cd /tmp
-#wget --no-check-certificate -O RCPlugins.zip https://github.com/w2c/ispconfig3_roundcube/archive/master.zip
-#unzip RCPlugins.zip
-#cd ispconfig3_roundcube-master
-#mv ispconfig3_* /var/lib/roundcube/plugins
-#cd /var/lib/roundcube/plugins
-#mv ispconfig3_account/config/config.inc.php.dist ispconfig3_account/config/config.inc.php
-
-#sed -i 's/$rcmail_config['plugins'] = array();///$rcmail_config['plugins'] = array();/' /etc/roundcube/main.inc.php
-#sed 's/.*//$rcmail_config['plugins'] = array();'
-
-
-#}
 
 install_ISPConfig (){
 #Install ISPConfig 3
@@ -613,17 +686,7 @@ if [ -f /etc/debian_version ]; then
         debian_install_Fail2BanDovecot
         debian_install_Fail2BanRulesDovecot
     fi
-    if [ $web_mail == "RoundCube" ]; then
-        if [ $web_mail == "Apache" ]; then
-            debian_install_RoundCube_Apache
-        fi
-        if [ $web_mail == "NginX" ]; then
-            debian_install_RoundCube_NginX
-        fi
-    fi
-    if [ $web_mail == "SquirrelMail" ]; then
-        debian_install_SquirrelMail
-    fi    
+    debian_install_SquirrelMail   
     install_ISPConfig
 else echo "Unsupported Linux Distribution."
 fi		
