@@ -354,7 +354,7 @@ EOF
 sed -i "s/x-ruby                             rb/x-ruby                            rb/#x-ruby                             rb/x-ruby                            rb/" /etc/mime.types
 
 #Install X-Cache
-apt-get install php5-xcache
+apt-get -y install php5-xcache
 
 /etc/init.d/apache2 restart
 
@@ -486,7 +486,7 @@ apt-get -y install bind9 dnsutils
 ubuntu_install_Stats (){
 
 #Install Vlogger, Webalizer, And AWstats
-apt-get install vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl
+apt-get -y install vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl
 
 sed -i "s/*/10 * * * * www-data/#*/10 * * * * www-data/" /etc/cron.d/awstats
 sed -i "s/10 03 * * * www-data/#10 03 * * * www-data/" /etc/cron.d/awstats
@@ -495,7 +495,7 @@ sed -i "s/10 03 * * * www-data/#10 03 * * * www-data/" /etc/cron.d/awstats
 
 ubuntu_install_Jailkit (){
 #Install Jailkit
-apt-get install build-essential autoconf automake1.9 libtool flex bison debhelper binutils-gold
+apt-get -y install build-essential autoconf automake1.9 libtool flex bison debhelper binutils-gold
 
 cd /tmp
 wget http://olivier.sessink.nl/jailkit/jailkit-2.16.tar.gz
