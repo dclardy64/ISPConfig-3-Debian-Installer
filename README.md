@@ -33,24 +33,8 @@ cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclard
 2. Answer the onscreen prompts. The script stops so that you can see the appropriate answers.
 3. Enjoy the completed installation.
 
-CentOS Installation Instructions: 
----------------------------------
-
-(Not Currently Working. Adding to this as I have time.)
-
-1. Run this command:
-
-```bash
-	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash centos_install.sh
-```
-
-2. Answer the onscreen prompts. The script stops so that you can see the appropriate answers.
-3. Enjoy the completed installation.
-
 
 TO DO
 -----
 
-1. See what other options I can add.
-2. Add CentOS Support. (In Progress)
-
+See what other options I can add. Please feel free to submit an issue for any ideas that you have.
