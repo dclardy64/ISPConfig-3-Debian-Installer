@@ -129,6 +129,17 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
     echo "jailkit=$jailkit"
     echo "==========================="
+
+set Mail Client
+    web_mail="SquirrelMail"
+    echo "Please select which Web Mail Client to install (SquirrelMail or RoundCube):"
+    read -p "(Default Web Mail Client: SquirrelMail):" web_mail
+    if [ "$web_mail" = "" ]; then
+        web_mail="SquirrelMail"
+    fi
+    echo "==========================="
+    echo "web_mail=$web_mail"
+    echo "==========================="
     
 fi
 
@@ -636,6 +647,47 @@ php -q install.php
 
 } 
 
+debian_install_RoundCube_NginX (){
+
+}
+
+debian_install_RoundCube_Apache (){
+
+echo "==========================================================================================="
+echo "When prompted, type D! Then type the mailserver you choose ($mail_server),"
+echo "and hit enter. Type S, Hit Enter. Type Q, Hit Enter."
+echo "==========================================================================================="
+echo "Press ENTER to continue.."
+read DUMMY
+
+
+echo "roundcube-core  roundcube/dbconfig-upgrade  boolean true" | debconf-set-selections
+echo "roundcube-core  roundcube/database-type select  mysql" | debconf-set-selections
+echo "roundcube-core  roundcube/mysql/admin-pass  $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+
+echo "roundcube/reconfigure-webserver: apache2" | debconf-set-selections
+
+
+apt-get install -y roundcube roundcube-plugins roundcube-plugins-extra
+
+sed -i 's/$rcmail_config['default_host'] = '';/$rcmail_config['default_host'] = 'localhost';/' /etc/roundcube/main.inc.php
+
+#Install RoundCube Plugins for ISPConfig3 
+
+cd /tmp
+wget --no-check-certificate -O RCPlugins.zip https://github.com/w2c/ispconfig3_roundcube/archive/master.zip
+unzip RCPlugins.zip
+cd ispconfig3_roundcube-master
+mv ispconfig3_* /var/lib/roundcube/plugins
+cd /var/lib/roundcube/plugins
+mv ispconfig3_account/config/config.inc.php.dist ispconfig3_account/config/config.inc.php
+
+sed -i 's/$rcmail_config['plugins'] = array();///$rcmail_config['plugins'] = array();/' /etc/roundcube/main.inc.php
+sed 's/.*//$rcmail_config['plugins'] = array();'
+
+
+}
+
 #Execute functions#
 if [ -f /etc/debian_version ]; then 
 	debian_install_basic
@@ -673,7 +725,17 @@ if [ -f /etc/debian_version ]; then
         debian_install_Fail2BanDovecot
         debian_install_Fail2BanRulesDovecot
     fi
-    debian_install_SquirrelMail   
+    if [ $web_mail == "RoundCube" ]; then
+        if [ $web_mail == "Apache" ]; then
+            debian_install_RoundCube_Apache
+        fi
+        if [ $web_mail == "NginX" ]; then
+            debian_install_RoundCube_NginX
+        fi
+    fi
+    if [ $web_mail == "SquirrelMail" ]; then
+        debian_install_SquirrelMail
+    fi 
     install_ISPConfig
 else echo "Unsupported Linux Distribution."
 fi		
