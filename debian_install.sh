@@ -252,6 +252,14 @@ update-rc.d -f spamassassin remove
 
 debian_install_Apache (){
 
+echo "========================================================================="
+echo "You will be prompted for some information during the install of phpmyadmin."
+echo "Select NO when asked to configure using dbconfig-common"
+echo "Please enter them where needed."
+echo "========================================================================="
+echo "Press ENTER to continue.."
+read DUMMY
+
 #Install Apache2, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 #PhpMyAdmin Selections Not Working
 #echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
@@ -297,6 +305,8 @@ sed -i 's|application/x-ruby|#application/x-ruby|' /etc/mime.types
 #Install XCache
 apt-get -y install php5-xcache
 
+
+
 #Restart Apache
 /etc/init.d/apache2 restart
 
@@ -319,6 +329,14 @@ apt-get -y install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick 
 apt-get -y install php-apc
 #PHP Configuration Stuff Goes Here
 apt-get -y install fcgiwrap
+
+echo "========================================================================="
+echo "You will be prompted for some information during the install of phpmyadmin."
+echo "Select NO when asked to configure using dbconfig-common"
+echo "Please enter them where needed."
+echo "========================================================================="
+echo "Press ENTER to continue.."
+read DUMMY
 apt-get -y install phpmyadmin
 
 #Remove the Apache2 Stuff for NginX
@@ -331,6 +349,16 @@ insserv -r apache2
 }
 
 debian_install_Mailman (){
+
+echo "================================================================================================"
+echo "You will be prompted for some information during the install."
+echo "Select the languages you want to support and hit OK when told about the missing site list"
+echo "You will also be asked for the email address of person running the list & password for the list."
+echo "Please enter them where needed."
+echo "================================================================================================"
+echo "Press ENTER to continue.."
+read DUMMY
+
 #Install Mailman
 apt-get -y install mailman
 newlist mailman
@@ -353,8 +381,10 @@ EOF
 cat /etc/aliases.backup /etc/aliases.mailman > /etc/aliases
 newaliases
 /etc/init.d/postfix restart
-ln -s /etc/mailman/apache.conf /etc/apache2/conf.d/mailman.conf
-/etc/init.d/apache2 restart
+    if [ $web_server == "Apache" ]; then
+        ln -s /etc/mailman/apache.conf /etc/apache2/conf.d/mailman.conf
+        /etc/init.d/apache2 restart
+    fi
 /etc/init.d/mailman start
 
 }
@@ -569,67 +599,70 @@ read DUMMY
 apt-get -y install squirrelmail
 squirrelmail-configure
 
-mv /etc/squirrelmail/apache.conf /etc/squirrelmail/apache.conf.backup
-cat > /etc/squirrelmail/apache.conf <<EOF
-Alias /squirrelmail /usr/share/squirrelmail
-Alias /webmail /usr/share/squirrelmail
+    if [ $web_server == "Apache" ]; then
+        mv /etc/squirrelmail/apache.conf /etc/squirrelmail/apache.conf.backup
+        cat > /etc/squirrelmail/apache.conf <<EOF
+        Alias /squirrelmail /usr/share/squirrelmail
+        Alias /webmail /usr/share/squirrelmail
 
-<Directory /usr/share/squirrelmail>
-  Options FollowSymLinks
-  <IfModule mod_php5.c>
-    AddType application/x-httpd-php .php
-    php_flag magic_quotes_gpc Off
-    php_flag track_vars On
-    php_admin_flag allow_url_fopen Off
-    php_value include_path .
-    php_admin_value upload_tmp_dir /var/lib/squirrelmail/tmp
-    php_admin_value open_basedir /usr/share/squirrelmail:/etc/squirrelmail:/var/lib/squirrelmail:/etc/hostname:/etc/mailname
-    php_flag register_globals off
-  </IfModule>
-  <IfModule mod_dir.c>
-    DirectoryIndex index.php
-  </IfModule>
+        <Directory /usr/share/squirrelmail>
+          Options FollowSymLinks
+          <IfModule mod_php5.c>
+            AddType application/x-httpd-php .php
+            php_flag magic_quotes_gpc Off
+            php_flag track_vars On
+            php_admin_flag allow_url_fopen Off
+            php_value include_path .
+            php_admin_value upload_tmp_dir /var/lib/squirrelmail/tmp
+            php_admin_value open_basedir /usr/share/squirrelmail:/etc/squirrelmail:/var/lib/squirrelmail:/etc/hostname:/etc/mailname
+            php_flag register_globals off
+          </IfModule>
+          <IfModule mod_dir.c>
+            DirectoryIndex index.php
+          </IfModule>
 
-  # access to configtest is limited by default to prevent information leak
-  <Files configtest.php>
-    order deny,allow
-    deny from all
-    allow from 127.0.0.1
-  </Files>
-</Directory>
+          # access to configtest is limited by default to prevent information leak
+          <Files configtest.php>
+            order deny,allow
+            deny from all
+            allow from 127.0.0.1
+          </Files>
+        </Directory>
 
-# users will prefer a simple URL like http://webmail.example.com
-#<VirtualHost 1.2.3.4>
-#  DocumentRoot /usr/share/squirrelmail
-#  ServerName webmail.example.com
-#</VirtualHost>
+        # users will prefer a simple URL like http://webmail.example.com
+        #<VirtualHost 1.2.3.4>
+        #  DocumentRoot /usr/share/squirrelmail
+        #  ServerName webmail.example.com
+        #</VirtualHost>
 
-# redirect to https when available (thanks omen@descolada.dartmouth.edu)
-#
-#  Note: There are multiple ways to do this, and which one is suitable for
-#  your site's configuration depends. Consult the apache documentation if
-#  you're unsure, as this example might not work everywhere.
-#
-#<IfModule mod_rewrite.c>
-#  <IfModule mod_ssl.c>
-#    <Location /squirrelmail>
-#      RewriteEngine on
-#      RewriteCond %{HTTPS} !^on$ [NC]
-#      RewriteRule . https://%{HTTP_HOST}%{REQUEST_URI}  [L]
-#    </Location>
-#  </IfModule>
-#</IfModule>
-EOF
-
-mkdir /var/lib/squirrelmail/tmp
-chown www-data /var/lib/squirrelmail/tmp
-ln -s /etc/squirrelmail/apache.conf /etc/apache2/conf.d/squirrelmail.conf
-/etc/init.d/apache2 reload
-
+        # redirect to https when available (thanks omen@descolada.dartmouth.edu)
+        #
+        #  Note: There are multiple ways to do this, and which one is suitable for
+        #  your site's configuration depends. Consult the apache documentation if
+        #  you're unsure, as this example might not work everywhere.
+        #
+        #<IfModule mod_rewrite.c>
+        #  <IfModule mod_ssl.c>
+        #    <Location /squirrelmail>
+        #      RewriteEngine on
+        #      RewriteCond %{HTTPS} !^on$ [NC]
+        #      RewriteRule . https://%{HTTP_HOST}%{REQUEST_URI}  [L]
+        #    </Location>
+        #  </IfModule>
+        #</IfModule>
+        EOF
+        mkdir /var/lib/squirrelmail/tmp
+        chown www-data /var/lib/squirrelmail/tmp
+        ln -s /etc/squirrelmail/apache.conf /etc/apache2/conf.d/squirrelmail.conf
+        /etc/init.d/apache2 reload
+    fi
 }
 
 install_ISPConfig (){
 #Install ISPConfig 3
+/etc/init.d/apache2 stop
+update-rc.d -f apache2 remove
+/etc/init.d/nginx restart
 cd /tmp
 wget http://www.ispconfig.org/downloads/ISPConfig-3-stable.tar.gz
 tar xfz ISPConfig-3-stable.tar.gz
