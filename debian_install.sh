@@ -25,16 +25,16 @@ read DUMMY
 
 if [ "$1" != "--help" ]; then
 
-#set mysql root password
+#set Server IP
 
-    MYSQL_ROOT_PASSWORD="123456789"
-    echo "Please input the root password of mysql:"
-    read -p "(Default password: 123456789):" MYSQL_ROOT_PASSWORD
-    if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
-        MYSQL_ROOT_PASSWORD="123456789"
+    serverIP="123.156.78.9"
+    echo "Please input the Server IP:"
+    read -p "(Default Server IP: 123.456.78.9):" serverIP
+    if [ "$serverIP" = "" ]; then
+        serverIP="123.456.78.9"
     fi
     echo "==========================="
-    echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
+    echo "serverIP=$serverIP"
     echo "==========================="
 
 #set Hostname
@@ -60,19 +60,6 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
     echo "HOSTNAMEFQDN=$HOSTNAMEFQDN"
     echo "==========================="
-    
-#set Server IP
-
-    serverIP="123.156.78.9"
-    echo "Please input the Server IP:"
-    read -p "(Default Server IP: 123.456.78.9):" serverIP
-    if [ "$serverIP" = "" ]; then
-        serverIP="123.456.78.9"
-    fi
-    echo "==========================="
-    echo "serverIP=$serverIP"
-    echo "==========================="
-
 
 #set Web Server
 
@@ -98,23 +85,24 @@ if [ "$1" != "--help" ]; then
     echo "mail_server=$mail_server"
     echo "==========================="
 
-#set Mail Client
-#    web_mail="SquirrelMail"
-#    echo "Please select which Web Mail Client to install (SquirrelMail or RoundCube):"
-#    read -p "(Default Web Mail Client: SquirrelMail):" web_mail
-#    if [ "$web_mail" = "" ]; then
-#        web_mail="SquirrelMail"
-#    fi
-#    echo "==========================="
-#    echo "web_mail=$web_mail"
-#    echo "==========================="
+#set mysql root password
+
+    MYSQL_ROOT_PASSWORD="123456789"
+    echo "Please input the root password of mysql:"
+    read -p "(Default password: 123456789):" MYSQL_ROOT_PASSWORD
+    if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
+        MYSQL_ROOT_PASSWORD="123456789"
+    fi
+    echo "==========================="
+    echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
+    echo "==========================="
 
 #set Quota
     quota="Yes"
     echo "Please select whether to install Quota or Not:"
-    read -p "(Default: Yes):" quota
+    read -p "(Default: No):" quota
     if [ "$quota" = "" ]; then
-        quota="Yes"
+        quota="No"
     fi
     echo "==========================="
     echo "quota=$quota"
@@ -123,9 +111,9 @@ if [ "$1" != "--help" ]; then
 #set Mailman
     mailman="Yes"
     echo "Please select whether to install Mailman or Not:"
-    read -p "(Default: Yes):" mailman
+    read -p "(Default: No):" mailman
     if [ "$mailman" = "" ]; then
-        mailmam="Yes"
+        mailmam="No"
     fi
     echo "==========================="
     echo "mailman=$mailman"
@@ -134,9 +122,9 @@ if [ "$1" != "--help" ]; then
 #set Jailkit
     jailkit="Yes"
     echo "Please select whether to install Jailkit or Not:"
-    read -p "(Default: Yes):" jailkit
+    read -p "(Default: No):" jailkit
     if [ "$jailkit" = "" ]; then
-        jailkit="Yes"
+        jailkit="No"
     fi
     echo "==========================="
     echo "jailkit=$jailkit"
