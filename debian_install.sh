@@ -14,7 +14,7 @@ fi
 
 back_title="ISPConfig 3 System Installer"
 
-debian_questions (){
+questions (){
   while [ "x$serverIP" == "x" ]
   do
         serverIP=$(whiptail --title "Server IP" --backtitle "$back_title" --inputbox "Please specify a Server IP" --nocancel 10 50 3>&1 1>&2 2>&3)
@@ -35,9 +35,9 @@ debian_questions (){
   do
     mail_server=$(whiptail --title "Mail Server" --backtitle "$back_title" --nocancel --radiolist "Select Mail Server Software" 10 50 2 "Dovecot" "(default)" ON "Courier" "" OFF 3>&1 1>&2 2>&3)
   done
-  while [ "x$MYSQL_ROOT_PASSWORD" == "x" ]
+  while [ "x$mysql_pass" == "x" ]
   do
-        MYSQL_ROOT_PASSWORD=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
+        mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
   done
   if (whiptail --title "Install Quota" --backtitle "$back_title" --yesno "Setup User Quotas?" 10 50) then
     quota=Yes
@@ -103,8 +103,8 @@ apt-get -y install ntp ntpdate
 debian_install_MYSQLCourier (){
 
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
-echo "mysql-server-5.5 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
 echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 echo "courier-base courier-base/webadmin-configmode boolean false" | debconf-set-selections
@@ -133,8 +133,8 @@ mkpop3dcert
 debian_install_MYSQLDovecot (){
 
 #Install Postfix, Dovecot, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
-echo "mysql-server-5.5 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
 echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 
@@ -184,10 +184,9 @@ echo "Press ENTER to continue.."
 read DUMMY
 
 #Install Apache2, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
-#PhpMyAdmin Selections Not Working
-#echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
-#echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
-#echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
+
+echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf-set-selections
+echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-set-selections
 
 apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby libapache2-mod-python php5-curl php5-intl php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
 
@@ -239,9 +238,9 @@ debian_install_NginX (){
 
 #Install NginX, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 #PhpMyAdmin Selections Not Working
-#echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
-#echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
-#echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
+echo 'phpmyadmin      phpmyadmin/reconfigure-webserver        multiselect' | debconf-set-selections
+echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-set-selections
+
 apt-get -y install nginx
 /etc/init.d/apache2 stop
 update-rc.d -f apache2 remove
@@ -596,8 +595,8 @@ php -q install.php
 
 #Execute functions#
 if [ -f /etc/debian_version ]; then 
-    debian_questions
-	debian_install_basic
+    questions
+	  debian_install_basic
     debian_install_DashNTP
     if [ $mail_server == "Courier" ]; then
 		debian_install_MYSQLCourier
