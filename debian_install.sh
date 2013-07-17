@@ -237,7 +237,7 @@ apt-get -y install php5-xcache
 debian_install_NginX (){
 
 #Install NginX, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
-#PhpMyAdmin Selections Not Working
+
 echo 'phpmyadmin      phpmyadmin/reconfigure-webserver        multiselect' | debconf-set-selections
 echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-set-selections
 

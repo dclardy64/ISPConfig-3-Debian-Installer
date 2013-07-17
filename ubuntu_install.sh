@@ -136,7 +136,7 @@ ubuntu_install_DisableAppArmor (){
 
 /etc/init.d/apparmor stop
 update-rc.d -f apparmor remove
-apt-get remove apparmor apparmor-utils
+apt-get -y remove apparmor apparmor-utils
 
 } #end function ubuntu_install_DisableAppArmor
 
@@ -228,18 +228,9 @@ update-rc.d -f spamassassin remove
 ubuntu_install_Apache (){
 
 #Install Apache2, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
-#PhpMyAdmin Selections Not Working
-#echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
-#echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
-#echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 
-echo "========================================================================="
-echo "You will be prompted for some information during the install of phpmyadmin."
-echo "Select NO when asked to configure using dbconfig-common"
-echo "Please enter them where needed."
-echo "========================================================================="
-echo "Press ENTER to continue.."
-read DUMMY
+echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf-set-selections
+echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-set-selections
 
 apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby libapache2-mod-python php5-curl php5-intl php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
 
@@ -286,10 +277,10 @@ apt-get -y install php5-xcache
 ubuntu_install_NginX (){
 
 #Install NginX, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
-#PhpMyAdmin Selections Not Working
-#echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
-#echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
-#echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
+
+echo 'phpmyadmin      phpmyadmin/reconfigure-webserver        multiselect' | debconf-set-selections
+echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-set-selections
+
 apt-get -y install nginx
 
 /etc/init.d/apache2 stop
@@ -302,14 +293,6 @@ apt-get -y install php-apc
 #PHP Configuration Stuff Goes Here
 /etc/init.d/php5-fpm reload
 apt-get -y install fcgiwrap
-
-echo "========================================================================="
-echo "You will be prompted for some information during the install of phpmyadmin."
-echo "Select NO when asked to configure using dbconfig-common"
-echo "Please enter them where needed."
-echo "========================================================================="
-echo "Press ENTER to continue.."
-read DUMMY
 
 apt-get -y install phpmyadmin
 
