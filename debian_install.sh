@@ -98,7 +98,7 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
 
 #set Quota
-    quota="Yes"
+    quota="No"
     echo "Please select whether to install Quota or Not:"
     read -p "(Default: No):" quota
     if [ "$quota" = "" ]; then
@@ -109,18 +109,18 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
     
 #set Mailman
-    mailman="Yes"
+    mailman="No"
     echo "Please select whether to install Mailman or Not:"
     read -p "(Default: No):" mailman
     if [ "$mailman" = "" ]; then
-        mailmam="No"
+        mailman="No"
     fi
     echo "==========================="
     echo "mailman=$mailman"
     echo "==========================="
     
 #set Jailkit
-    jailkit="Yes"
+    jailkit="No"
     echo "Please select whether to install Jailkit or Not:"
     read -p "(Default: No):" jailkit
     if [ "$jailkit" = "" ]; then
@@ -599,63 +599,63 @@ read DUMMY
 apt-get -y install squirrelmail
 squirrelmail-configure
 
-    if [ $web_server == "Apache" ]; then
-        mv /etc/squirrelmail/apache.conf /etc/squirrelmail/apache.conf.backup
-        cat > /etc/squirrelmail/apache.conf <<EOF
-        Alias /squirrelmail /usr/share/squirrelmail
-        Alias /webmail /usr/share/squirrelmail
+if [ $web_server == "Apache" ]; then
+mv /etc/squirrelmail/apache.conf /etc/squirrelmail/apache.conf.backup
+cat > /etc/squirrelmail/apache.conf <<EOF
+Alias /squirrelmail /usr/share/squirrelmail
+Alias /webmail /usr/share/squirrelmail
 
-        <Directory /usr/share/squirrelmail>
-          Options FollowSymLinks
-          <IfModule mod_php5.c>
-            AddType application/x-httpd-php .php
-            php_flag magic_quotes_gpc Off
-            php_flag track_vars On
-            php_admin_flag allow_url_fopen Off
-            php_value include_path .
-            php_admin_value upload_tmp_dir /var/lib/squirrelmail/tmp
-            php_admin_value open_basedir /usr/share/squirrelmail:/etc/squirrelmail:/var/lib/squirrelmail:/etc/hostname:/etc/mailname
-            php_flag register_globals off
-          </IfModule>
-          <IfModule mod_dir.c>
-            DirectoryIndex index.php
-          </IfModule>
+<Directory /usr/share/squirrelmail>
+  Options FollowSymLinks
+  <IfModule mod_php5.c>
+    AddType application/x-httpd-php .php
+    php_flag magic_quotes_gpc Off
+    php_flag track_vars On
+    php_admin_flag allow_url_fopen Off
+    php_value include_path .
+    php_admin_value upload_tmp_dir /var/lib/squirrelmail/tmp
+    php_admin_value open_basedir /usr/share/squirrelmail:/etc/squirrelmail:/var/lib/squirrelmail:/etc/hostname:/etc/mailname
+    php_flag register_globals off
+  </IfModule>
+  <IfModule mod_dir.c>
+    DirectoryIndex index.php
+  </IfModule>
 
-          # access to configtest is limited by default to prevent information leak
-          <Files configtest.php>
-            order deny,allow
-            deny from all
-            allow from 127.0.0.1
-          </Files>
-        </Directory>
+  # access to configtest is limited by default to prevent information leak
+  <Files configtest.php>
+    order deny,allow
+    deny from all
+    allow from 127.0.0.1
+  </Files>
+</Directory>
 
-        # users will prefer a simple URL like http://webmail.example.com
-        #<VirtualHost 1.2.3.4>
-        #  DocumentRoot /usr/share/squirrelmail
-        #  ServerName webmail.example.com
-        #</VirtualHost>
+# users will prefer a simple URL like http://webmail.example.com
+#<VirtualHost 1.2.3.4>
+#  DocumentRoot /usr/share/squirrelmail
+#  ServerName webmail.example.com
+#</VirtualHost>
 
-        # redirect to https when available (thanks omen@descolada.dartmouth.edu)
-        #
-        #  Note: There are multiple ways to do this, and which one is suitable for
-        #  your site's configuration depends. Consult the apache documentation if
-        #  you're unsure, as this example might not work everywhere.
-        #
-        #<IfModule mod_rewrite.c>
-        #  <IfModule mod_ssl.c>
-        #    <Location /squirrelmail>
-        #      RewriteEngine on
-        #      RewriteCond %{HTTPS} !^on$ [NC]
-        #      RewriteRule . https://%{HTTP_HOST}%{REQUEST_URI}  [L]
-        #    </Location>
-        #  </IfModule>
-        #</IfModule>
-        EOF
-        mkdir /var/lib/squirrelmail/tmp
-        chown www-data /var/lib/squirrelmail/tmp
-        ln -s /etc/squirrelmail/apache.conf /etc/apache2/conf.d/squirrelmail.conf
-        /etc/init.d/apache2 reload
-    fi
+# redirect to https when available (thanks omen@descolada.dartmouth.edu)
+#
+#  Note: There are multiple ways to do this, and which one is suitable for
+#  your site's configuration depends. Consult the apache documentation if
+#  you're unsure, as this example might not work everywhere.
+#
+#<IfModule mod_rewrite.c>
+#  <IfModule mod_ssl.c>
+#    <Location /squirrelmail>
+#      RewriteEngine on
+#      RewriteCond %{HTTPS} !^on$ [NC]
+#      RewriteRule . https://%{HTTP_HOST}%{REQUEST_URI}  [L]
+#    </Location>
+#  </IfModule>
+#</IfModule>
+EOF
+mkdir /var/lib/squirrelmail/tmp
+chown www-data /var/lib/squirrelmail/tmp
+ln -s /etc/squirrelmail/apache.conf /etc/apache2/conf.d/squirrelmail.conf
+/etc/init.d/apache2 reload
+fi
 }
 
 install_ISPConfig (){
