@@ -1,9 +1,9 @@
 #!/bin/bash
 
 ###############################################################################################
-# Complete ISPConfig setup script for Ubuntu 13.04.								 			  #
-# Drew Clardy																				  #
-# http://drewclardy.com							                                              #
+# Complete ISPConfig setup script for Ubuntu 13.04.                                           #
+# Drew Clardy                                                                                 #
+# http://drewclardy.com                                                                       #
 ###############################################################################################
 
 # Check if user is root
@@ -12,134 +12,57 @@ if [ $(id -u) != "0" ]; then
     exit 1
 fi
 
-clear
-echo "================================================================================"
-echo "ISPConfig 3 Setup Script,  Written by Drew Clardy with help from other scripts!"
-echo "================================================================================"
-echo "A tool to auto-install ISPConfig and its dependencies "
-echo "Script is using the DotDeb repo for updated packages"
-echo "================================================================================"
-echo "Please have Server IP and Hostname Ready!"
-echo "Press ENTER to continue.."
-read DUMMY
+back_title="ISPConfig 3 System Installer"
 
-if [ "$1" != "--help" ]; then
+questions (){
+  while [ "x$serverIP" == "x" ]
+  do
+        serverIP=$(whiptail --title "Server IP" --backtitle "$back_title" --inputbox "Please specify a Server IP" --nocancel 10 50 3>&1 1>&2 2>&3)
+  done
+  while [ "x$HOSTNAMESHORT" == "x" ]
+  do
+        HOSTNAMESHORT=$(whiptail --title "Hostname" --backtitle "$back_title" --inputbox "Please specify a Hostname" --nocancel 10 50 3>&1 1>&2 2>&3)
+  done
+  while [ "x$HOSTNAMEFQDN" == "x" ]
+  do
+        HOSTNAMEFQDN=$(whiptail --title "Fully Qualified Hostname" --backtitle "$back_title" --inputbox "Please specify a Fully Qualified Hostname" --nocancel 10 50 3>&1 1>&2 2>&3)
+  done
+  while [ "x$web_server" == "x" ]
+  do
+    web_server=$(whiptail --title "Web Server" --backtitle "$back_title" --nocancel --radiolist "Select Web Server Software" 10 50 2 "Apache" "(default)" ON "NginX" "" OFF 3>&1 1>&2 2>&3)
+  done
+  while [ "x$mail_server" == "x" ]
+  do
+    mail_server=$(whiptail --title "Mail Server" --backtitle "$back_title" --nocancel --radiolist "Select Mail Server Software" 10 50 2 "Dovecot" "(default)" ON "Courier" "" OFF 3>&1 1>&2 2>&3)
+  done
+  while [ "x$mysql_pass" == "x" ]
+  do
+        mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
+  done
+  if (whiptail --title "Install Quota" --backtitle "$back_title" --yesno "Setup User Quotas?" 10 50) then
+    quota=Yes
+  else
+    quota=No
+  fi
+  if (whiptail --title "Install Mailman" --backtitle "$back_title" --yesno "Setup Mailman?" 10 50) then
+    mailman=Yes
+  else
+    mailman=No
+  fi
+  if (whiptail --title "Install Jailkit" --backtitle "$back_title" --yesno "Setup User Jailkits?" 10 50) then
+    jailkit=Yes
+  else
+    jailkit=No
+  fi
 
-#set Server IP
-
-    serverIP="123.156.78.9"
-    echo "Please input the Server IP:"
-    read -p "(Default Server IP: 123.456.78.9):" serverIP
-    if [ "$serverIP" = "" ]; then
-        serverIP="123.456.78.9"
-    fi
-    echo "==========================="
-    echo "serverIP=$serverIP"
-    echo "==========================="
-
-#set Hostname
-
-    HOSTNAME="server1"
-    echo "Please input the Hostname:"
-    read -p "(Default Hostname: server1):" HOSTNAME
-    if [ "$HOSTNAME" = "" ]; then
-        HOSTNAME="server1"
-    fi
-    echo "==========================="
-    echo "HOSTNAME=$HOSTNAME"
-    echo "==========================="
-
-#set Fully Qualified Hostname
-
-    HOSTNAMEFQDN="server1.example.com"
-    echo "Please input the Full Hostname:"
-    read -p "(Default Full Hostname: server1.example.com):" HOSTNAMEFQDN
-    if [ "$HOSTNAMEFQDN" = "" ]; then
-        HOSTNAMEFQDN="server1.example.com"
-    fi
-    echo "==========================="
-    echo "HOSTNAMEFQDN=$HOSTNAMEFQDN"
-    echo "==========================="
-
-#set Web Server
-
-    web_server="Apache"
-    echo "Please select Web Server (Apache or NginX):"
-    read -p "(Default Web Server: Apache):" web_server
-    if [ "$web_server" = "" ]; then
-        web_server="Apache"
-    fi
-    echo "==========================="
-    echo "web_server=$web_server"
-    echo "==========================="    
-    
-#set Mail Server
-
-    mail_server="Courier"
-    echo "Please select Mail Server (Courier or Dovecot):"
-    read -p "(Default Mail Server: Courier):" mail_server
-    if [ "$mail_server" = "" ]; then
-        mail_server="Courier"
-    fi
-    echo "==========================="
-    echo "mail_server=$mail_server"
-    echo "==========================="
-
-#set mysql root password
-
-    MYSQL_ROOT_PASSWORD="123456789"
-    echo "Please input the root password of mysql:"
-    read -p "(Default password: 123456789):" MYSQL_ROOT_PASSWORD
-    if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
-        MYSQL_ROOT_PASSWORD="123456789"
-    fi
-    echo "==========================="
-    echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
-    echo "==========================="
-
-#set Quota
-    quota="Yes"
-    echo "Please select whether to install Quota or Not:"
-    read -p "(Default: No):" quota
-    if [ "$quota" = "" ]; then
-        quota="No"
-    fi
-    echo "==========================="
-    echo "quota=$quota"
-    echo "==========================="
-    
-#set Mailman
-    mailman="Yes"
-    echo "Please select whether to install Mailman or Not:"
-    read -p "(Default: No):" mailman
-    if [ "$mailman" = "" ]; then
-        mailmam="No"
-    fi
-    echo "==========================="
-    echo "mailman=$mailman"
-    echo "==========================="
-    
-#set Jailkit
-    jailkit="Yes"
-    echo "Please select whether to install Jailkit or Not:"
-    read -p "(Default: No):" jailkit
-    if [ "$jailkit" = "" ]; then
-        jailkit="No"
-    fi
-    echo "==========================="
-    echo "jailkit=$jailkit"
-    echo "==========================="
-    
-fi
-
-###Ubuntu Functions Begin### 
+}
 
 ubuntu_install_basic (){
 
 #Set hostname and FQDN
 cp /etc/hosts /etc/hosts.backup
-sed -i "s/${serverIP}.*/${serverIP} ${HOSTNAMEFQDN} ${HOSTNAME}/" /etc/hosts
-echo "$HOSTNAME" > /etc/hostname
+sed -i "s/${serverIP}.*/${serverIP} ${HOSTNAMEFQDN} ${HOSTNAMESHORT}/" /etc/hosts
+echo "$HOSTNAMESHORT" > /etc/hostname
 /etc/init.d/hostname.sh start >/dev/null 2>&1
 
 #Updates server and install commonly used utilities
@@ -230,8 +153,8 @@ apt-get -y install ntp ntpdate
 ubuntu_install_MYSQLCourier (){
 
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
-echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
-echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
 echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 echo "courier-base courier-base/webadmin-configmode boolean false" | debconf-set-selections
@@ -260,8 +183,8 @@ mkpop3dcert
 ubuntu_install_MYSQLDovecot (){
 
 #Install Postfix, Dovecot, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
-echo "mysql-server-5.1 mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
-echo "mysql-server-5.1 mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
 echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 
@@ -653,6 +576,7 @@ php -q install.php
 
 #Execute functions#
 if [ -f /etc/debian_version ]; then 
+    questions
     ubuntu_install_basic
     ubuntu_install_DisableAppArmor
     ubuntu_install_DashNTP
