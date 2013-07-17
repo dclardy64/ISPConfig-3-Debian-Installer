@@ -98,7 +98,7 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
 
 #set Quota
-    quota="Yes"
+    quota="No"
     echo "Please select whether to install Quota or Not:"
     read -p "(Default: No):" quota
     if [ "$quota" = "" ]; then
@@ -109,18 +109,18 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
     
 #set Mailman
-    mailman="Yes"
+    mailman="No"
     echo "Please select whether to install Mailman or Not:"
     read -p "(Default: No):" mailman
     if [ "$mailman" = "" ]; then
-        mailmam="No"
+        mailman="No"
     fi
     echo "==========================="
     echo "mailman=$mailman"
     echo "==========================="
     
 #set Jailkit
-    jailkit="Yes"
+    jailkit="No"
     echo "Please select whether to install Jailkit or Not:"
     read -p "(Default: No):" jailkit
     if [ "$jailkit" = "" ]; then
@@ -263,6 +263,14 @@ update-rc.d -f spamassassin remove
 
 debian_install_Apache (){
 
+echo "========================================================================="
+echo "You will be prompted for some information during the install of phpmyadmin."
+echo "Select NO when asked to configure using dbconfig-common"
+echo "Please enter them where needed."
+echo "========================================================================="
+echo "Press ENTER to continue.."
+read DUMMY
+
 #Install Apache2, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 #PhpMyAdmin Selections Not Working
 #echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
@@ -308,6 +316,8 @@ sed -i 's|application/x-ruby|#application/x-ruby|' /etc/mime.types
 #Install XCache
 apt-get -y install php5-xcache
 
+
+
 #Restart Apache
 /etc/init.d/apache2 restart
 
@@ -330,6 +340,14 @@ apt-get -y install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick 
 apt-get -y install php-apc
 #PHP Configuration Stuff Goes Here
 apt-get -y install fcgiwrap
+
+echo "========================================================================="
+echo "You will be prompted for some information during the install of phpmyadmin."
+echo "Select NO when asked to configure using dbconfig-common"
+echo "Please enter them where needed."
+echo "========================================================================="
+echo "Press ENTER to continue.."
+read DUMMY
 apt-get -y install phpmyadmin
 
 #Remove the Apache2 Stuff for NginX
@@ -342,6 +360,16 @@ insserv -r apache2
 }
 
 debian_install_Mailman (){
+
+echo "================================================================================================"
+echo "You will be prompted for some information during the install."
+echo "Select the languages you want to support and hit OK when told about the missing site list"
+echo "You will also be asked for the email address of person running the list & password for the list."
+echo "Please enter them where needed."
+echo "================================================================================================"
+echo "Press ENTER to continue.."
+read DUMMY
+
 #Install Mailman
 apt-get -y install mailman
 newlist mailman
@@ -364,8 +392,10 @@ EOF
 cat /etc/aliases.backup /etc/aliases.mailman > /etc/aliases
 newaliases
 /etc/init.d/postfix restart
-ln -s /etc/mailman/apache.conf /etc/apache2/conf.d/mailman.conf
-/etc/init.d/apache2 restart
+    if [ $web_server == "Apache" ]; then
+        ln -s /etc/mailman/apache.conf /etc/apache2/conf.d/mailman.conf
+        /etc/init.d/apache2 restart
+    fi
 /etc/init.d/mailman start
 
 }
@@ -580,6 +610,7 @@ read DUMMY
 apt-get -y install squirrelmail
 squirrelmail-configure
 
+if [ $web_server == "Apache" ]; then
 mv /etc/squirrelmail/apache.conf /etc/squirrelmail/apache.conf.backup
 cat > /etc/squirrelmail/apache.conf <<EOF
 Alias /squirrelmail /usr/share/squirrelmail
@@ -631,16 +662,18 @@ Alias /webmail /usr/share/squirrelmail
 #  </IfModule>
 #</IfModule>
 EOF
-
 mkdir /var/lib/squirrelmail/tmp
 chown www-data /var/lib/squirrelmail/tmp
 ln -s /etc/squirrelmail/apache.conf /etc/apache2/conf.d/squirrelmail.conf
 /etc/init.d/apache2 reload
-
+fi
 }
 
 install_ISPConfig (){
 #Install ISPConfig 3
+/etc/init.d/apache2 stop
+update-rc.d -f apache2 remove
+/etc/init.d/nginx restart
 cd /tmp
 wget http://www.ispconfig.org/downloads/ISPConfig-3-stable.tar.gz
 tar xfz ISPConfig-3-stable.tar.gz

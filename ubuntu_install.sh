@@ -1,14 +1,14 @@
 #!/bin/bash
 
 ###############################################################################################
-# Complete ISPConfig setup script for Ubuntu.									 			  #
+# Complete ISPConfig setup script for Ubuntu 13.04.								 			  #
 # Drew Clardy																				  #
 # http://drewclardy.com							                                              #
 ###############################################################################################
 
 # Check if user is root
 if [ $(id -u) != "0" ]; then
-    echo "Error: You must be root to run this script, please use root to install the software."
+    echo "Error: You must be root to run this script, please use the root user to install the software."
     exit 1
 fi
 
@@ -25,16 +25,16 @@ read DUMMY
 
 if [ "$1" != "--help" ]; then
 
-#set mysql root password
+#set Server IP
 
-    MYSQL_ROOT_PASSWORD="123456789"
-    echo "Please input the root password of mysql:"
-    read -p "(Default password: 123456789):" MYSQL_ROOT_PASSWORD
-    if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
-        MYSQL_ROOT_PASSWORD="123456789"
+    serverIP="123.156.78.9"
+    echo "Please input the Server IP:"
+    read -p "(Default Server IP: 123.456.78.9):" serverIP
+    if [ "$serverIP" = "" ]; then
+        serverIP="123.456.78.9"
     fi
     echo "==========================="
-    echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
+    echo "serverIP=$serverIP"
     echo "==========================="
 
 #set Hostname
@@ -60,32 +60,19 @@ if [ "$1" != "--help" ]; then
     echo "==========================="
     echo "HOSTNAMEFQDN=$HOSTNAMEFQDN"
     echo "==========================="
-    
-#set Server IP
-
-    serverIP="123.156.78.9"
-    echo "Please input the Server IP:"
-    read -p "(Default Server IP: 123.456.78.9):" serverIP
-    if [ "$serverIP" = "" ]; then
-        serverIP="123.456.78.9"
-    fi
-    echo "==========================="
-    echo "serverIP=$serverIP"
-    echo "==========================="
-
 
 #set Web Server
 
     web_server="Apache"
-	echo "Please select Web Server (Apache or NginX):"
-	read -p "(Default Web Server: Apache):" web_server
+    echo "Please select Web Server (Apache or NginX):"
+    read -p "(Default Web Server: Apache):" web_server
     if [ "$web_server" = "" ]; then
-    	web_server="Apache"
+        web_server="Apache"
     fi
     echo "==========================="
     echo "web_server=$web_server"
-    echo "==========================="
-	
+    echo "==========================="    
+    
 #set Mail Server
 
     mail_server="Courier"
@@ -98,12 +85,24 @@ if [ "$1" != "--help" ]; then
     echo "mail_server=$mail_server"
     echo "==========================="
 
+#set mysql root password
+
+    MYSQL_ROOT_PASSWORD="123456789"
+    echo "Please input the root password of mysql:"
+    read -p "(Default password: 123456789):" MYSQL_ROOT_PASSWORD
+    if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
+        MYSQL_ROOT_PASSWORD="123456789"
+    fi
+    echo "==========================="
+    echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
+    echo "==========================="
+
 #set Quota
     quota="Yes"
     echo "Please select whether to install Quota or Not:"
-    read -p "(Default: Yes):" quota
+    read -p "(Default: No):" quota
     if [ "$quota" = "" ]; then
-        quota="Yes"
+        quota="No"
     fi
     echo "==========================="
     echo "quota=$quota"
@@ -112,9 +111,9 @@ if [ "$1" != "--help" ]; then
 #set Mailman
     mailman="Yes"
     echo "Please select whether to install Mailman or Not:"
-    read -p "(Default: Yes):" mailman
+    read -p "(Default: No):" mailman
     if [ "$mailman" = "" ]; then
-        mailmam="Yes"
+        mailmam="No"
     fi
     echo "==========================="
     echo "mailman=$mailman"
@@ -123,9 +122,9 @@ if [ "$1" != "--help" ]; then
 #set Jailkit
     jailkit="Yes"
     echo "Please select whether to install Jailkit or Not:"
-    read -p "(Default: Yes):" jailkit
+    read -p "(Default: No):" jailkit
     if [ "$jailkit" = "" ]; then
-        jailkit="Yes"
+        jailkit="No"
     fi
     echo "==========================="
     echo "jailkit=$jailkit"
@@ -148,60 +147,60 @@ cp /etc/apt/sources.list /etc/apt/sources.list.backup
 cat > /etc/apt/sources.list <<EOF
 # See http://help.ubuntu.com/community/UpgradeNotes for how to upgrade to
 # newer versions of the distribution.
-deb http://de.archive.ubuntu.com/ubuntu/ quantal main restricted
-deb-src http://de.archive.ubuntu.com/ubuntu/ quantal main restricted
+deb http://de.archive.ubuntu.com/ubuntu/ raring main restricted
+deb-src http://de.archive.ubuntu.com/ubuntu/ raring main restricted
 
 ## Major bug fix updates produced after the final release of the
 ## distribution.
-deb http://de.archive.ubuntu.com/ubuntu/ quantal-updates main restricted
-deb-src http://de.archive.ubuntu.com/ubuntu/ quantal-updates main restricted
+deb http://de.archive.ubuntu.com/ubuntu/ raring-updates main restricted
+deb-src http://de.archive.ubuntu.com/ubuntu/ raring-updates main restricted
 
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team. Also, please note that software in universe WILL NOT receive any
 ## review or updates from the Ubuntu security team.
-deb http://de.archive.ubuntu.com/ubuntu/ quantal universe
-deb-src http://de.archive.ubuntu.com/ubuntu/ quantal universe
-deb http://de.archive.ubuntu.com/ubuntu/ quantal-updates universe
-deb-src http://de.archive.ubuntu.com/ubuntu/ quantal-updates universe
+deb http://de.archive.ubuntu.com/ubuntu/ raring universe
+deb-src http://de.archive.ubuntu.com/ubuntu/ raring universe
+deb http://de.archive.ubuntu.com/ubuntu/ raring-updates universe
+deb-src http://de.archive.ubuntu.com/ubuntu/ raring-updates universe
 
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team, and may not be under a free licence. Please satisfy yourself as to
 ## your rights to use the software. Also, please note that software in
 ## multiverse WILL NOT receive any review or updates from the Ubuntu
 ## security team.
-deb http://de.archive.ubuntu.com/ubuntu/ quantal multiverse
-deb-src http://de.archive.ubuntu.com/ubuntu/ quantal multiverse
-deb http://de.archive.ubuntu.com/ubuntu/ quantal-updates multiverse
-deb-src http://de.archive.ubuntu.com/ubuntu/ quantal-updates multiverse
+deb http://de.archive.ubuntu.com/ubuntu/ raring multiverse
+deb-src http://de.archive.ubuntu.com/ubuntu/ raring multiverse
+deb http://de.archive.ubuntu.com/ubuntu/ raring-updates multiverse
+deb-src http://de.archive.ubuntu.com/ubuntu/ raring-updates multiverse
 
 ## N.B. software from this repository may not have been tested as
 ## extensively as that contained in the main release, although it includes
 ## newer versions of some applications which may provide useful features.
 ## Also, please note that software in backports WILL NOT receive any review
 ## or updates from the Ubuntu security team.
-deb http://de.archive.ubuntu.com/ubuntu/ quantal-backports main restricted universe multiverse
-deb-src http://de.archive.ubuntu.com/ubuntu/ quantal-backports main restricted universe multiverse
+deb http://de.archive.ubuntu.com/ubuntu/ raring-backports main restricted universe multiverse
+deb-src http://de.archive.ubuntu.com/ubuntu/ raring-backports main restricted universe multiverse
 
-deb http://security.ubuntu.com/ubuntu quantal-security main restricted
-deb-src http://security.ubuntu.com/ubuntu quantal-security main restricted
-deb http://security.ubuntu.com/ubuntu quantal-security universe
-deb-src http://security.ubuntu.com/ubuntu quantal-security universe
-deb http://security.ubuntu.com/ubuntu quantal-security multiverse
-deb-src http://security.ubuntu.com/ubuntu quantal-security multiverse
+deb http://security.ubuntu.com/ubuntu raring-security main restricted
+deb-src http://security.ubuntu.com/ubuntu raring-security main restricted
+deb http://security.ubuntu.com/ubuntu raring-security universe
+deb-src http://security.ubuntu.com/ubuntu raring-security universe
+deb http://security.ubuntu.com/ubuntu raring-security multiverse
+deb-src http://security.ubuntu.com/ubuntu raring-security multiverse
 
 ## Uncomment the following two lines to add software from Canonical's
 ## 'partner' repository.
 ## This software is not part of Ubuntu, but is offered by Canonical and the
 ## respective vendors as a service to Ubuntu users.
-# deb http://archive.canonical.com/ubuntu quantal partner
-# deb-src http://archive.canonical.com/ubuntu quantal partner
+# deb http://archive.canonical.com/ubuntu raring partner
+# deb-src http://archive.canonical.com/ubuntu raring partner
 
 ## Uncomment the following two lines to add software from Ubuntu's
 ## 'extras' repository.
 ## This software is not part of Ubuntu, but is offered by third-party
 ## developers who want to ship their latest software.
-# deb http://extras.ubuntu.com/ubuntu quantal main
-# deb-src http://extras.ubuntu.com/ubuntu quantal main
+# deb http://extras.ubuntu.com/ubuntu raring main
+# deb-src http://extras.ubuntu.com/ubuntu raring main
 EOF
 
 apt-get update
@@ -209,6 +208,14 @@ apt-get -y upgrade
 apt-get -y install vim-nox dnsutils unzip nano
 
 } #end function ubuntu_install_basic
+
+ubuntu_install_DisableAppArmor (){
+
+/etc/init.d/apparmor stop
+update-rc.d -f apparmor remove
+apt-get remove apparmor apparmor-utils
+
+} #end function ubuntu_install_DisableAppArmor
 
 ubuntu_install_DashNTP (){
 
@@ -219,14 +226,6 @@ dpkg-reconfigure -f noninteractive dash > /dev/null 2>&1
 apt-get -y install ntp ntpdate
 
 } #end function ubuntu_install_DashNTP
-
-ubuntu_install_DisableAppArmor (){
-
-/etc/init.d/apparmor stop
-update-rc.d -f apparmor remove
-apt-get remove apparmor apparmor-utils
-
-} #end function ubuntu_install_DisableAppArmor
 
 ubuntu_install_MYSQLCourier (){
 
@@ -268,16 +267,27 @@ echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 
 apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server openssl getmail4 rkhunter binutils dovecot-imapd dovecot-pop3d dovecot-mysql dovecot-sieve sudo
 
+#Uncommenting some Postfix configuration files
+cp /etc/postfix/master.cf /etc/postfix/master.cf.backup
+sed -i 's|#submission inet n       -       -       -       -       smtpd|submission inet n       -       -       -       -       smtpd|' /etc/postfix/master.cf
+sed -i 's|#  -o syslog_name=postfix/submission|  -o syslog_name=postfix/submission|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_tls_security_level=encrypt|  -o smtpd_tls_security_level=encrypt|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_client_restrictions=permit_sasl_authenticated,reject|  -o smtpd_client_restrictions=permit_sasl_authenticated,reject|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#smtps     inet  n       -       -       -       -       smtpd|smtps     inet  n       -       -       -       -       smtpd|' /etc/postfix/master.cf
+sed -i 's|#  -o syslog_name=postfix/smtps|  -o syslog_name=postfix/smtps|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_tls_wrappermode=yes|  -o smtpd_tls_wrappermode=yes|' /etc/postfix/master.cf
+
+/etc/init.d/postfix restart
+
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
 sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
+
 /etc/init.d/mysql restart
-
-#Allow TLS/SSL in Postfix
-cp /etc/postfix/master.cf /etc/postfix/master.cf.backup
-sed -i 's/#submission inet n       -       -       -       -       smtpd/submission inet n       -       -       -       -       smtpd/' /etc/postfix/master.cf
-sed -i 's/#smtps     inet  n       -       -       -       -       smtpd/smtps     inet  n       -       -       -       -       smtpd/' /etc/postfix/master.cf
-
 
 }
 
@@ -295,10 +305,9 @@ update-rc.d -f spamassassin remove
 ubuntu_install_Apache (){
 
 #Install Apache2, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
-echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
-#Still Not Working
+#PhpMyAdmin Selections Not Working
+#echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
 #echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
-#Still Not working
 #echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 
 echo "========================================================================="
@@ -309,10 +318,7 @@ echo "========================================================================="
 echo "Press ENTER to continue.."
 read DUMMY
 
-apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi php5-curl libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby libapache2-mod-python libapache2-mod-perl2
-
-#Web server to reconfigure automatically: <-- apache2
-#Configure database for phpmyadmin with dbconfig-common? <-- No
+apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby libapache2-mod-python php5-curl php5-intl php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
 
 a2enmod suexec rewrite ssl actions include
 a2enmod dav_fs dav auth_digest
@@ -348,7 +354,7 @@ EOF
 sed -i "s/x-ruby                             rb/x-ruby                            rb/#x-ruby                             rb/x-ruby                            rb/" /etc/mime.types
 
 #Install X-Cache
-apt-get install php5-xcache
+apt-get -y install php5-xcache
 
 /etc/init.d/apache2 restart
 
@@ -357,16 +363,20 @@ apt-get install php5-xcache
 ubuntu_install_NginX (){
 
 #Install NginX, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
-echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
-#Still Not Working 
+#PhpMyAdmin Selections Not Working
+#echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
 #echo "phpmyadmin phpmyadmin/dbconfig-install boolean false" | debconf-set-selections
-#Still Not working
 #echo "dbconfig-common dbconfig-common/dbconfig-install boolean false" | debconf-set-selections
 apt-get -y install nginx
 
-apt-get -y install php5-fpm
-apt-get -y install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
-apt-get -y install php5-xcache
+/etc/init.d/apache2 stop
+update-rc.d -f apache2 remove
+
+/etc/init.d/nginx start
+
+apt-get -y install php5-fpm php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
+apt-get -y install php-apc
+#PHP Configuration Stuff Goes Here
 /etc/init.d/php5-fpm reload
 apt-get -y install fcgiwrap
 
@@ -390,7 +400,6 @@ insserv -r apache2
 }
 
 ubuntu_install_Mailman (){
-#Install Mailman
 
 echo "================================================================================================"
 echo "You will be prompted for some information during the install."
@@ -401,15 +410,13 @@ echo "==========================================================================
 echo "Press ENTER to continue.."
 read DUMMY
 
+#Install Mailman
 apt-get -y install mailman
 newlist mailman
-
-
 
 mv /etc/aliases /etc/aliases.backup
 
 cat > /etc/aliases.mailman <<EOF
-## mailman mailing list
 mailman:              "|/var/lib/mailman/mail/mailman post mailman"
 mailman-admin:        "|/var/lib/mailman/mail/mailman admin mailman"
 mailman-bounces:      "|/var/lib/mailman/mail/mailman bounces mailman"
@@ -425,6 +432,10 @@ EOF
 cat /etc/aliases.backup /etc/aliases.mailman > /etc/aliases
 newaliases
 /etc/init.d/postfix restart
+    if [ $web_server == "Apache" ]; then
+        ln -s /etc/mailman/apache.conf /etc/apache2/conf.d/mailman.conf
+        /etc/init.d/apache2 restart
+    fi
 /etc/init.d/mailman start
 
 }
@@ -552,7 +563,6 @@ apt-get -y install fail2ban
 
 cat > /etc/fail2ban/jail.local <<EOF
 [pureftpd]
-
 enabled  = true
 port     = ftp
 filter   = pureftpd
@@ -560,12 +570,18 @@ logpath  = /var/log/syslog
 maxretry = 3
 
 [dovecot-pop3imap]
-
 enabled = true
 filter = dovecot-pop3imap
 action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps", protocol=tcp]
 logpath = /var/log/mail.log
 maxretry = 5
+
+[sasl]
+enabled  = true
+port     = smtp
+filter   = sasl
+logpath  = /var/log/mail.log
+maxretry = 3
 EOF
 
 }
@@ -634,7 +650,10 @@ echo "Press ENTER to continue.."
 read DUMMY
 #Install SquirrelMail
 apt-get -y install squirrelmail
-ln -s /usr/share/squirrelmail/ /var/www/webmail
+    if [ $web_server == "Apache" ]; then
+        ln -s /usr/share/squirrelmail/ /var/www/webmail
+    fi
+
 squirrelmail-configure
 
 }
