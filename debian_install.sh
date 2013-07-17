@@ -17,15 +17,15 @@ back_title="ISPConfig 3 System Installer"
 questions (){
   while [ "x$serverIP" == "x" ]
   do
-        serverIP=$(whiptail --title "Server IP" --backtitle "$back_title" --inputbox "Please specify a Server IP" --nocancel 10 50 3>&1 1>&2 2>&3)
+    serverIP=$(whiptail --title "Server IP" --backtitle "$back_title" --inputbox "Please specify a Server IP" --nocancel 10 50 3>&1 1>&2 2>&3)
   done
   while [ "x$HOSTNAMESHORT" == "x" ]
   do
-        HOSTNAMESHORT=$(whiptail --title "Hostname" --backtitle "$back_title" --inputbox "Please specify a Hostname" --nocancel 10 50 3>&1 1>&2 2>&3)
+    HOSTNAMESHORT=$(whiptail --title "Hostname" --backtitle "$back_title" --inputbox "Please specify a Hostname" --nocancel 10 50 3>&1 1>&2 2>&3)
   done
   while [ "x$HOSTNAMEFQDN" == "x" ]
   do
-        HOSTNAMEFQDN=$(whiptail --title "Fully Qualified Hostname" --backtitle "$back_title" --inputbox "Please specify a Fully Qualified Hostname" --nocancel 10 50 3>&1 1>&2 2>&3)
+    HOSTNAMEFQDN=$(whiptail --title "Fully Qualified Hostname" --backtitle "$back_title" --inputbox "Please specify a Fully Qualified Hostname" --nocancel 10 50 3>&1 1>&2 2>&3)
   done
   while [ "x$web_server" == "x" ]
   do
@@ -37,7 +37,7 @@ questions (){
   done
   while [ "x$mysql_pass" == "x" ]
   do
-        mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
+    mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
   done
   if (whiptail --title "Install Quota" --backtitle "$back_title" --yesno "Setup User Quotas?" 10 50) then
     quota=Yes
