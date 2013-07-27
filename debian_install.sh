@@ -110,7 +110,7 @@ echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 echo "courier-base courier-base/webadmin-configmode boolean false" | debconf-set-selections
 echo "courier-ssl courier-ssl/certnotice note" | debconf-set-selections
 
-apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4 rkhunter binutils sudo
+apt-get -y install subversion postfix postfix-mysql postfix-doc mysql-client mysql-server courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4 rkhunter binutils sudo
 
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
@@ -585,10 +585,8 @@ install_ISPConfig (){
 /etc/init.d/apache2 stop
 update-rc.d -f apache2 remove
 /etc/init.d/nginx restart
-cd /tmp
-wget http://www.ispconfig.org/downloads/ISPConfig-3-stable.tar.gz
-tar xfz ISPConfig-3-stable.tar.gz
-cd /tmp/ispconfig3_install/install/
+svn export svn://svn.ispconfig.org/ispconfig3/branches/ispconfig-3.0.5 /tmp/ispconfig
+cd /tmp/ispconfig/install/
 php -q install.php
 
 } 
