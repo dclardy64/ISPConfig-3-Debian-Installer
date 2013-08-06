@@ -355,14 +355,8 @@ apt-get -y install pure-ftpd-common pure-ftpd-mysql
 sed -i 's/VIRTUALCHROOT=false/VIRTUALCHROOT=true/' /etc/default/pure-ftpd-common
 echo 1 > /etc/pure-ftpd/conf/TLS
 mkdir -p /etc/ssl/private/
-echo "==========================================================================================="
-echo "The following questions can be left as default (just press enter), but when"
-echo "asked for 'Common Name', enter your FQDN hostname ($HOSTNAMEFQDN)."
-echo "==========================================================================================="
-echo "Press ENTER to continue.."
-read DUMMY
 
-openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
+openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -subj "/C=/ST=/L=/O=/CN=$(hostname -f)" -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
 chmod 600 /etc/ssl/private/pure-ftpd.pem
 /etc/init.d/pure-ftpd-mysql restart
 
