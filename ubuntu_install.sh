@@ -221,7 +221,7 @@ apt-get -y install amavisd-new spamassassin clamav clamav-daemon zoo unzip bzip2
 
 #Stop SpamAssassin. ISPConfig 3 uses amavisd
 /etc/init.d/spamassassin stop
-update-rc.d -f spamassassin remove
+insserv -rf spamassassin
 
 }
 

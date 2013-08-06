@@ -169,7 +169,7 @@ debian_install_Virus (){
 apt-get -y install amavisd-new spamassassin clamav clamav-daemon zoo unzip bzip2 arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl zip libnet-dns-perl
 
 /etc/init.d/spamassassin stop
-update-rc.d -f spamassassin remove
+insserv -rf spamassassin
 
 }
 
