@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############################################################################################
-# RoundCube Setup ISPConfig setup.                      						 			                    #
+# RoundCube for ISPConfig 3 setup.                      						 			                    #
 # Drew Clardy																				                                          #
 # http://drewclardy.com							                                                          #
 ###############################################################################################
@@ -19,108 +19,176 @@ questions (){
   do
     web_server=$(whiptail --title "Web Server" --backtitle "$back_title" --nocancel --radiolist "Select Web Server Software" 10 50 2 "Apache" "(default)" ON "NginX" "" OFF 3>&1 1>&2 2>&3)
   done
-  while [ "x$mysql_pass" == "x" ]
-  do
-    mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
-  done
-  while [ "x$roundcube_db" == "x" ]
-  do
-    roundcube_db=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a RoundCube Database" --nocancel 10 50 3>&1 1>&2 2>&3)
-  done
-  while [ "x$roundcube_user" == "x" ]
-  do
-    roundcube_user=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a RoundCube User" --nocancel 10 50 3>&1 1>&2 2>&3)
-  done
-  while [ "x$roundcube_pass" == "x" ]
-  do
-    roundcube_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a RoundCube User Password" --nocancel 10 50 3>&1 1>&2 2>&3)
-  done
+  if [ $web_server == "NginX" ]; then
+    while [ "x$mysql_pass" == "x" ]
+    do
+      mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
+    done
+    while [ "x$roundcube_db" == "x" ]
+    do
+      roundcube_db=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a RoundCube Database" --nocancel 10 50 3>&1 1>&2 2>&3)
+    done
+    while [ "x$roundcube_user" == "x" ]
+    do
+      roundcube_user=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a RoundCube User" --nocancel 10 50 3>&1 1>&2 2>&3)
+    done
+    while [ "x$roundcube_pass" == "x" ]
+    do
+      roundcube_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a RoundCube User Password" --nocancel 10 50 3>&1 1>&2 2>&3)
+    done
+  fi
 }
 
 function_install_Apache() {
-	echo "This is not done at this time. Check back later. It should be soon."
+
+apt-get install -y roundcube roundcube-plugins roundcube-plugins-extra
+
+mv /etc/apache2/conf.d/roundcube /etc/apache2/conf.d/roundcube.backup
+cat > /etc/apache2/conf.d/roundcube <<"EOF"
+# Those aliases do not work properly with several hosts on your apache server
+# Uncomment them to use it or adapt them to your configuration
+Alias /roundcube/program/js/tiny_mce/ /usr/share/tinymce/www/
+Alias /roundcube /var/lib/roundcube
+Alias /webmail /var/lib/roundcube
+
+# Access to tinymce files
+<Directory "/usr/share/tinymce/www/">
+      Options Indexes MultiViews FollowSymLinks
+      AllowOverride None
+      Order allow,deny
+      allow from all
+</Directory>
+
+<Directory /var/lib/roundcube/>
+  Options +FollowSymLinks
+  DirectoryIndex index.php
+
+  <IfModule mod_php5.c>
+    AddType application/x-httpd-php .php
+
+    php_flag magic_quotes_gpc Off
+    php_flag track_vars On
+    php_flag register_globals Off
+    php_value include_path .:/usr/share/php
+  </IfModule>
+
+  # This is needed to parse /var/lib/roundcube/.htaccess. See its
+  # content before setting AllowOverride to None.
+  AllowOverride All
+  order allow,deny
+  allow from all
+</Directory>
+
+# Protecting basic directories:
+<Directory /var/lib/roundcube/config>
+        Options -FollowSymLinks
+        AllowOverride None
+</Directory>
+
+<Directory /var/lib/roundcube/temp>
+        Options -FollowSymLinks
+        AllowOverride None
+        Order allow,deny
+        Deny from all
+</Directory>
+
+<Directory /var/lib/roundcube/logs>
+        Options -FollowSymLinks
+        AllowOverride None
+        Order allow,deny
+        Deny from all
+</Directory>
+EOF
+
+/etc/init.d/apache2 restart
+
+sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/main.inc.php
+
+
 }
 
 function_install_NginX() {
-	#Make RoundCube Directory
-	mkdir -p /var/www/roundcube 
 
-	#RoundCube Download
-	cd /tmp
-	wget http://downloads.sourceforge.net/project/roundcubemail/roundcubemail/0.9.2/roundcubemail-0.9.2.tar.gz
-	tar xvfz roundcubemail-0.9.2.tar.gz
-	cd roundcubemail-0.9.2/
-	mv * /var/www/roundcube/
+#Make RoundCube Directory
+mkdir -p /var/www/roundcube 
 
-	chown -R www-data:www-data /var/www/roundcube
+#RoundCube Download
+cd /tmp
+wget http://downloads.sourceforge.net/project/roundcubemail/roundcubemail/0.9.2/roundcubemail-0.9.2.tar.gz
+tar xvfz roundcubemail-0.9.2.tar.gz
+cd roundcubemail-0.9.2/
+mv * /var/www/roundcube/
 
-	mysql -uroot -p$mysql_pass -e "CREATE DATABASE $roundcube_db;"
-	mysql -uroot -p$mysql_pass -e "GRANT ALL PRIVILEGES ON $roundcube_db.* TO '$roundcube_user'@'localhost' IDENTIFIED BY '$roundcube_pass';"
-  mysql -uroot -p$mysql_pass -e "GRANT ALL PRIVILEGES ON $roundcube_db.* TO '$roundcube_user'@'localhost.localdomain' IDENTIFIED BY '$roundcube_pass';"
-  mysql -uroot -p$mysql_pass -e "FLUSH PRIVILEGES;"
+chown -R www-data:www-data /var/www/roundcube
 
-  mysql -uroot -p$mysql_pass "$roundcube_db" < /var/www/roundcube/SQL/mysql.initial.sql
+mysql -uroot -p$mysql_pass -e "CREATE DATABASE $roundcube_db;"
+mysql -uroot -p$mysql_pass -e "GRANT ALL PRIVILEGES ON $roundcube_db.* TO '$roundcube_user'@'localhost' IDENTIFIED BY '$roundcube_pass';"
+mysql -uroot -p$mysql_pass -e "GRANT ALL PRIVILEGES ON $roundcube_db.* TO '$roundcube_user'@'localhost.localdomain' IDENTIFIED BY '$roundcube_pass';"
+mysql -uroot -p$mysql_pass -e "FLUSH PRIVILEGES;"
 
-  cat > /etc/nginx/sites-available/webmail.vhost <<"EOF"
-    server {
-        listen 80;
-        server_name webmail.*;
+mysql -uroot -p$mysql_pass "$roundcube_db" < /var/www/roundcube/SQL/mysql.initial.sql
 
-        index index.php index.html;
-        root /var/www/roundcube;
+cat > /etc/nginx/sites-available/webmail.vhost <<"EOF"
+  server {
+      listen 80;
+      server_name webmail.*;
 
-        location ~ ^/favicon.ico$ {
-	    	root /var/www/roundcube/skins/default/images;
-	        log_not_found off;
-	        access_log off;
-	        expires max;
-        }
+      index index.php index.html;
+      root /var/www/roundcube;
 
-        location = /robots.txt {
-            allow all;
-            log_not_found off;
-            access_log off;
-        } 
+      location ~ ^/favicon.ico$ {
+    	root /var/www/roundcube/skins/default/images;
+        log_not_found off;
+        access_log off;
+        expires max;
+      }
 
-        location ~ ^/(README|INSTALL|LICENSE|CHANGELOG|UPGRADING)$ {
-            deny all;
-        }
+      location = /robots.txt {
+          allow all;
+          log_not_found off;
+          access_log off;
+      } 
 
-        location ~ ^/(bin|SQL)/ {
-            deny all;
-        }
+      location ~ ^/(README|INSTALL|LICENSE|CHANGELOG|UPGRADING)$ {
+          deny all;
+      }
 
-        location ~ /\. {
-            deny all;
-            access_log off;
-            log_not_found off;
-        }
+      location ~ ^/(bin|SQL)/ {
+          deny all;
+      }
 
-        location ~ \.php$ {
-            try_files $uri =404;
-            include /etc/nginx/fastcgi_params;
-            fastcgi_pass unix://var/run/php5-fpm.sock;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            fastcgi_index index.php;
-        }
-	}
+      location ~ /\. {
+          deny all;
+          access_log off;
+          log_not_found off;
+      }
+
+      location ~ \.php$ {
+          try_files $uri =404;
+          include /etc/nginx/fastcgi_params;
+          fastcgi_pass unix://var/run/php5-fpm.sock;
+          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+          fastcgi_index index.php;
+      }
+}
 EOF
 
-  cd /etc/nginx/sites-enabled/
-  ln -s /etc/nginx/sites-available/webmail.vhost webmail.vhost
+cd /etc/nginx/sites-enabled/
+ln -s /etc/nginx/sites-available/webmail.vhost webmail.vhost
 
-	/etc/init.d/nginx reload
+/etc/init.d/nginx reload
 
-	cd /var/www/roundcube/config
-	mv db.inc.php.dist db.inc.php
-	mv main.inc.php.dist main.inc.php
-	
-	sed -i "s|mysql://roundcube:pass@localhost/roundcubemail|mysqli://$roundcube_user:$roundcube_pass@localhost/$roundcube_db|" /var/www/roundcube/config/db.inc.php
+cd /var/www/roundcube/config
+mv db.inc.php.dist db.inc.php
+mv main.inc.php.dist main.inc.php
 
-	sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/main.inc.php
-	sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/main.inc.php
+sed -i "s|mysql://roundcube:pass@localhost/roundcubemail|mysqli://$roundcube_user:$roundcube_pass@localhost/$roundcube_db|" /var/www/roundcube/config/db.inc.php
 
-	rm -rf /var/www/roundcube/installer
+sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/main.inc.php
+
+rm -rf /var/www/roundcube/installer
 }
 
 #Execute functions#
