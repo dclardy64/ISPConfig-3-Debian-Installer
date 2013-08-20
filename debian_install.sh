@@ -197,14 +197,14 @@ a2enmod dav_fs dav auth_digest
 
 #Fix Ming Error
 rm /etc/php5/cli/conf.d/ming.ini
-cat > /etc/php5/cli/conf.d/ming.ini <<EOF
+cat > /etc/php5/cli/conf.d/ming.ini <<"EOF"
 extension=ming.so
 EOF
 
 #Fix SuPHP
 cp /etc/apache2/mods-available/suphp.conf /etc/apache2/mods-available/suphp.conf.backup
 rm /etc/apache2/mods-available/suphp.conf
-cat > /etc/apache2/mods-available/suphp.conf <<EOF
+cat > /etc/apache2/mods-available/suphp.conf <<"EOF"
 <IfModule mod_suphp.c>
     #<FilesMatch "\.ph(p3?|tml)$">
     #    SetHandler application/x-httpd-suphp
@@ -278,7 +278,7 @@ insserv -r apache2
 
 #Fix Ming Error
 rm /etc/php5/cli/conf.d/ming.ini
-cat > /etc/php5/cli/conf.d/ming.ini <<EOF
+cat > /etc/php5/cli/conf.d/ming.ini <<"EOF"
 extension=ming.so
 EOF
 
@@ -303,7 +303,7 @@ newlist mailman
 
 mv /etc/aliases /etc/aliases.backup
 
-cat > /etc/aliases.mailman <<EOF
+cat > /etc/aliases.mailman <<"EOF"
 mailman:              "|/var/lib/mailman/mail/mailman post mailman"
 mailman-admin:        "|/var/lib/mailman/mail/mailman admin mailman"
 mailman-bounces:      "|/var/lib/mailman/mail/mailman bounces mailman"
@@ -391,7 +391,7 @@ debian_install_Fail2BanCourier (){
 #Install fail2ban
 apt-get -y install fail2ban
 
-cat > /etc/fail2ban/jail.local <<EOF
+cat > /etc/fail2ban/jail.local <<"EOF"
 [pureftpd]
 enabled  = true
 port     = ftp
@@ -440,7 +440,7 @@ debian_install_Fail2BanDovecot() {
 #Install fail2ban
 apt-get -y install fail2ban
 
-cat > /etc/fail2ban/jail.local <<EOF
+cat > /etc/fail2ban/jail.local <<"EOF"
 [pureftpd]
 enabled  = true
 port     = ftp
@@ -467,19 +467,19 @@ EOF
 
 debian_install_Fail2BanRulesCourier() {
 
-cat > /etc/fail2ban/filter.d/pureftpd.conf <<EOF
+cat > /etc/fail2ban/filter.d/pureftpd.conf <<"EOF"
 [Definition]
 failregex = .*pure-ftpd: \(.*@<HOST>\) \[WARNING\] Authentication failed for user.*
 ignoreregex =
 EOF
 
-cat > /etc/fail2ban/filter.d/courierpop3.conf <<EOF
+cat > /etc/fail2ban/filter.d/courierpop3.conf <<"EOF"
 [Definition]
 failregex = pop3d: LOGIN FAILED.*ip=\[.*:<HOST>\]
 ignoreregex =
 EOF
 
-cat > /etc/fail2ban/filter.d/courierpop3s.conf <<EOF
+cat > /etc/fail2ban/filter.d/courierpop3s.conf <<"EOF"
 [Definition]
 failregex = pop3d-ssl: LOGIN FAILED.*ip=\[.*:<HOST>\]
 ignoreregex =
@@ -491,7 +491,7 @@ failregex = imapd: LOGIN FAILED.*ip=\[.*:<HOST>\]
 ignoreregex =
 EOF
 
-cat > /etc/fail2ban/filter.d/courierimaps.conf <<EOF
+cat > /etc/fail2ban/filter.d/courierimaps.conf <<"EOF"
 [Definition]
 failregex = imapd-ssl: LOGIN FAILED.*ip=\[.*:<HOST>\]
 ignoreregex =
@@ -503,13 +503,13 @@ EOF
 
 debian_install_Fail2BanRulesDovecot() {
 
-cat > /etc/fail2ban/filter.d/pureftpd.conf <<EOF
+cat > /etc/fail2ban/filter.d/pureftpd.conf <<"EOF"
 [Definition]
 failregex = .*pure-ftpd: \(.*@<HOST>\) \[WARNING\] Authentication failed for user.*
 ignoreregex =
 EOF
 
-cat > /etc/fail2ban/filter.d/dovecot-pop3imap.conf <<EOF
+cat > /etc/fail2ban/filter.d/dovecot-pop3imap.conf <<"EOF"
 [Definition]
 failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted login \(auth failed|Aborted login \(tried to use disabled|Disconnected \(auth failed|Aborted login \(\d+ authentication attempts).*rip=(?P<host>\S*),.*
 ignoreregex =
@@ -533,7 +533,7 @@ squirrelmail-configure
 
 if [ $web_server == "Apache" ]; then
 mv /etc/squirrelmail/apache.conf /etc/squirrelmail/apache.conf.backup
-cat > /etc/squirrelmail/apache.conf <<EOF
+cat > /etc/squirrelmail/apache.conf <<"EOF"
 Alias /squirrelmail /usr/share/squirrelmail
 Alias /webmail /usr/share/squirrelmail
 

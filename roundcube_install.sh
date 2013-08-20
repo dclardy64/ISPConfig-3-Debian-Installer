@@ -1,9 +1,9 @@
 #!/bin/bash
 
 ###############################################################################################
-# RoundCube Setup ISPConfig setup.                      						 			  #
-# Drew Clardy																				  #
-# http://drewclardy.com							                                              #
+# RoundCube Setup ISPConfig setup.                      						 			                    #
+# Drew Clardy																				                                          #
+# http://drewclardy.com							                                                          #
 ###############################################################################################
 
 # Check if user is root
@@ -56,10 +56,12 @@ function_install_NginX() {
 
 	mysql -uroot -p$mysql_pass -e "CREATE DATABASE $roundcube_db;"
 	mysql -uroot -p$mysql_pass -e "GRANT ALL PRIVILEGES ON $roundcube_db.* TO '$roundcube_user'@'localhost' IDENTIFIED BY '$roundcube_pass';"
-    mysql -uroot -p$mysql_pass -e "GRANT ALL PRIVILEGES ON $roundcube_db.* TO '$roundcube_user'@'localhost.localdomain' IDENTIFIED BY '$roundcube_pass';"
-    mysql -uroot -p$mysql_pass -e "FLUSH PRIVILEGES;"
+  mysql -uroot -p$mysql_pass -e "GRANT ALL PRIVILEGES ON $roundcube_db.* TO '$roundcube_user'@'localhost.localdomain' IDENTIFIED BY '$roundcube_pass';"
+  mysql -uroot -p$mysql_pass -e "FLUSH PRIVILEGES;"
 
-    cat > /etc/nginx/sites-available/webmail.vhost <<"EOF"
+  mysql -uroot -p$mysql_pass "$roundcube_db" < /var/www/roundcube/SQL/mysql.initial.sql
+
+  cat > /etc/nginx/sites-available/webmail.vhost <<"EOF"
     server {
         listen 80;
         server_name webmail.*;
@@ -104,8 +106,8 @@ function_install_NginX() {
 	}
 EOF
 
-    cd /etc/nginx/sites-enabled/
-    ln -s /etc/nginx/sites-available/webmail.vhost webmail.vhost
+  cd /etc/nginx/sites-enabled/
+  ln -s /etc/nginx/sites-available/webmail.vhost webmail.vhost
 
 	/etc/init.d/nginx reload
 
@@ -113,10 +115,10 @@ EOF
 	mv db.inc.php.dist db.inc.php
 	mv main.inc.php.dist main.inc.php
 	
-	sed -i 's|$rcmail_config['db_dsnw'] = 'mysql://roundcube:pass@localhost/roundcubemail';|$rcmail_config['db_dsnw'] = 'mysql://$roundcube_user:$roundcube_pass@localhost/$roundcube_db';|' /var/www/roundcube/config/db.inc.php
+	sed -i "s|mysql://roundcube:pass@localhost/roundcubemail|mysqli://$roundcube_user:$roundcube_pass@localhost/$roundcube_db|" /var/www/roundcube/config/db.inc.php
 
-	sed -i 's|$rcmail_config['default_host'] = '';|$rcmail_config['default_host'] = '%s';|' /var/www/roundcube/config/main.inc.php
-	sed -i 's|$rcmail_config['smtp_server'] = '';|$rcmail_config['smtp_server'] = '%h';|' /var/www/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/main.inc.php
 
 	rm -rf /var/www/roundcube/installer
 }
