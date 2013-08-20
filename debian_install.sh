@@ -1,9 +1,9 @@
 ﻿#!/bin/bash
 
 ###############################################################################################
-# Complete ISPConfig setup script for Debian 7.         						 			  #
-# Drew Clardy																				  #
-# http://drewclardy.com							                                              #
+# Complete ISPConfig setup script for Debian 7.         						 			                    #
+# Drew Clardy																				                                          #
+# http://drewclardy.com							                                                          #
 ###############################################################################################
 
 # Check if user is root
