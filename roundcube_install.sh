@@ -19,11 +19,12 @@ questions (){
   do
     web_server=$(whiptail --title "Web Server" --backtitle "$back_title" --nocancel --radiolist "Select Web Server Software" 10 50 2 "Apache" "(default)" ON "NginX" "" OFF 3>&1 1>&2 2>&3)
   done
+  while [ "x$mysql_pass" == "x" ]
+  do
+    mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
+  done
   if [ $web_server == "NginX" ]; then
-    while [ "x$mysql_pass" == "x" ]
-    do
-      mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
-    done
+
     while [ "x$roundcube_db" == "x" ]
     do
       roundcube_db=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a RoundCube Database" --nocancel 10 50 3>&1 1>&2 2>&3)
@@ -41,7 +42,13 @@ questions (){
 
 function_install_Apache() {
 
+echo "roundcube-core  roundcube/language      select  en_US" | debconf-set-selections
+echo "roundcube-core  roundcube/database-type select  mysql" | debconf-set-selections
+echo "roundcube-core  roundcube/mysql/admin-pass      $mysql_pass" | debconf-set-selections
+echo "roundcube-core  roundcube/dbconfig-install      boolean true" | debconf-set-selections
+
 apt-get install -y roundcube roundcube-plugins roundcube-plugins-extra
+apt-get remove -y --purge squirrelmail
 
 mv /etc/apache2/conf.d/roundcube /etc/apache2/conf.d/roundcube.backup
 cat > /etc/apache2/conf.d/roundcube <<"EOF"
@@ -100,10 +107,11 @@ Alias /webmail /var/lib/roundcube
 </Directory>
 EOF
 
+rm /etc/apache2/conf.d/squirrelmail.conf
 /etc/init.d/apache2 restart
 
-sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /etc/roundcube/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /etc/roundcube/main.inc.php
 
 
 }
