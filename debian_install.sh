@@ -605,7 +605,7 @@ php -q install.php
 
 #Execute functions#
 if [ -f /etc/debian_version ]; then 
-    questions
+  questions
 	debian_install_basic
     debian_install_DashNTP
     if [ $mail_server == "Courier" ]; then
