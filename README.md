@@ -39,9 +39,9 @@ RoundCube Installation Instructions:
 1. Please make sure that you have set the PHP Timezone in the appropriate files.
 2. Run this command:
 
-```bash
-cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash roundcube_install.sh
-```
+	```bash
+	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash roundcube_install.sh
+	```
 3. Enjoy the completed installation.
 
 
