@@ -59,7 +59,7 @@ function_install_NginX() {
     mysql -uroot -p$mysql_pass -e "GRANT ALL PRIVILEGES ON $roundcube_db.* TO '$roundcube_user'@'localhost.localdomain' IDENTIFIED BY '$roundcube_pass';"
     mysql -uroot -p$mysql_pass -e "FLUSH PRIVILEGES;"
 
-    cat > /etc/nginx/sites-available/webmail.vhost <<EOF
+    cat > /etc/nginx/sites-available/webmail.vhost <<"EOF"
     server {
         listen 80;
         server_name webmail.*;

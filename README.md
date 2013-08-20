@@ -42,8 +42,7 @@ RoundCube Installation Instructions:
 ```bash
 cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash roundcube_install.sh
 ```
-3. Answer the onscreen prompts. The script stops so that you can see the appropriate answers.
-4. Enjoy the completed installation.
+3. Enjoy the completed installation.
 
 
 TO DO

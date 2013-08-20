@@ -606,13 +606,13 @@ php -q install.php
 #Execute functions#
 if [ -f /etc/debian_version ]; then 
   questions
-	debian_install_basic
-    debian_install_DashNTP
-    if [ $mail_server == "Courier" ]; then
+  debian_install_basic
+  debian_install_DashNTP
+  if [ $mail_server == "Courier" ]; then
 		debian_install_MYSQLCourier
 	fi
 	if [ $mail_server == "Dovecot" ]; then
-  		debian_install_MYSQLDovecot
+  	debian_install_MYSQLDovecot
 	fi
 	debian_install_Virus
 	if [ $web_server == "Apache" ]; then
@@ -629,20 +629,20 @@ if [ -f /etc/debian_version ]; then
 		debian_install_Quota
 	fi
 	debian_install_Bind
-    debian_install_Stats
-    if [ $jailkit == "Yes" ]; then
+  debian_install_Stats
+  if [ $jailkit == "Yes" ]; then
 		debian_install_Jailkit
 	fi
 	if [ $mail_server == "Courier" ]; then
-        debian_install_Fail2BanCourier
-        debian_install_Fail2BanRulesCourier
-    fi
-    if [ $mail_server == "Dovecot" ]; then
-        debian_install_Fail2BanDovecot
-        debian_install_Fail2BanRulesDovecot
-    fi
-    debian_install_SquirrelMail
-    install_ISPConfig
+    debian_install_Fail2BanCourier
+    debian_install_Fail2BanRulesCourier
+  fi
+  if [ $mail_server == "Dovecot" ]; then
+    debian_install_Fail2BanDovecot
+    debian_install_Fail2BanRulesDovecot
+  fi
+  debian_install_SquirrelMail
+  install_ISPConfig
 else echo "Unsupported Linux Distribution."
 fi		
 
