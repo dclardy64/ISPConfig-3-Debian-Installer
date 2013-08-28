@@ -15,6 +15,15 @@ fi
 back_title="ISPConfig 3 System Installer"
 
 questions (){
+
+  PKG_OK=$(dpkg-query -W --showformat='${Status}\n' whiptail|grep "install ok installed")
+  echo Checking for whiptail: $PKG_OK
+  if [ "" == "$PKG_OK" ]; then
+    echo "No whiptail installed. Setting up whiptail."
+    apt-get update
+    sudo apt-get --force-yes --yes install whiptail
+  fi
+  
   while [ "x$serverIP" == "x" ]
   do
         serverIP=$(whiptail --title "Server IP" --backtitle "$back_title" --inputbox "Please specify a Server IP" --nocancel 10 50 3>&1 1>&2 2>&3)
