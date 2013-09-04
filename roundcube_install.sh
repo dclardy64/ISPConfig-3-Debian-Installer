@@ -24,7 +24,6 @@ questions (){
     mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
   done
   if [ $web_server == "NginX" ]; then
-
     while [ "x$roundcube_db" == "x" ]
     do
       roundcube_db=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a RoundCube Database" --nocancel 10 50 3>&1 1>&2 2>&3)
@@ -112,7 +111,8 @@ rm /etc/apache2/conf.d/squirrelmail.conf
 
 sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /etc/roundcube/main.inc.php
 sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /etc/roundcube/main.inc.php
-
+sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /etc/roundcube/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /etc/roundcube/main.inc.php
 
 }
 
@@ -195,6 +195,8 @@ sed -i "s|mysql://roundcube:pass@localhost/roundcubemail|mysqli://$roundcube_use
 
 sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/main.inc.php
 sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /etc/roundcube/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /etc/roundcube/main.inc.php
 
 rm -rf /var/www/roundcube/installer
 }
