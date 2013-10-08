@@ -44,6 +44,10 @@ questions (){
   do
     mail_server=$(whiptail --title "Mail Server" --backtitle "$back_title" --nocancel --radiolist "Select Mail Server Software" 10 50 2 "Dovecot" "(default)" ON "Courier" "" OFF 3>&1 1>&2 2>&3)
   done
+  while [ "x$sql_server" == "x" ]
+  do
+    sql_server=$(whiptail --title "SQL Server" --backtitle "$back_title" --nocancel --radiolist "Select SQL Server Software" 10 50 2 "MySQL" "(default)" ON "MariaDB" "" OFF 3>&1 1>&2 2>&3)
+  done
   while [ "x$mysql_pass" == "x" ]
   do
     mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)
@@ -109,7 +113,7 @@ apt-get -y install ntp ntpdate
 
 } #end function debian_install_DashNTP
 
-debian_install_MYSQLCourier (){
+debian_install_MySQLCourier (){
 
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
 echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
@@ -137,9 +141,45 @@ mkpop3dcert
 /etc/init.d/courier-imap-ssl restart
 /etc/init.d/courier-pop-ssl restart
 
-}
+} #end function debian_install_MySQLCourier
 
-debian_install_MYSQLDovecot (){
+debian_install_MariaDBCourier (){
+
+#Add MariaDB Repos
+apt-get -y install python-software-properties
+apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+add-apt-repository 'deb http://mirror.netcologne.de/mariadb/repo/5.5/debian wheezy main'
+apt-get update
+
+#Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
+echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
+echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
+echo "courier-base courier-base/webadmin-configmode boolean false" | debconf-set-selections
+echo "courier-ssl courier-ssl/certnotice note" | debconf-set-selections
+
+apt-get -y install postfix postfix-mysql postfix-doc mariadb-client mariadb-server courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4 rkhunter binutils sudo
+
+#Allow MySQL to listen on all interfaces
+cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
+sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
+/etc/init.d/mysql restart
+
+#Delete and Reconfigure SSL Certificates
+cd /etc/courier
+rm -f /etc/courier/imapd.pem
+rm -f /etc/courier/pop3d.pem
+sed -i "s/CN=localhost/CN=${HOSTNAMEFQDN}/" /etc/courier/imapd.cnf
+sed -i "s/CN=localhost/CN=${HOSTNAMEFQDN}/" /etc/courier/pop3d.cnf
+mkimapdcert
+mkpop3dcert
+/etc/init.d/courier-imap-ssl restart
+/etc/init.d/courier-pop-ssl restart
+
+} #end function debian_install_MariaDBCourier
+
+debian_install_MySQLDovecot (){
 
 #Install Postfix, Dovecot, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
 echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
@@ -170,7 +210,46 @@ sed -i 's|bind-address           = 127.0.0.1|#bind-address           = 127.0.0.1
 /etc/init.d/postfix restart
 /etc/init.d/mysql restart
 
-}
+} #end function debian_install_MySQLDovecot
+
+debian_install_MariaDBDovecot (){
+
+#Add MariaDB Repos
+apt-get -y install python-software-properties
+apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+add-apt-repository 'deb http://mirror.netcologne.de/mariadb/repo/5.5/debian wheezy main'
+apt-get update
+
+#Install Postfix, Dovecot, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
+echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
+echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
+
+apt-get -y install postfix postfix-mysql postfix-doc mariadb-client mariadb-server openssl getmail4 rkhunter binutils dovecot-imapd dovecot-pop3d dovecot-mysql dovecot-sieve sudo 
+
+#Uncommenting some Postfix configuration files
+cp /etc/postfix/master.cf /etc/postfix/master.cf.backup
+sed -i 's|#submission inet n       -       -       -       -       smtpd|submission inet n       -       -       -       -       smtpd|' /etc/postfix/master.cf
+sed -i 's|#  -o syslog_name=postfix/submission|  -o syslog_name=postfix/submission|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_tls_security_level=encrypt|  -o smtpd_tls_security_level=encrypt|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_client_restrictions=permit_sasl_authenticated,reject|  -o smtpd_client_restrictions=permit_sasl_authenticated,reject|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_sasl_auth_enable=yes|  -o smtpd_sasl_auth_enable=yes|' /etc/postfix/master.cf
+sed -i 's|#smtps     inet  n       -       -       -       -       smtpd|smtps     inet  n       -       -       -       -       smtpd|' /etc/postfix/master.cf
+sed -i 's|#  -o syslog_name=postfix/smtps|  -o syslog_name=postfix/smtps|' /etc/postfix/master.cf
+sed -i 's|#  -o smtpd_tls_wrappermode=yes|  -o smtpd_tls_wrappermode=yes|' /etc/postfix/master.cf
+
+#Allow MySQL to listen on all interfaces
+cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
+sed -i 's|bind-address           = 127.0.0.1|#bind-address           = 127.0.0.1|' /etc/mysql/my.cnf
+
+/etc/init.d/postfix restart
+/etc/init.d/mysql restart
+
+} #end function debian_install_MariaDBDovecot
 
 debian_install_Virus (){
 
@@ -268,8 +347,6 @@ apt-get -y install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick 
 apt-get -y install php-apc
 #PHP Configuration Stuff Goes Here
 apt-get -y install fcgiwrap
-
-
 
 echo "========================================================================="
 echo "You will be prompted for some information during the install of phpmyadmin."
@@ -617,12 +694,18 @@ if [ -f /etc/debian_version ]; then
   questions
   debian_install_basic
   debian_install_DashNTP
-  if [ $mail_server == "Courier" ]; then
-		debian_install_MYSQLCourier
+  if [[ $sql_server == "MySQL" && $mail_server == "Courier" ]]; then
+		  debian_install_MySQLCourier
+  fi
+  if [[ $sql_server == "MySQL" && $mail_server ==  "Dovecot" ]]; then
+      debian_install_MySQLDovecot
 	fi
-	if [ $mail_server == "Dovecot" ]; then
-  	debian_install_MYSQLDovecot
-	fi
+  if [[ $sql_server == "MariaDB" && $mail_server == "Courier" ]]; then
+      debian_install_MariaDBCourier
+  fi
+  if [[ $sql_server == "MariaDB" && $mail_server ==  "Dovecot" ]]; then
+      debian_install_MariaDBDovecot
+  fi
 	debian_install_Virus
 	if [ $web_server == "Apache" ]; then
 		debian_install_Apache
