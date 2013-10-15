@@ -678,9 +678,6 @@ fi
 
 install_ISPConfig (){
 #Install ISPConfig 3
-/etc/init.d/apache2 stop
-update-rc.d -f apache2 remove
-/etc/init.d/nginx restart
 cd /tmp
 wget http://www.ispconfig.org/downloads/ISPConfig-3-stable.tar.gz
 tar xfz ISPConfig-3-stable.tar.gz
