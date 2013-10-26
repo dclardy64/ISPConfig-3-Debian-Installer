@@ -195,8 +195,8 @@ sed -i "s|mysql://roundcube:pass@localhost/roundcubemail|mysqli://$roundcube_use
 
 sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/main.inc.php
 sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /etc/roundcube/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /etc/roundcube/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /var/www/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/roundcube/config/main.inc.php
 
 rm -rf /var/www/roundcube/installer
 }
