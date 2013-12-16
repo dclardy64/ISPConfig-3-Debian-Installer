@@ -51,7 +51,7 @@ Theme Installation Instructions:
 2. Run this command:
 
 	```bash
-	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash roundcube_install.sh
+	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash theme_install.sh
 	```
 3. Enjoy the completed installation.
 
