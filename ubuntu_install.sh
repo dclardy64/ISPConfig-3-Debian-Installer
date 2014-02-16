@@ -81,62 +81,10 @@ echo "$HOSTNAMESHORT" > /etc/hostname
 #Updates server and install commonly used utilities
 cp /etc/apt/sources.list /etc/apt/sources.list.backup
 cat > /etc/apt/sources.list <<EOF
-# See http://help.ubuntu.com/community/UpgradeNotes for how to upgrade to
-# newer versions of the distribution.
-deb http://de.archive.ubuntu.com/ubuntu/ raring main restricted
-deb-src http://de.archive.ubuntu.com/ubuntu/ raring main restricted
-
-## Major bug fix updates produced after the final release of the
-## distribution.
-deb http://de.archive.ubuntu.com/ubuntu/ raring-updates main restricted
-deb-src http://de.archive.ubuntu.com/ubuntu/ raring-updates main restricted
-
-## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
-## team. Also, please note that software in universe WILL NOT receive any
-## review or updates from the Ubuntu security team.
-deb http://de.archive.ubuntu.com/ubuntu/ raring universe
-deb-src http://de.archive.ubuntu.com/ubuntu/ raring universe
-deb http://de.archive.ubuntu.com/ubuntu/ raring-updates universe
-deb-src http://de.archive.ubuntu.com/ubuntu/ raring-updates universe
-
-## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
-## team, and may not be under a free licence. Please satisfy yourself as to
-## your rights to use the software. Also, please note that software in
-## multiverse WILL NOT receive any review or updates from the Ubuntu
-## security team.
-deb http://de.archive.ubuntu.com/ubuntu/ raring multiverse
-deb-src http://de.archive.ubuntu.com/ubuntu/ raring multiverse
-deb http://de.archive.ubuntu.com/ubuntu/ raring-updates multiverse
-deb-src http://de.archive.ubuntu.com/ubuntu/ raring-updates multiverse
-
-## N.B. software from this repository may not have been tested as
-## extensively as that contained in the main release, although it includes
-## newer versions of some applications which may provide useful features.
-## Also, please note that software in backports WILL NOT receive any review
-## or updates from the Ubuntu security team.
-deb http://de.archive.ubuntu.com/ubuntu/ raring-backports main restricted universe multiverse
-deb-src http://de.archive.ubuntu.com/ubuntu/ raring-backports main restricted universe multiverse
-
-deb http://security.ubuntu.com/ubuntu raring-security main restricted
-deb-src http://security.ubuntu.com/ubuntu raring-security main restricted
-deb http://security.ubuntu.com/ubuntu raring-security universe
-deb-src http://security.ubuntu.com/ubuntu raring-security universe
-deb http://security.ubuntu.com/ubuntu raring-security multiverse
-deb-src http://security.ubuntu.com/ubuntu raring-security multiverse
-
-## Uncomment the following two lines to add software from Canonical's
-## 'partner' repository.
-## This software is not part of Ubuntu, but is offered by Canonical and the
-## respective vendors as a service to Ubuntu users.
-# deb http://archive.canonical.com/ubuntu raring partner
-# deb-src http://archive.canonical.com/ubuntu raring partner
-
-## Uncomment the following two lines to add software from Ubuntu's
-## 'extras' repository.
-## This software is not part of Ubuntu, but is offered by third-party
-## developers who want to ship their latest software.
-# deb http://extras.ubuntu.com/ubuntu raring main
-# deb-src http://extras.ubuntu.com/ubuntu raring main
+deb mirror://mirrors.ubuntu.com/mirrors.txt precise main restricted universe multiverse
+deb mirror://mirrors.ubuntu.com/mirrors.txt precise-updates main restricted universe multiverse
+deb mirror://mirrors.ubuntu.com/mirrors.txt precise-backports main restricted universe multiverse
+deb mirror://mirrors.ubuntu.com/mirrors.txt precise-security main restricted universe multiverse
 EOF
 
 apt-get update
@@ -198,7 +146,7 @@ ubuntu_install_MariaDBCourier (){
 #Add MariaDB Repos
 apt-get -y install software-properties-common
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
-add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu raring main'
+add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu precise main'
 apt-get update
 
 #Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
@@ -268,7 +216,7 @@ ubuntu_install_MariaDBDovecot (){
 #Add MariaDB Repos
 apt-get -y install software-properties-common
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
-add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu raring main'
+add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu precise main'
 apt-get update
 
 #Install Postfix, Dovecot, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
