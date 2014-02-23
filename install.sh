@@ -1,10 +1,10 @@
 #!/bin/bash
 
 ###############################################################################################
-# Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
-# Drew Clardy												                                  #
-# http://drewclardy.com				                                                          #
-# http://github.com/dclardy64/ISPConfig-3-Debian-Instal                                       #
+# Complete ISPConfig setup script for Debian/Ubuntu Systems         						  						#
+# Drew Clardy												                                                      		# 
+# http://drewclardy.com				                                                          			#
+# http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
 
 # Check if user is root
@@ -19,12 +19,6 @@ source config.sh
 ###############
 ## Libraries ##
 ###############
-
-# Load Libraries (External)
-for file in $LIBRARYPATH/external/*.sh; do
-	# Source Libraries
-	source $file
-done
 
 # Load Libraries
 for file in $LIBRARYPATH/*.sh; do
@@ -48,57 +42,64 @@ done
 
 # Load Functions (Distribution Specific)
 if [ $DISTRIBUTION == "debian" ]; then
-	source $FUNCTIONPATH/$DISTRIBUTION_functions.sh
+	source $FUNCTIONPATH/$DISTRIBUTION.functions.sh
 elif [ $DISTRIBUTION == "ubuntu" ]; then
-	source $FUNCTIONPATH/$DISTRIBUTION_functions.sh
+	source $FUNCTIONPATH/$DISTRIBUTION.functions.sh
 fi
-source $FUNCTIONPATH/generic_functions.sh
+
+# Load Generic Functions
+source $FUNCTIONPATH/generic.functions.sh
 
 
 
 #Execute functions#
 questions
-install_basic
-install_DashNTP
+install_Basic
 if [ $sql_server == "MySQL" ]; then
-	$DISTRIBUTION_install_MySQL
+	$DISTRIBUTION.install_MySQL
 fi
 if [ $sql_server == "MariaDB" ]; then
-	$DISTRIBUTION_install_MariaDB
+	$DISTRIBUTION.install_MariaDB
 fi
-if [ $mail_server == "Courier" ]; then
-	$DISTRIBUTION_install_Courier
+if [ $install_mail_server == "Yes" ]; then
+	if [ $mail_server == "Courier" ]; then
+		$DISTRIBUTION.install_Courier
+	elif [ $mail_server == "Dovecot" ]; then
+		$DISTRIBUTION.install_Dovecot
+	fi
+	$DISTRIBUTION.install_Virus
 fi
-if [ $mail_server == "Dovecot" ]; then
-	$DISTRIBUTION_install_Dovecot
-fi
-$DISTRIBUTION_install_Virus
-if [ $web_server == "Apache" ]; then
-	$DISTRIBUTION_install_Apache
-fi
-if [ $web_server == "NginX" ]; then
-	$DISTRIBUTION_install_NginX
+if [ $install_web_server == "Yes" ]; then
+	if [ $web_server == "Apache" ]; then
+		$DISTRIBUTION.install_Apache
+	elif [ $web_server == "NginX" ]; then
+		$DISTRIBUTION.install_NginX
+	fi
+	$DISTRIBUTION.install_Stats
 fi
 if [ $mailman == "Yes" ]; then
-	$DISTRIBUTION_install_Mailman
+	$DISTRIBUTION.install_Mailman
 fi
-$DISTRIBUTION_install_PureFTPD
+if [ $install_ftp_server == "Yes" ]; then
+	$DISTRIBUTION.install_PureFTPD
+fi
+if [ $install_dns_server == "Yes" ]; then
+	$DISTRIBUTION.install_Bind
+fi
 if [ $quota == "Yes" ]; then
-	$DISTRIBUTION_install_Quota
+	$DISTRIBUTION.install_Quota
 fi
-$DISTRIBUTION_install_Bind
-$DISTRIBUTION_install_Stats
 if [ $jailkit == "Yes" ]; then
-	$DISTRIBUTION_install_Jailkit
+	$DISTRIBUTION.install_Jailkit
 fi
-$DISTRIBUTION_install_Fail2Ban
+$DISTRIBUTION.install_Fail2Ban
 if [ $mail_server == "Courier" ]; then
-	$DISTRIBUTION_install_Fail2BanRulesCourier
+	$DISTRIBUTION.install_Fail2BanRulesCourier
 fi
 if [ $mail_server == "Dovecot" ]; then
-	$DISTRIBUTION_install_Fail2BanRulesDovecot
+	$DISTRIBUTION.install_Fail2BanRulesDovecot
 fi
-$DISTRIBUTION_install_SquirrelMail
+$DISTRIBUTION.install_SquirrelMail
 install_ISPConfig
 
 

@@ -1,13 +1,14 @@
 ﻿#!/bin/bash
 
 ###############################################################################################
-# Complete ISPConfig setup script for Debian 7.         						 			                    #
-# Drew Clardy																				                                          #
-# http://drewclardy.com							                                                          #
+# Complete ISPConfig setup script for Debian/Ubuntu Systems             					  					#
+# Drew Clardy												                          	                              # 
+# http://drewclardy.com				                                                          			#
+# http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
 
 
-debian_install_Repos (){
+debian.install_Repos (){
 
 #Updates server and install commonly used utilities
 cp /etc/apt/sources.list /etc/apt/sources.list.backup
@@ -30,9 +31,9 @@ EOF
 wget http://www.dotdeb.org/dotdeb.gpg
 cat dotdeb.gpg | apt-key add - 
 
-} #end function debian_install_Repos
+} #end function debian.install_Repos
 
-debian_install_MySQL () {
+debian.install_MySQL () {
 
 echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
 echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
@@ -45,9 +46,9 @@ cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
 sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
 /etc/init.d/mysql restart
 
-} #end function debian_install_MySQL
+} #end function debian.install_MySQL
 
-debian_install_MariaDB (){
+debian.install_MariaDB (){
 
 #Add MariaDB Repos
 apt-get -y install python-software-properties
@@ -66,9 +67,9 @@ cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
 sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
 /etc/init.d/mysql restart
 
-} #end function debian_install_MariaDB
+} #end function debian.install_MariaDB
 
-debian_install_Courier (){
+debian.install_Courier (){
 
 #Install Postfix, Courier, Saslauthd
 
@@ -90,9 +91,9 @@ mkpop3dcert
 /etc/init.d/courier-imap-ssl restart
 /etc/init.d/courier-pop-ssl restart
 
-} #end function debian_install_Courier
+} #end function debian.install_Courier
 
-debian_install_Dovecot (){
+debian.install_Dovecot (){
 
 #Install Postfix, Dovecot, Saslauthd
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
@@ -117,9 +118,9 @@ sed -i 's|#  -o smtpd_tls_wrappermode=yes|  -o smtpd_tls_wrappermode=yes|' /etc/
 
 /etc/init.d/postfix restart
 
-} #end function debian_install_Dovecot
+} #end function debian.install_Dovecot
 
-debian_install_Virus (){
+debian.install_Virus (){
 
 #Install Amavisd-new, SpamAssassin, And Clamav
 package_install amavisd-new spamassassin clamav clamav-daemon zoo arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl libnet-dns-perl
@@ -127,9 +128,9 @@ package_install amavisd-new spamassassin clamav clamav-daemon zoo arj nomarch lz
 /etc/init.d/spamassassin stop
 insserv -rf spamassassin
 
-} #end function debian_install_Virus
+} #end function debian.install_Virus
 
-debian_install_Apache (){
+debian.install_Apache (){
 
 echo "========================================================================="
 echo "You will be prompted for some information during the install of phpmyadmin."
@@ -196,9 +197,9 @@ package_install php5-xcache
 #Restart Apache
 /etc/init.d/apache2 restart
 
-} # end function debian_install_Apache
+} # end function debian.install_Apache
 
-debian_install_NginX (){
+debian.install_NginX (){
 
 #Install NginX, PHP5, phpMyAdmin, FCGI, suExec, Pear, And mcrypt
 
@@ -238,9 +239,9 @@ EOF
 
 /etc/init.d/php5-fpm restart
 
-} # end function debian_install_NginX
+} # end function debian.install_NginX
 
-debian_install_Mailman (){
+debian.install_Mailman (){
 
 echo "================================================================================================"
 echo "You will be prompted for some information during the install."
@@ -279,9 +280,9 @@ newaliases
 		fi
 /etc/init.d/mailman start
 
-} # end function debian_install_Mailman
+} # end function debian.install_Mailman
 
-debian_install_PureFTPD (){
+debian.install_PureFTPD (){
 
 #Install PureFTPd
 package_install pure-ftpd-common pure-ftpd-mysql
@@ -295,9 +296,9 @@ openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -subj "/C=/ST=/L=/O=/CN=$(h
 chmod 600 /etc/ssl/private/pure-ftpd.pem
 /etc/init.d/pure-ftpd-mysql restart
 
-} # end function debian_install_Mailman
+} # end function debian.install_Mailman
 
-debian_install_Quota (){
+debian.install_Quota (){
 
 #Editing FStab
 cp /etc/fstab /etc/fstab.backup
@@ -309,16 +310,16 @@ mount -o remount /
 quotacheck -avugm
 quotaon -avug
 
-} # end function debian_install_Quota
+} # end function debian.install_Quota
 
-debian_install_Bind (){
+debian.install_Bind (){
 
 #Install BIND DNS Server
 package_install bind9 dnsutils
 
-} # end function debian_install_Binf
+} # end function debian.install_Binf
 
-debian_install_Stats (){
+debian.install_Stats (){
 
 #Install Vlogger, Webalizer, And AWstats
 package_install vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl
@@ -326,9 +327,9 @@ package_install vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl
 sed -i "s/*/10 * * * * www-data/#*/10 * * * * www-data/" /etc/cron.d/awstats
 sed -i "s/10 03 * * * www-data/#10 03 * * * www-data/" /etc/cron.d/awstats
 
-} # end function debian_install_Stats
+} # end function debian.install_Stats
 
-debian_install_Jailkit (){
+debian.install_Jailkit (){
 
 #Install Jailkit
 package_install build-essential autoconf automake1.9 libtool flex bison debhelper binutils-gold
@@ -342,16 +343,16 @@ cd ..
 dpkg -i jailkit_2.17-1_*.deb
 rm -rf jailkit-2.17*
 
-} # end function debian_install_Jailkit
+} # end function debian.install_Jailkit
 
-debian_install_Fail2Ban (){
+debian.install_Fail2Ban (){
 
 #Install fail2ban
 package_install fail2ban
 
-} # end function debian_install_Fail2Ban
+} # end function debian.install_Fail2Ban
 
-debian_install_Fail2BanRulesCourier() {
+debian.install_Fail2BanRulesCourier() {
 
 cat > /etc/fail2ban/jail.local <<"EOF"
 [pureftpd]
@@ -429,9 +430,9 @@ EOF
 
 /etc/init.d/fail2ban restart
 
-} # end function debian_install_Fail2BanRuleCourier
+} # end function debian.install_Fail2BanRuleCourier
 
-debian_install_Fail2BanRulesDovecot() {
+debian.install_Fail2BanRulesDovecot() {
 
 cat > /etc/fail2ban/jail.local <<"EOF"
 [pureftpd]
@@ -470,9 +471,9 @@ EOF
 
 /etc/init.d/fail2ban restart
 
-} # end function debian_install_Fail2BanRuleCourier
+} # end function debian.install_Fail2BanRuleCourier
 
-debian_install_SquirrelMail (){
+debian.install_SquirrelMail (){
 
 echo "==========================================================================================="
 echo "When prompted, type D! Then type the mailserver you choose ($mail_server),"
@@ -545,4 +546,4 @@ ln -s /etc/squirrelmail/apache.conf /etc/apache2/conf.d/squirrelmail.conf
 
 fi
 
-} # end function debian_install_SquirrelMail	
+} # end function debian.install_SquirrelMail	
