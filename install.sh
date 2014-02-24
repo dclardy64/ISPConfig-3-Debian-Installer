@@ -53,7 +53,7 @@ source $FUNCTIONPATH/generic.functions.sh
 
 
 #Execute functions#
-questions
+install_questions
 install_Basic
 if [ $sql_server == "MySQL" ]; then
 	$DISTRIBUTION.install_MySQL

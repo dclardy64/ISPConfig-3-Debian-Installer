@@ -9,17 +9,21 @@
 
 
 back_title="ISPConfig 3 System Installer"
+base_ip=$(ip -f inet -o addr show eth0|cut -d\  -f 7 | cut -d/ -f 1)
 
-questions (){
+install_questions (){
 
 if ! check_package "whiptail"; then
 	package_install whiptail
 fi
-
-while [ "x$serverIP" == "x" ]
-do
-serverIP=$(whiptail --title "Server IP" --backtitle "$back_title" --inputbox "Please specify a Server IP" --nocancel 10 50 3>&1 1>&2 2>&3)
-done
+if (whiptail --title "IP Address Check" --backtitle "$back_title" --yesno "Is the Main IP of the Server? $base_ip" 10 50) then
+	serverIP=base_ip
+	else
+		while [ "x$serverIP" == "x" ]
+		do
+		serverIP=$(whiptail --title "Server IP" --backtitle "$back_title" --inputbox "Please specify a Server IP" --nocancel 10 50 3>&1 1>&2 2>&3)
+		done
+fi
 while [ "x$HOSTNAMESHORT" == "x" ]
 do
 HOSTNAMESHORT=$(whiptail --title "Short Hostname" --backtitle "$back_title" --inputbox "Please specify a Short Hostname" --nocancel 10 50 3>&1 1>&2 2>&3)
