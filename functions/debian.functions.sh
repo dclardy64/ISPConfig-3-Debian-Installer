@@ -1,9 +1,9 @@
 ﻿#!/bin/bash
 
 ###############################################################################################
-# Complete ISPConfig setup script for Debian/Ubuntu Systems             					  					#
-# Drew Clardy												                          	                              # 
-# http://drewclardy.com				                                                          			#
+# Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
+# Drew Clardy												                                  # 
+# http://drewclardy.com				                                                          #
 # http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
 

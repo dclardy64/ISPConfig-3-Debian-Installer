@@ -1,9 +1,9 @@
 #!/bin/bash
 
 ###############################################################################################
-# Complete ISPConfig setup script for Debian/Ubuntu Systems             					  					#
-# Drew Clardy												                          	                              # 
-# http://drewclardy.com				                                                          			#
+# Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
+# Drew Clardy												                                  # 
+# http://drewclardy.com				                                                          #
 # http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
 
@@ -84,6 +84,22 @@ if (whiptail --title "Install Jailkit" --backtitle "$back_title" --yesno "Setup 
 	jailkit=No
 fi
 
+}
+
+install_extras () {
+
+if ! check_package "whiptail"; then
+	package_install whiptail
+fi
+if (whiptail --title "Install Extras" --backtitle "$back_title" --yesno "Would you like to install a few extras?" 10 50) then
+	extras=Yes
+	while [ "x$extra_stuff" == "x" ]
+	do
+	extra_stuff=$(whiptail --title "Extras" --backtitle "$back_title" --nocancel --radiolist "Select Extras" 10 50 2 "Theme Installation" "(default)" ON "RoundCube" "" OFF 3>&1 1>&2 2>&3)
+	done
+	else
+	extras=No
+fi
 }
 
 install_Basic () {

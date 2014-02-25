@@ -1,20 +1,15 @@
 #!/bin/bash
 
 ###############################################################################################
-# RoundCube for ISPConfig 3 setup.                      						 			                    #
-# Drew Clardy																				                                          #
-# http://drewclardy.com							                                                          #
+# Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
+# Drew Clardy												                                  # 
+# http://drewclardy.com				                                                          #
+# http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
-
-# Check if user is root
-if [ $(id -u) != "0" ]; then
-    echo "Error: You must be root to run this script, please use the root user to install the software."
-    exit 1
-fi
 
 back_title="ISPConfig 3 RoundCube Installer"
 
-questions (){
+roundcube_questions (){
   while [ "x$web_server" == "x" ]
   do
     web_server=$(whiptail --title "Web Server" --backtitle "$back_title" --nocancel --radiolist "Select Web Server Software" 10 50 2 "Apache" "(default)" ON "NginX" "" OFF 3>&1 1>&2 2>&3)
@@ -200,17 +195,3 @@ sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/roundcu
 
 rm -rf /var/www/roundcube/installer
 }
-
-#Execute functions#
-if [ -f /etc/debian_version ]; then 
-	questions
-  	if [ $web_server == "Apache" ]; then
-		function_install_Apache
-	fi
-	if [ $web_server == "NginX" ]; then
-		function_install_NginX
-	fi
-else echo "Unsupported Linux Distribution."
-fi		
-
-#End execute functions#

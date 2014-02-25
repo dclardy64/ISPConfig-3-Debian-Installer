@@ -1,20 +1,15 @@
 #!/bin/bash
 
 ###############################################################################################
-# Theme Installation for ISPConfig 3 setup.              						 			                    #
-# Drew Clardy																				                                          #
-# http://drewclardy.com							                                                          #
+# Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
+# Drew Clardy												                                  # 
+# http://drewclardy.com				                                                          #
+# http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
-
-# Check if user is root
-if [ $(id -u) != "0" ]; then
-    echo "Error: You must be root to run this script, please use the root user to install the software."
-    exit 1
-fi
 
 back_title="ISPConfig 3 Theme Installer"
 
-questions (){
+theme_questions (){
   while [ "x$theme" == "x" ]
   do
     theme=$(whiptail --title "Theme" --backtitle "$back_title" --nocancel --radiolist "Select Theme" 10 50 2 "ISPC-Clean" "(default)" ON "Other" "" OFF 3>&1 1>&2 2>&3)
@@ -41,14 +36,3 @@ function_install_ISPC_Clean() {
   mysql -u root -p$mysql_pass < sql/ispc-clean.sql
 
 }
-
-#Execute functions#
-if [ -f /etc/debian_version ]; then 
-	questions
-  if [ $theme == "ISPC-Clean" ]; then
-    function_install_ISPC_Clean
-  fi
-else echo "Unsupported Linux Distribution."
-fi		
-
-#End execute functions#

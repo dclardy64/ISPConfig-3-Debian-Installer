@@ -7,5 +7,8 @@ DISTRIBUTION=none
 # Library Path
 LIBRARYPATH=libraries
 
-# Library Path
+# Function Path
 FUNCTIONPATH=functions
+
+# Extras Path
+EXTRAPATH=extras

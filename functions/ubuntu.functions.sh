@@ -1,9 +1,10 @@
 #!/bin/bash
 
 ###############################################################################################
-# Complete ISPConfig setup script for Ubuntu 13.04.                                           #
-# Drew Clardy                                                                                 #
-# http://drewclardy.com                                                                       #
+# Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
+# Drew Clardy												                                  # 
+# http://drewclardy.com				                                                          #
+# http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
 
 # Check if user is root
