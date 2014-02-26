@@ -551,6 +551,7 @@ fi
 
 if [ $web_server == "Apache" ]; then
 #Remove the Apache2 Stuff for NginX
+apt-get remove --purge apache2
 /etc/init.d/apache2 stop
 insserv -r apache2
 /etc/init.d/nginx start
