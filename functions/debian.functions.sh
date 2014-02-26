@@ -474,7 +474,7 @@ EOF
 
 /etc/init.d/fail2ban restart
 
-} # end function debian.install_Fail2BanRuleCourier
+} # end function debian.install_Fail2BanRuleDovecot
 
 debian.install_SquirrelMail (){
 
