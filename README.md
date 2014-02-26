@@ -44,6 +44,23 @@ RoundCube Installation Instructions:
 	```
 3. Enjoy the completed installation. For Apache, Roundcube can be accessed at /webmail for all hosts. For NginX, RoundCube can be accessed at webmail.* for all hosts. You will have to add this into DNS records.
 
+RoundCube Upgrade to 0.9 from 0.7 for Debian Apache:
+------------------------------------
+1. edit /etc/apt/sources.list
+2. add to 1. deb http://ftp.debian.org/debian wheezy-backports main contrib non-free
+3. run aptitude update
+4. run aptitude -t wheezy-backports install roundcube roundcube-plugins roundcube-plugins-extra
+
+If you choose to use their main.inc config file, just replace the value in /etc/roundcube/main.inc.php after everything is completed with 
+
+$rcmail_config['default_host'] = '%s';
+
+$rcmail_config['smtp_server'] =  '%h';
+
+$rcmail_config['smtp_user'] = '%u';
+
+$rcmail_config['smtp_pass'] = '%p';
+
 Theme Installation Instructions:
 ------------------------------------
 
