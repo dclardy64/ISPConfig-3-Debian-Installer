@@ -11,7 +11,7 @@
 back_title="ISPConfig 3 System Installer"
 base_ip=$(ip -f inet -o addr show eth0|cut -d\  -f 7 | cut -d/ -f 1)
 
-install_questions (){
+install_Questions (){
 
 if ! check_package "whiptail"; then
 	package_install whiptail
@@ -106,18 +106,19 @@ install_Basic () {
 
 #Set hostname and FQDN
 sed -i "s/${serverIP}.*/${serverIP} ${HOSTNAMEFQDN} ${HOSTNAMESHORT}/" /etc/hosts
-echo "$HOSTNAMESHORT" > /etc/hostname
+echo "$HOSTNAMEFQDN" > /etc/hostname
 /etc/init.d/hostname.sh start >/dev/null 2>&1
 
-package_update
-package_upgrade
-package_install vim-nox dnsutils unzip rkhunter binutils sudo bzip2 zip
+apt-get update
+apt-get upgrade
+apt-get install -y vim-nox dnsutils unzip rkhunter binutils sudo bzip2 zip
 
 echo "dash dash/sh boolean false" | debconf-set-selections
 dpkg-reconfigure -f noninteractive dash > /dev/null 2>&1
 
 #Synchronize the System Clock
-package_install ntp ntpdate
+package_install ntp 
+package_install ntpdate
 
 } # end function install_Basic
 

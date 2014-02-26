@@ -62,8 +62,9 @@ source $EXTRAPATH/*.sh
 
 #Execute functions#
 if [ $ISPConfig_Installed = "No" ]; then
-	install_questions
+	install_Questions
 	install_Basic
+	$DISTRIBUTION.install_Repos
 	if [ $sql_server == "MySQL" ]; then
 		$DISTRIBUTION.install_MySQL
 	fi

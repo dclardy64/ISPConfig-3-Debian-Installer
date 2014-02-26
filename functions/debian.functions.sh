@@ -39,7 +39,8 @@ echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debcon
 echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
 #Install MySQL
-package_install mysql-client mysql-server 
+apt-get install -y mysql-client
+apt-get install -y mysql-server 
 
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
@@ -51,7 +52,7 @@ sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1
 debian.install_MariaDB (){
 
 #Add MariaDB Repos
-apt-get -y install python-software-properties
+apt-get install -y python-software-properties
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 add-apt-repository 'deb http://mirror.netcologne.de/mariadb/repo/5.5/debian wheezy main'
 apt-get update
@@ -60,7 +61,8 @@ apt-get update
 echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
 echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
-package_install mariadb-client mariadb-server
+apt-get install -y mariadb-client 
+apt-get install -y mariadb-server
 
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
@@ -78,7 +80,8 @@ echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 echo "courier-base courier-base/webadmin-configmode boolean false" | debconf-set-selections
 echo "courier-ssl courier-ssl/certnotice note" | debconf-set-selections
 
-package_install postfix postfix-mysql postfix-doc courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4
+apt-get install -y postfix  postfix-doc courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4
+
 
 #Delete and Reconfigure SSL Certificates
 cd /etc/courier
@@ -99,7 +102,7 @@ debian.install_Dovecot (){
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
 echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 
-package_install postfix postfix-mysql postfix-doc openssl getmail4 dovecot-imapd dovecot-pop3d dovecot-mysql dovecot-sieve 
+apt-get install -y postfix postfix-mysql postfix-doc openssl getmail4 dovecot-imapd dovecot-pop3d dovecot-mysql dovecot-sieve 
 
 #Uncommenting some Postfix configuration files
 cp /etc/postfix/master.cf /etc/postfix/master.cf.backup
@@ -123,7 +126,7 @@ sed -i 's|#  -o smtpd_tls_wrappermode=yes|  -o smtpd_tls_wrappermode=yes|' /etc/
 debian.install_Virus (){
 
 #Install Amavisd-new, SpamAssassin, And Clamav
-package_install amavisd-new spamassassin clamav clamav-daemon zoo arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl libnet-dns-perl
+apt-get install -y amavisd-new spamassassin clamav clamav-daemon zoo arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl libnet-dns-perl
 
 /etc/init.d/spamassassin stop
 insserv -rf spamassassin
@@ -147,7 +150,7 @@ echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf
 #echo 'phpmyadmin      phpmyadmin/dbconfig-reinstall   boolean false' | debconf-set-selections
 #echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-set-selections
 
-package_install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby libapache2-mod-python php5-curl php5-intl php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
+apt-get install -y apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby libapache2-mod-python php5-curl php5-intl php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
 
 a2enmod suexec rewrite ssl actions include
 a2enmod dav_fs dav auth_digest
@@ -190,7 +193,7 @@ EOF
 sed -i 's|application/x-ruby|#application/x-ruby|' /etc/mime.types
 
 #Install XCache
-package_install php5-xcache
+apt-get install -y php5-xcache
 
 
 
@@ -206,16 +209,16 @@ debian.install_NginX (){
 echo 'phpmyadmin      phpmyadmin/reconfigure-webserver        multiselect' | debconf-set-selections
 echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-set-selections
 
-package_install nginx
+apt-get install -y nginx
 /etc/init.d/apache2 stop
 update-rc.d -f apache2 remove
 /etc/init.d/nginx start
 
-package_install php5-fpm
-package_install php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
-package_install php-apc
+apt-get install -y php5-fpm
+apt-get install -y php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
+apt-get install -y php-apc
 #PHP Configuration Stuff Goes Here
-package_install fcgiwrap
+apt-get install -y fcgiwrap
 
 echo "========================================================================="
 echo "You will be prompted for some information during the install of phpmyadmin."
@@ -224,7 +227,7 @@ echo "Please enter them where needed."
 echo "========================================================================="
 echo "Press ENTER to continue.."
 read DUMMY
-package_install phpmyadmin
+apt-get install -y phpmyadmin
 
 #Remove the Apache2 Stuff for NginX
 /etc/init.d/apache2 stop
@@ -253,7 +256,7 @@ echo "Press ENTER to continue.."
 read DUMMY
 
 #Install Mailman
-package_install mailman
+apt-get install -y mailman
 newlist mailman
 
 mv /etc/aliases /etc/aliases.backup
@@ -285,7 +288,7 @@ newaliases
 debian.install_PureFTPD (){
 
 #Install PureFTPd
-package_install pure-ftpd-common pure-ftpd-mysql
+apt-get install -y pure-ftpd-common pure-ftpd-mysql
 
 #Setting up Pure-Ftpd
 sed -i 's/VIRTUALCHROOT=false/VIRTUALCHROOT=true/' /etc/default/pure-ftpd-common
@@ -305,7 +308,7 @@ cp /etc/fstab /etc/fstab.backup
 sed -i "s/errors=remount-ro/errors=remount-ro,usrjquota=quota.user,grpjquota=quota.group,jqfmt=vfsv0/" /etc/fstab
 
 #Setting up Quota
-package_install quota quotatool
+apt-get install -y quota quotatool
 mount -o remount /
 quotacheck -avugm
 quotaon -avug
@@ -315,14 +318,14 @@ quotaon -avug
 debian.install_Bind (){
 
 #Install BIND DNS Server
-package_install bind9 dnsutils
+apt-get install -y bind9 dnsutils
 
 } # end function debian.install_Binf
 
 debian.install_Stats (){
 
 #Install Vlogger, Webalizer, And AWstats
-package_install vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl
+apt-get install -y vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl
 
 sed -i "s/*/10 * * * * www-data/#*/10 * * * * www-data/" /etc/cron.d/awstats
 sed -i "s/10 03 * * * www-data/#10 03 * * * www-data/" /etc/cron.d/awstats
@@ -332,7 +335,7 @@ sed -i "s/10 03 * * * www-data/#10 03 * * * www-data/" /etc/cron.d/awstats
 debian.install_Jailkit (){
 
 #Install Jailkit
-package_install build-essential autoconf automake1.9 libtool flex bison debhelper binutils-gold
+apt-get install -y build-essential autoconf automake1.9 libtool flex bison debhelper binutils-gold
 
 cd /tmp
 wget http://olivier.sessink.nl/jailkit/jailkit-2.17.tar.gz
@@ -348,7 +351,7 @@ rm -rf jailkit-2.17*
 debian.install_Fail2Ban (){
 
 #Install fail2ban
-package_install fail2ban
+apt-get install -y fail2ban
 
 } # end function debian.install_Fail2Ban
 
@@ -483,7 +486,7 @@ echo "Press ENTER to continue.."
 read DUMMY
 
 #Install SquirrelMail
-package_install squirrelmail
+apt-get install -y squirrelmail
 squirrelmail-configure
 
 if [ $web_server == "Apache" ]; then
@@ -544,6 +547,13 @@ chown www-data /var/lib/squirrelmail/tmp
 ln -s /etc/squirrelmail/apache.conf /etc/apache2/conf.d/squirrelmail.conf
 /etc/init.d/apache2 reload
 
+fi
+
+if [ $web_server == "Apache" ]; then
+#Remove the Apache2 Stuff for NginX
+/etc/init.d/apache2 stop
+insserv -r apache2
+/etc/init.d/nginx start
 fi
 
 } # end function debian.install_SquirrelMail	
