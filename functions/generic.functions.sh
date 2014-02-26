@@ -95,7 +95,7 @@ if (whiptail --title "Install Extras" --backtitle "$back_title" --yesno "Would y
 	extras=Yes
 	while [ "x$extra_stuff" == "x" ]
 	do
-	extra_stuff=$(whiptail --title "Extras" --backtitle "$back_title" --nocancel --radiolist "Select Extras" 10 50 2 "Theme Installation" "(default)" ON "RoundCube" "" OFF 3>&1 1>&2 2>&3)
+	extra_stuff=$(whiptail --title "Extras" --backtitle "$back_title" --nocancel --radiolist "Select Extras" 10 50 2 "Themes" "(default)" ON "RoundCube" "" OFF 3>&1 1>&2 2>&3)
 	done
 	else
 	extras=No

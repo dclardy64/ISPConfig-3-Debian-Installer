@@ -13,9 +13,9 @@ if [ $(id -u) != "0" ]; then
     exit 1
 fi
 
-if [ ! -f /usr/local/ispconfig/interface/config.inc.php ]; then
+if [ ! -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
     ISPConfig_Installed=No
-elif [ -f /usr/local/ispconfig/interface/config.inc.php ]; then
+elif [ -f /usr/local/ispconfig/interface/lib/config.inc.php ]; then
 	ISPConfig_Installed=Yes
 fi
 
@@ -57,7 +57,9 @@ fi
 source $FUNCTIONPATH/generic.functions.sh
 
 # Load Extras
-source $EXTRAPATH/*.sh
+for file in $EXTRAPATH/*.install.sh; do
+	source $file
+done
 
 
 #Execute functions#
@@ -115,7 +117,7 @@ elif [ $ISPConfig_Installed == "Yes" ]; then
 	warning "ISPConfig 3 already installed! Asking about extra installation scripts."
 	install_extras
 	if [ $extras == "Yes" ]; then
-		if [ $extra_stuff == "Theme Installation" ]; then
+		if [ $extra_stuff == "Themes" ]; then
 			theme_questions
 			if [ $theme == "ISPC-Clean" ]; then
 				function_install_ISPC_Clean
@@ -123,10 +125,9 @@ elif [ $ISPConfig_Installed == "Yes" ]; then
 		elif [ $extra_stuff == "RoundCube" ]; then
 			roundcube_questions
 			if [ $web_server == "Apache" ]; then
-					function_install_Apache
-			elif
-				[ $web_server == "NginX" ]; then
-					function_install_NginX
+				RoundCube_install_Apache
+			elif [ $web_server == "NginX" ]; then
+				RoundCube_install_NginX
 			fi
 		fi
 	fi

@@ -34,7 +34,7 @@ roundcube_questions (){
   fi
 }
 
-function_install_Apache() {
+RoundCube_install_Apache() {
 
 echo "roundcube-core  roundcube/language      select  en_US" | debconf-set-selections
 echo "roundcube-core  roundcube/database-type select  mysql" | debconf-set-selections
@@ -111,16 +111,16 @@ sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /etc/roundcube/m
 
 }
 
-function_install_NginX() {
+RoundCube_install_NginX() {
 
 #Make RoundCube Directory
 mkdir -p /var/www/roundcube 
 
 #RoundCube Download
 cd /tmp
-wget http://downloads.sourceforge.net/project/roundcubemail/roundcubemail/0.9.2/roundcubemail-0.9.2.tar.gz
-tar xvfz roundcubemail-0.9.2.tar.gz
-cd roundcubemail-0.9.2/
+wget http://downloads.sourceforge.net/project/roundcubemail/roundcubemail/0.9.5/roundcubemail-0.9.5.tar.gz
+tar xvfz roundcubemail-0.9.5.tar.gz
+cd roundcubemail-0.9.5/
 mv * /var/www/roundcube/
 
 chown -R www-data:www-data /var/www/roundcube

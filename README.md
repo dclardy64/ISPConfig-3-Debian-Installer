@@ -23,28 +23,17 @@ Installation Instructions:
 3. Enjoy the completed installation.
 
 
-RoundCube Installation Instructions:
+Extra Installation Instructions:
 ------------------------------------
 
 1. Please make sure that you have set the PHP Timezone in the appropriate files.
 2. Run this command:
 
 	```bash
-	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash roundcube_install.sh
+	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash install.sh
 	```
-3. Enjoy the completed installation. For Apache, Roundcube can be accessed at /webmail for all hosts. For NginX, RoundCube can be accessed at webmail.* for all hosts. You will have to add this into DNS records.
-
-Theme Installation Instructions:
-------------------------------------
-
-1. I am assumming that you used the default database installation name here. If not, you will have to manually run these commands.
-2. Run this command:
-
-	```bash
-	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash theme_install.sh
-	```
-3. In the panel, go to Tools->Interface and change the design to ispc-clean.	
-4. Enjoy the completed installation.
+3. Answer the onscreen prompts.
+4. Enjoy the completed installation. 
 
 
 TO DO
