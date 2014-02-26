@@ -9,7 +9,11 @@
 
 
 back_title="ISPConfig 3 System Installer"
-base_ip=$(ip -f inet -o addr show eth0|cut -d\  -f 7 | cut -d/ -f 1)
+if [ ! -f /proc/user_beancounters ]; then
+    base_ip=$(ip -f inet -o addr show eth0|cut -d\  -f 7 | cut -d/ -f 1)
+else
+	base_ip=$(ip -f inet -o addr show venet0|cut -d\  -f 7 | cut -d/ -f 1)
+fi
 
 install_Questions (){
 
@@ -110,7 +114,7 @@ echo "$HOSTNAMEFQDN" > /etc/hostname
 /etc/init.d/hostname.sh start >/dev/null 2>&1
 
 apt-get update
-apt-get upgrade
+apt-get -y upgrade
 apt-get install -y vim-nox dnsutils unzip rkhunter binutils sudo bzip2 zip
 
 echo "dash dash/sh boolean false" | debconf-set-selections

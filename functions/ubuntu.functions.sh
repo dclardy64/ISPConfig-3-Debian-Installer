@@ -472,7 +472,7 @@ squirrelmail-configure
 
 if [ $web_server == "NginX" ]; then
 #Remove the Apache2 Stuff for NginX
-apt-get remove --purge apache2*
+apt-get remove --purge -y apache2*
 /etc/init.d/nginx start
 fi
 
