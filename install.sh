@@ -118,7 +118,7 @@ if [ $ISPConfig_Installed = "No" ]; then
 	install_ISPConfig
 elif [ $ISPConfig_Installed == "Yes" ]; then
 	warning "ISPConfig 3 already installed! Asking about extra installation scripts."
-	install_extras
+	install_Extras
 	if [ $extras == "Yes" ]; then
 		if [ $extra_stuff == "Themes" ]; then
 			theme_questions
