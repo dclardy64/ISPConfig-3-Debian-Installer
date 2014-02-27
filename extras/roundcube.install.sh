@@ -1,9 +1,7 @@
-#!/bin/bash
-
 ###############################################################################################
-# Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
-# Drew Clardy												                                  # 
-# http://drewclardy.com				                                                          #
+# Complete ISPConfig setup script for Debian/Ubuntu Systems         			      #
+# Drew Clardy										      # 
+# http://drewclardy.com				                                              #
 # http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
 
@@ -194,22 +192,4 @@ sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /var/www/roundcu
 sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/roundcube/config/main.inc.php
 
 rm -rf /var/www/roundcube/installer
-<<<<<<< HEAD:roundcube_install.sh
 }
-
-#Execute functions#
-if [ -f /etc/debian_version ]; then 
-	questions
-  	if [ $web_server == "Apache" ]; then
-		function_install_Apache
-	fi
-	if [ $web_server == "NginX" ]; then
-		function_install_NginX
-	fi
-else echo "Unsupported Linux Distribution."
-fi		
-
-#End execute functions#
-=======
-}
->>>>>>> dev:extras/roundcube.install.sh
