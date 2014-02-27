@@ -1,20 +1,15 @@
 #!/bin/bash
 
 ###############################################################################################
-# RoundCube for ISPConfig 3 setup.                      						 			                    #
-# Drew Clardy																				                                          #
-# http://drewclardy.com							                                                          #
+# Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
+# Drew Clardy												                                  # 
+# http://drewclardy.com				                                                          #
+# http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
-
-# Check if user is root
-if [ $(id -u) != "0" ]; then
-    echo "Error: You must be root to run this script, please use the root user to install the software."
-    exit 1
-fi
 
 back_title="ISPConfig 3 RoundCube Installer"
 
-questions (){
+roundcube_questions (){
   while [ "x$web_server" == "x" ]
   do
     web_server=$(whiptail --title "Web Server" --backtitle "$back_title" --nocancel --radiolist "Select Web Server Software" 10 50 2 "Apache" "(default)" ON "NginX" "" OFF 3>&1 1>&2 2>&3)
@@ -39,7 +34,7 @@ questions (){
   fi
 }
 
-function_install_Apache() {
+RoundCube_install_Apache() {
 
 echo "roundcube-core  roundcube/language      select  en_US" | debconf-set-selections
 echo "roundcube-core  roundcube/database-type select  mysql" | debconf-set-selections
@@ -116,7 +111,7 @@ sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /etc/roundcube/m
 
 }
 
-function_install_NginX() {
+RoundCube_install_NginX() {
 
 #Make RoundCube Directory
 mkdir -p /var/www/roundcube 
@@ -199,6 +194,7 @@ sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /var/www/roundcu
 sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/roundcube/config/main.inc.php
 
 rm -rf /var/www/roundcube/installer
+<<<<<<< HEAD:roundcube_install.sh
 }
 
 #Execute functions#
@@ -214,3 +210,6 @@ else echo "Unsupported Linux Distribution."
 fi		
 
 #End execute functions#
+=======
+}
+>>>>>>> dev:extras/roundcube.install.sh

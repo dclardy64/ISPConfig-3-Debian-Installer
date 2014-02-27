@@ -10,51 +10,30 @@ There are some things to note.
 2. I make no guarantees that this will work for you. It should, but I am not responsible for anything that happens to your system. It should be installed on a clean install. If you choose
 not to follow these directions, you are responsible for the damage that you have done.
 
-Debian Installation Instructions:
----------------------------------
+Installation Instructions:
+--------------------------
 
 1. Run this command:
 
 	```bash
-	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash debian_install.sh
+	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash install.sh
 	```
 
 2. Answer the onscreen prompts. The script stops so that you can see the appropriate answers.
 3. Enjoy the completed installation.
 
-Ubuntu Installation Instructions:
----------------------------------
 
-1. Run this command:
-
-	```bash
-	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash ubuntu_install.sh
-	```
-2. Answer the onscreen prompts. The script stops so that you can see the appropriate answers.
-3. Enjoy the completed installation.
-
-RoundCube Installation Instructions:
+Extra Installation Instructions:
 ------------------------------------
 
 1. Please make sure that you have set the PHP Timezone in the appropriate files.
 2. Run this command:
 
 	```bash
-	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash roundcube_install.sh
+	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash install.sh
 	```
-3. Enjoy the completed installation. For Apache, Roundcube can be accessed at /webmail for all hosts. For NginX, RoundCube can be accessed at webmail.* for all hosts. You will have to add this into DNS records.
-
-Theme Installation Instructions:
-------------------------------------
-
-1. I am assumming that you used the default database installation name here. If not, you will have to manually run these commands.
-2. Run this command:
-
-	```bash
-	cd /tmp; wget --no-check-certificate -O ISPConfig3.tgz https://github.com/dclardy64/ISPConfig-3-Debian-Installer/tarball/master; tar zxvf ISPConfig3.tgz; cd *Installer*; bash theme_install.sh
-	```
-3. In the panel, go to Tools->Interface and change the design to ispc-clean.	
-4. Enjoy the completed installation.
+3. Answer the onscreen prompts.
+4. Enjoy the completed installation. 
 
 
 TO DO
