@@ -88,7 +88,7 @@ fi
 
 }
 
-install_extras () {
+install_Extras () {
 
 if ! check_package "whiptail"; then
 	package_install whiptail
