@@ -219,11 +219,12 @@ apt-get install -y fcgiwrap
 
 echo "========================================================================="
 echo "You will be prompted for some information during the install of phpmyadmin."
-echo "Select NO when asked to configure using dbconfig-common"
 echo "Please enter them where needed."
 echo "========================================================================="
 echo "Press ENTER to continue.."
 read DUMMY
+
+DEBIAN_FRONTEND=noninteractive apt-get install -y dbconfig-common
 apt-get install -y phpmyadmin
 
 #Remove the Apache2 Stuff for NginX
