@@ -36,8 +36,8 @@ echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debcon
 echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
 #Install MySQL
-apt-get install -y mysql-client
-apt-get install -y mysql-server 
+apt-get install -y mysql-server
+apt-get install -y mysql-client 
 
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
@@ -51,15 +51,15 @@ debian.install_MariaDB (){
 #Add MariaDB Repos
 apt-get install -y python-software-properties
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
-add-apt-repository 'deb http://mirror.netcologne.de/mariadb/repo/5.5/debian wheezy main'
+add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/5.5/debian wheezy main'
 apt-get update
 
 #Install MariaDB
 echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
 echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
-apt-get install -y mariadb-client 
-apt-get install -y mariadb-server
+apt-get install -y mariadb-server 
+apt-get install -y mariadb-client
 
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
