@@ -106,6 +106,8 @@ fi
 
 install_Basic () {
 
+package_install hostname
+
 #Set hostname and FQDN
 sed -i "s/${serverIP}.*/${serverIP} ${HOSTNAMEFQDN} ${HOSTNAMESHORT}/" /etc/hosts
 echo "$HOSTNAMEFQDN" > /etc/hostname
