@@ -12,10 +12,31 @@ ubuntu.install_Repos (){
 #Updates server and install commonly used utilities
 cp /etc/apt/sources.list /etc/apt/sources.list.backup
 cat > /etc/apt/sources.list <<EOF
-deb mirror://mirrors.ubuntu.com/mirrors.txt precise main restricted universe multiverse
-deb mirror://mirrors.ubuntu.com/mirrors.txt precise-updates main restricted universe multiverse
-deb mirror://mirrors.ubuntu.com/mirrors.txt precise-backports main restricted universe multiverse
-deb mirror://mirrors.ubuntu.com/mirrors.txt precise-security main restricted universe multiverse
+#############################################################
+################### OFFICIAL UBUNTU REPOS ###################
+#############################################################
+
+###### Ubuntu Main Repos
+deb http://02.archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse
+deb-src http://02.archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse
+
+###### Ubuntu Update Repos
+deb http://02.archive.ubuntu.com/ubuntu/ saucy-security main restricted universe multiverse
+deb http://02.archive.ubuntu.com/ubuntu/ saucy-updates main restricted universe multiverse
+deb http://02.archive.ubuntu.com/ubuntu/ saucy-proposed main restricted universe multiverse
+deb http://02.archive.ubuntu.com/ubuntu/ saucy-backports main restricted universe multiverse
+deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-updates main restricted universe multiverse
+deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-proposed main restricted universe multiverse
+deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-backports main restricted universe multiverse
+
+###### Ubuntu Partner Repo
+deb http://archive.canonical.com/ubuntu saucy partner
+deb-src http://archive.canonical.com/ubuntu saucy partner
+
+###### Ubuntu Extras Repo
+deb http://extras.ubuntu.com/ubuntu saucy main
+deb-src http://extras.ubuntu.com/ubuntu saucy main
+
 EOF
 
 } #end function ubuntu.install_Repos
