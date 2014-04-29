@@ -135,6 +135,3 @@ elif [ $ISPConfig_Installed == "Yes" ]; then
 		fi
 	fi
 fi
-
-
-
