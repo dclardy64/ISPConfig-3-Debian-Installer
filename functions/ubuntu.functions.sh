@@ -30,9 +30,9 @@ apt-get -y remove apparmor apparmor-utils
 
 ubuntu.install_MySQL (){
 
-#Install MySQL, phpMyAdmin
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+#Install MySQL
+echo "mysql-server-5.6 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.6 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
 apt-get -y install mysql-client mysql-server
 apt-get -y install php5-cli php5-mysql php5-mcrypt mcrypt
@@ -52,9 +52,9 @@ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu precise main'
 apt-get update
 
-#Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+#Install MariaDB
+echo "mysql-server-5.6 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.6 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
 apt-get -y install mariadb-client mariadb-server
 apt-get -y install php5-cli php5-mysqlnd php5-mcrypt mcrypt

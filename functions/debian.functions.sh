@@ -32,8 +32,8 @@ cat dotdeb.gpg | apt-key add -
 
 debian.install_MySQL () {
 
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.6 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.6 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
 #Install MySQL
 apt-get install -y mysql-server
@@ -56,8 +56,8 @@ add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/5.5/debian wheezy mai
 apt-get update
 
 #Install MariaDB
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.6 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.6 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
 apt-get install -y mariadb-server 
 apt-get install -y mariadb-client
