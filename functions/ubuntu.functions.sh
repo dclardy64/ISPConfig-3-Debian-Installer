@@ -61,7 +61,7 @@ sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1
 
 ubuntu.install_MariaDB (){
 
-apt-get install -y python-software-properties
+apt-get install -y software-properties-common python-software-properties
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 
 if [ $maria_version == "5.5" ]; then
