@@ -67,7 +67,7 @@ if [ $ISPConfig_Installed = "No" ]; then
 	install_Questions
 	$DISTRIBUTION.install_Repos
 	install_Basic
-	if [ $DISTRIBUTION == "ubuntu"]; then
+	if [ $DISTRIBUTION == "ubuntu" ]; then
 		ubuntu.install_DisableAppArmor
 	fi
 	if [ $sql_server == "MySQL" ]; then
