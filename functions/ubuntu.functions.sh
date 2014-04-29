@@ -73,7 +73,7 @@ ubuntu.install_MariaDB (){
 apt-get -y install software-properties-common
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu precise main'
-apt-get update
+
 
 #Install MariaDB
 echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
@@ -84,6 +84,8 @@ Package: *
 Pin: release o=MariaDB
 Pin-Priority: 1000
 EOF
+
+apt-get update
 
 apt-get -y install mariadb-client mariadb-server
 apt-get -y install php5-cli php5-mysqlnd php5-mcrypt mcrypt

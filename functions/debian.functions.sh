@@ -55,7 +55,6 @@ debian.install_MariaDB (){
 apt-get install -y python-software-properties
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/5.5/debian wheezy main'
-apt-get update
 
 #Install MariaDB
 echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
@@ -66,6 +65,8 @@ Package: *
 Pin: release o=MariaDB
 Pin-Priority: 1000
 EOF
+
+apt-get update
 
 apt-get install -y mariadb-server 
 apt-get install -y mariadb-client
