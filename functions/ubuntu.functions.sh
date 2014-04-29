@@ -31,14 +31,6 @@ deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-updates main restricted unive
 deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-proposed main restricted universe multiverse
 deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-backports main restricted universe multiverse
 
-###### Ubuntu Partner Repo
-deb http://archive.canonical.com/ubuntu saucy partner
-deb-src http://archive.canonical.com/ubuntu saucy partner
-
-###### Ubuntu Extras Repo
-deb http://extras.ubuntu.com/ubuntu saucy main
-deb-src http://extras.ubuntu.com/ubuntu saucy main
-
 EOF
 
 } #end function ubuntu.install_Repos
