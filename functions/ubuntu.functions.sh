@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ###############################################################################################
 # Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
 # Drew Clardy												                                  # 
@@ -74,8 +76,14 @@ add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu precis
 apt-get update
 
 #Install MariaDB
-echo "mysql-server-5.6 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.6 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+
+cat > /etc/apt/preferences.d/mariadb.pref <<EOF
+Package: *
+Pin: release o=MariaDB
+Pin-Priority: 1000
+EOF
 
 apt-get -y install mariadb-client mariadb-server
 apt-get -y install php5-cli php5-mysqlnd php5-mcrypt mcrypt

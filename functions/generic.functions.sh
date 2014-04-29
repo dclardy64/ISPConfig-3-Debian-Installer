@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ###############################################################################################
 # Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
 # Drew Clardy												                                  # 

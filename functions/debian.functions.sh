@@ -1,4 +1,6 @@
-﻿###############################################################################################
+﻿#!/bin/bash
+
+###############################################################################################
 # Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
 # Drew Clardy												                                  # 
 # http://drewclardy.com				                                                          #
@@ -56,8 +58,14 @@ add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/5.5/debian wheezy mai
 apt-get update
 
 #Install MariaDB
-echo "mysql-server-5.6 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.6 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+
+cat > /etc/apt/preferences.d/mariadb.pref <<EOF
+Package: *
+Pin: release o=MariaDB
+Pin-Priority: 1000
+EOF
 
 apt-get install -y mariadb-server 
 apt-get install -y mariadb-client
