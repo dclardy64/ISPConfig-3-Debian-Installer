@@ -58,6 +58,12 @@ while [ "x$sql_server" == "x" ]
 do
 sql_server=$(whiptail --title "SQL Server" --backtitle "$back_title" --nocancel --radiolist "Select SQL Server Software" 10 50 2 "MySQL" "(default)" ON "MariaDB" "" OFF 3>&1 1>&2 2>&3)
 done
+if [ $sql_server == "MariaDB" ]; then
+	while ["x$maria_version" == "x" ]
+	do
+	maria_version=$(whiptail --title "MariaDB Version" --backtitle "$back_title" --nocancel --radiolist "Select MariaDB Version" 10 50 2 "5.5" "(default)" ON "10.0" "" OFF 3>&1 1>&2 2>&3)
+	done		
+fi
 while [ "x$mysql_pass" == "x" ]
 do
 mysql_pass=$(whiptail --title "MySQL Root Password" --backtitle "$back_title" --inputbox "Please specify a MySQL Root Password" --nocancel 10 50 3>&1 1>&2 2>&3)

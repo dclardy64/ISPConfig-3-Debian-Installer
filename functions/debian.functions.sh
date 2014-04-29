@@ -51,14 +51,17 @@ sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1
 
 debian.install_MariaDB (){
 
-#Add MariaDB Repos
 apt-get install -y python-software-properties
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
-add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/5.5/debian wheezy main'
 
-#Install MariaDB
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+if [ $maria_version == "5.5" ]; then
+	add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/5.5/debian wheezy main'
+elif [ $maria_version == "10.0" ]; then
+	add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/10.0/debian wheezy main'
+fi
+
+echo "mysql-server mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
 cat > /etc/apt/preferences.d/mariadb.pref <<EOF
 Package: *

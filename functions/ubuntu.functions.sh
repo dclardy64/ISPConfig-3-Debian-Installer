@@ -69,15 +69,17 @@ sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1
 
 ubuntu.install_MariaDB (){
 
-#Add MariaDB Repos
-apt-get -y install software-properties-common
+apt-get install -y python-software-properties
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
-add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu precise main'
 
+if [ $maria_version == "5.5" ]; then
+    add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu saucy main'
+elif [ $maria_version == "10.0" ]; then
+    add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu saucy main'
+fi
 
-#Install MariaDB
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+echo "mysql-server mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
 cat > /etc/apt/preferences.d/mariadb.pref <<EOF
 Package: *
@@ -87,15 +89,16 @@ EOF
 
 apt-get update
 
-apt-get -y install mariadb-client mariadb-server
+apt-get install -y mariadb-server 
+apt-get install -y mariadb-client
 apt-get -y install php5-cli php5-mysqlnd php5-mcrypt mcrypt
-    
+
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
 sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
 /etc/init.d/mysql restart
 
-} #end function ubuntu.install_MariaDBCourier
+} #end function ubuntu.install_MariaDB
 
 ubuntu.install_Courier (){
 
