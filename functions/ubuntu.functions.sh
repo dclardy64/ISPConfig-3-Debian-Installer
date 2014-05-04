@@ -14,22 +14,20 @@ ubuntu.install_Repos (){
 #Updates server and install commonly used utilities
 cp /etc/apt/sources.list /etc/apt/sources.list.backup
 cat > /etc/apt/sources.list <<EOF
-#############################################################
-################### OFFICIAL UBUNTU REPOS ###################
-#############################################################
+deb http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty main
+deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty-updates main
 
-###### Ubuntu Main Repos
-deb http://02.archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse
-deb-src http://02.archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse
+deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty universe
+deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty-updates universe
 
-###### Ubuntu Update Repos
-deb http://02.archive.ubuntu.com/ubuntu/ saucy-security main restricted universe multiverse
-deb http://02.archive.ubuntu.com/ubuntu/ saucy-updates main restricted universe multiverse
-deb http://02.archive.ubuntu.com/ubuntu/ saucy-proposed main restricted universe multiverse
-deb http://02.archive.ubuntu.com/ubuntu/ saucy-backports main restricted universe multiverse
-deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-updates main restricted universe multiverse
-deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-proposed main restricted universe multiverse
-deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-backports main restricted universe multiverse
+
+deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty multiverse
+deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty-updates multiverse
+
+
+deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multivers
+deb-src http://security.ubuntu.com/ubuntu trusty-security main
+deb-src http://security.ubuntu.com/ubuntu trusty-security universe
 
 EOF
 
@@ -66,9 +64,10 @@ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 
 if [ $maria_version == "5.5" ]; then
     add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu saucy main'
-elif [ $maria_version == "10.0" ]; then
-    add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu saucy main'
 fi
+if [ $maria_version == "10.0" ]; then
+    add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu saucy main'
+fis
 
 echo "mysql-server mysql-server/root_password password $mysql_pass" | debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
@@ -101,6 +100,7 @@ echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 echo "courier-base courier-base/webadmin-configmode boolean false" | debconf-set-selections
 echo "courier-ssl courier-ssl/certnotice note" | debconf-set-selections
 
+service sendmail stop; update-rc.d -f sendmail remove
 apt-get install -y postfix  postfix-doc courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4
 
 
@@ -123,6 +123,7 @@ ubuntu.install_Dovecot (){
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
 echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 
+service sendmail stop; update-rc.d -f sendmail remove
 apt-get install -y postfix postfix-mysql postfix-doc openssl getmail4 dovecot-imapd dovecot-pop3d dovecot-mysql dovecot-sieve 
 
 #Uncommenting some Postfix configuration files
@@ -164,7 +165,7 @@ echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf
 #echo 'phpmyadmin      phpmyadmin/dbconfig-reinstall   boolean false' | debconf-set-selections
 #echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-set-selections
 
-apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5-common php5-gd php5-imap phpmyadmin php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby libapache2-mod-python php5-curl php5-intl php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
+apt-get install apache2 apache2-doc apache2-utils libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-python php5-curl php5-intl php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
 
 a2enmod suexec rewrite ssl actions include
 a2enmod dav_fs dav auth_digest
@@ -206,7 +207,7 @@ sed -i "s/x-ruby                             rb/x-ruby                          
 #Install X-Cache
 apt-get -y install php5-xcache
 
-/etc/init.d/apache2 restart
+service apache2 restart
 
 } #end function ubuntu.install_Apache2
 
