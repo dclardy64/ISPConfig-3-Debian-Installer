@@ -14,20 +14,29 @@ ubuntu.install_Repos (){
 #Updates server and install commonly used utilities
 cp /etc/apt/sources.list /etc/apt/sources.list.backup
 cat > /etc/apt/sources.list <<EOF
-deb http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty main
-deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty-updates main
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates main restricted
 
-deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty universe
-deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty-updates universe
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty universe
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty universe
 
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates universe
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates universe
 
-deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty multiverse
-deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty-updates multiverse
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty multiverse
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty multiverse
 
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates multiverse
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates multiverse
 
-deb-src http://us-west-2.ec2.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multivers
-deb-src http://security.ubuntu.com/ubuntu trusty-security main
-deb-src http://security.ubuntu.com/ubuntu trusty-security universe
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-backports main restricted universe multiverse
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-backports main restricted universe multiverse
+
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted
+
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security universe
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-security universe
 
 EOF
 

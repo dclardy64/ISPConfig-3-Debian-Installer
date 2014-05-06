@@ -22,13 +22,24 @@ deb-src http://security.debian.org/ wheezy/updates main contrib non-free
 deb http://ftp.us.debian.org/debian/ wheezy-updates main contrib non-free
 deb-src http://ftp.us.debian.org/debian/ wheezy-updates main contrib non-free
 
+EOF
+
+cat > /etc/apt/sources.list.d/dotdeb.list <<EOF
 # DotDeb
 deb http://packages.dotdeb.org wheezy all
 deb-src http://packages.dotdeb.org wheezy all
+
 EOF
 
 wget http://www.dotdeb.org/dotdeb.gpg
 cat dotdeb.gpg | apt-key add - 
+
+apt-get update
+apt-get install netselect-apt
+
+cd /tmp
+netselect-apt -s -n
+mv sources.list /etc/apt/sources.list
 
 } #end function debian.install_Repos
 
