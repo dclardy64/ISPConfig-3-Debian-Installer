@@ -1,7 +1,7 @@
 ###############################################################################################
-# Complete ISPConfig setup script for Debian/Ubuntu Systems         			      #
-# Drew Clardy										      # 
-# http://drewclardy.com				                                              #
+# Complete ISPConfig setup script for Debian/Ubuntu Systems         			                    #
+# Drew Clardy										                                                              # 
+# http://drewclardy.com				                                                                #
 # http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
 
@@ -181,15 +181,14 @@ ln -s /etc/nginx/sites-available/webmail.vhost webmail.vhost
 /etc/init.d/nginx reload
 
 cd /var/www/roundcube/config
-mv db.inc.php.dist db.inc.php
-mv main.inc.php.dist main.inc.php
+mv config.inc.php.sample config.inc.php
 
-sed -i "s|mysql://roundcube:pass@localhost/roundcubemail|mysqli://$roundcube_user:$roundcube_pass@localhost/$roundcube_db|" /var/www/roundcube/config/db.inc.php
+sed -i "s|mysql://roundcube:pass@localhost/roundcubemail|mysqli://$roundcube_user:$roundcube_pass@localhost/$roundcube_db|" /var/www/roundcube/config/config.inc.php
 
-sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /var/www/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/roundcube/config/main.inc.php
+sed -i "s|^\(\$config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/config.inc.php
+sed -i "s|^\(\$config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/config.inc.php
+sed -i "s|^\(\$config\['smtp_user'\] =\).*$|\1 \'%u\';|" /var/www/roundcube/config/config.inc.php
+sed -i "s|^\(\$config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/roundcube/config/config.inc.php
 
 rm -rf /var/www/roundcube/installer
 }
