@@ -377,12 +377,12 @@ filter   = pureftpd
 logpath  = /var/log/syslog
 maxretry = 3
 
-[sasl]
+[postfix-sasl]
 enabled  = true
 port     = smtp
 filter   = sasl
 logpath  = /var/log/mail.log
-maxretry = 5
+maxretry = 3
 
 [courierpop3]
 enabled  = true
@@ -464,7 +464,7 @@ action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps",
 logpath = /var/log/mail.log
 maxretry = 5
 
-[sasl]
+[postfix-sasl]
 enabled  = true
 port     = smtp
 filter   = sasl
