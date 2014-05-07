@@ -484,7 +484,9 @@ failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted logi
 ignoreregex =
 EOF
 
-/etc/init.d/fail2ban restart
+echo "ignoreregex =" >> /etc/fail2ban/filter.d/postfix-sasl.conf
+
+service fail2ban restart
 
 } # end function ubuntu.install_Fail2BanRuleDovecot
 
