@@ -158,9 +158,8 @@ ubuntu.install_Virus (){
 #Install Amavisd-new, SpamAssassin, And Clamav
 apt-get -y install amavisd-new spamassassin clamav clamav-daemon zoo unzip bzip2 arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl zip libnet-dns-perl
 
-#Stop SpamAssassin. ISPConfig 3 uses amavisd
-/etc/init.d/spamassassin stop
-insserv -rf spamassassin
+service spamassassin stop
+update-rc.d -f spamassassin remove
 
 } #end function ubuntu.install_Virus
 
