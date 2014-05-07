@@ -75,7 +75,7 @@ if [ $maria_version == "5.5" ]; then
 fi
 if [ $maria_version == "10.0" ]; then
     add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu saucy main'
-fis
+fi
 
 echo "mysql-server mysql-server/root_password password $mysql_pass" | debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
