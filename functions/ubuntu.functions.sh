@@ -37,7 +37,6 @@ deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted
 
 deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security universe
 deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-security universe
-
 EOF
 
 } #end function ubuntu.install_Repos
