@@ -114,6 +114,9 @@ fi
 
 install_Basic () {
 
+apt-get update
+apt-get upgrade
+
 package_install hostname
 
 #Set hostname and FQDN

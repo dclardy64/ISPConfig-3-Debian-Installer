@@ -228,10 +228,10 @@ echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-s
 
 apt-get -y install nginx
 
-/etc/init.d/apache2 stop
+service apache2 stop
 update-rc.d -f apache2 remove
 
-/etc/init.d/nginx start
+service nginx start
 
 apt-get -y install php5-fpm php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
 apt-get -y install php-apc
@@ -242,9 +242,9 @@ apt-get -y install fcgiwrap
 apt-get -y install phpmyadmin
 
 #Remove the Apache2 Stuff for NginX
-/etc/init.d/apache2 stop
-insserv -r apache2
-/etc/init.d/nginx start
+service apache2 stop
+update-rc.d -f apache2 remove
+service nginx start
 
 #Fix Ming Error
 rm /etc/php5/cli/conf.d/ming.ini
