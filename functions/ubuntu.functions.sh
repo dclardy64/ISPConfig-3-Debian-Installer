@@ -60,8 +60,9 @@ apt-get -y install php5-cli php5-mysql php5-mcrypt mcrypt
     
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
-sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
-/etc/init.d/mysql restart
+sed -i 's/bind-address/#bind-address' /etc/mysql/my.cnf
+
+service mysql restart
 
 } #end function ubuntu.install_MySQL
 
@@ -467,7 +468,7 @@ maxretry = 5
 [postfix-sasl]
 enabled  = true
 port     = smtp
-filter   = sasl
+filter   = postfix-sasl
 logpath  = /var/log/mail.log
 maxretry = 3
 EOF
