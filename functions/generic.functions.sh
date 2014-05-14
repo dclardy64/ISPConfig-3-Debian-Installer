@@ -115,7 +115,7 @@ fi
 install_Basic () {
 
 apt-get update
-apt-get upgrade
+apt-get -y upgrade
 
 package_install hostname
 
