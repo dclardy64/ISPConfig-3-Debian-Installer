@@ -51,7 +51,7 @@ echo "mysql-server-5.6 mysql-server/root_password_again password $mysql_pass" | 
 #Install MySQL
 apt-get install -y mysql-server
 apt-get install -y mysql-client 
-apt-get -y install php5-cli php5-mysql php5-mcrypt mcrypt
+apt-get -y install php5-cli php5-mysqlnd php5-mcrypt mcrypt
 
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
