@@ -1,6 +1,13 @@
 #!/bin/bash
 # Functions For Displaying Messages & Headers
 
+# Print Headeline
+headline(){
+  echo -e "\e[1;34m###########################################"
+  echo -e "##########  \e[1;37m$*"
+  echo -e "\e[1;34m###########################################\e[0m"
+}
+
 # Print Header
 function header() {
 	echo -e "\e[1;34m>> \e[1;37m$* \e[1;34m<<\e[0m"

@@ -66,17 +66,23 @@ done
 if [ $ISPConfig_Installed = "No" ]; then
 	install_Questions
 	$DISTRIBUTION.install_Repos
+	
+	headline install basics
 	install_Basic
 	if [ $DISTRIBUTION == "ubuntu" ]; then
 		ubuntu.install_DisableAppArmor
 	fi
+	
+	headline install database
 	if [ $sql_server == "MySQL" ]; then
 		$DISTRIBUTION.install_MySQL
-	fi
-	if [ $sql_server == "MariaDB" ]; then
+	elif [ $sql_server == "MariaDB" ]; then
 		$DISTRIBUTION.install_MariaDB
+	else
+		echo 'no database selcted'
 	fi
 	if [ $install_mail_server == "Yes" ]; then
+		headline install mail server
 		if [ $mail_server == "Courier" ]; then
 			$DISTRIBUTION.install_Courier
 		elif [ $mail_server == "Dovecot" ]; then
@@ -85,6 +91,7 @@ if [ $ISPConfig_Installed = "No" ]; then
 		$DISTRIBUTION.install_Virus
 	fi
 	if [ $install_web_server == "Yes" ]; then
+		headline install web server
 		if [ $web_server == "Apache" ]; then
 			$DISTRIBUTION.install_Apache
 		elif [ $web_server == "NginX" ]; then
@@ -93,29 +100,43 @@ if [ $ISPConfig_Installed = "No" ]; then
 		$DISTRIBUTION.install_Stats
 	fi
 	if [ $mailman == "Yes" ]; then
+		headline install mailman
 		$DISTRIBUTION.install_Mailman
 	fi
 	if [ $install_ftp_server == "Yes" ]; then
+		headline ftp
 		$DISTRIBUTION.install_PureFTPD
 	fi
 	if [ $install_dns_server == "Yes" ]; then
+		headline bind;
 		$DISTRIBUTION.install_Bind
 	fi
 	if [ $quota == "Yes" ]; then
+		headline quota;
 		$DISTRIBUTION.install_Quota
 	fi
 	if [ $jailkit == "Yes" ]; then
+		headline jailkit;
 		$DISTRIBUTION.install_Jailkit
 	fi
+	
+	headline fail2ban
 	$DISTRIBUTION.install_Fail2Ban
+	
+	headline mail server
 	if [ $mail_server == "Courier" ]; then
 		$DISTRIBUTION.install_Fail2BanRulesCourier
 	fi
 	if [ $mail_server == "Dovecot" ]; then
 		$DISTRIBUTION.install_Fail2BanRulesDovecot
 	fi
+	
+	headline install_SquirrelMail
 	$DISTRIBUTION.install_SquirrelMail
+	
+	headline Finally installin ISPConfig itself from http://www.ispconfig.org/downloads/ISPConfig-3-stable.tar.gz
 	install_ISPConfig
+	
 elif [ $ISPConfig_Installed == "Yes" ]; then
 	warning "ISPConfig 3 already installed! Asking about extra installation scripts."
 	install_Extras
