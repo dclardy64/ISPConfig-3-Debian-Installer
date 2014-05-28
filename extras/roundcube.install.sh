@@ -121,7 +121,7 @@ tar xvfz roundcubemail-1.0.1.tar.gz
 cd roundcubemail-1.0.1/
 mv * /var/www/roundcube/
 
-chown -R www-data:www-data /var/www/roundcube
+chown -R ispapps:ispapps /var/www/roundcube
 
 mysql -uroot -p$mysql_pass -e "CREATE DATABASE $roundcube_db;"
 mysql -uroot -p$mysql_pass -e "GRANT ALL PRIVILEGES ON $roundcube_db.* TO '$roundcube_user'@'localhost' IDENTIFIED BY '$roundcube_pass';"
@@ -168,7 +168,7 @@ cat > /etc/nginx/sites-available/webmail.vhost <<"EOF"
       location ~ \.php$ {
           try_files $uri =404;
           include /etc/nginx/fastcgi_params;
-          fastcgi_pass unix://var/run/php5-fpm.sock;
+          fastcgi_pass unix://var/lib/php5-fpm/apps.sock;
           fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
           fastcgi_index index.php;
       }
