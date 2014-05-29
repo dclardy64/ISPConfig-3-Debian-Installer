@@ -66,16 +66,19 @@ done
 if [ $ISPConfig_Installed = "No" ]; then
 	install_Questions
 	$DISTRIBUTION.install_Repos
+	header "Installing Basics..."
 	install_Basic
 	if [ $DISTRIBUTION == "ubuntu" ]; then
 		ubuntu.install_DisableAppArmor
 	fi
+	header "Installing Database Selection..."
 	if [ $sql_server == "MySQL" ]; then
 		$DISTRIBUTION.install_MySQL
 	fi
 	if [ $sql_server == "MariaDB" ]; then
 		$DISTRIBUTION.install_MariaDB
 	fi
+	header "Installing Mail Server Selection..."
 	if [ $install_mail_server == "Yes" ]; then
 		if [ $mail_server == "Courier" ]; then
 			$DISTRIBUTION.install_Courier
