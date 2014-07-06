@@ -1,4 +1,6 @@
-﻿###############################################################################################
+#!/bin/bash
+
+###############################################################################################
 # Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
 # Drew Clardy												                                  # 
 # http://drewclardy.com				                                                          #
@@ -20,25 +22,36 @@ deb-src http://security.debian.org/ wheezy/updates main contrib non-free
 deb http://ftp.us.debian.org/debian/ wheezy-updates main contrib non-free
 deb-src http://ftp.us.debian.org/debian/ wheezy-updates main contrib non-free
 
+EOF
+
+cat > /etc/apt/sources.list.d/dotdeb.list <<EOF
 # DotDeb
 deb http://packages.dotdeb.org wheezy all
 deb-src http://packages.dotdeb.org wheezy all
+
 EOF
 
 wget http://www.dotdeb.org/dotdeb.gpg
 cat dotdeb.gpg | apt-key add - 
 
+apt-get update
+apt-get install netselect-apt
+
+cd /tmp
+netselect-apt -s -n
+mv sources.list /etc/apt/sources.list
+
 } #end function debian.install_Repos
 
 debian.install_MySQL () {
 
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.6 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.6 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
 #Install MySQL
 apt-get install -y mysql-server
 apt-get install -y mysql-client 
-apt-get -y install php5-cli php5-mysql php5-mcrypt mcrypt
+apt-get -y install php5-cli php5-mysqlnd php5-mcrypt mcrypt
 
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
@@ -49,15 +62,25 @@ sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1
 
 debian.install_MariaDB (){
 
-#Add MariaDB Repos
 apt-get install -y python-software-properties
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
-add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/5.5/debian wheezy main'
-apt-get update
 
-#Install MariaDB
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+if [ $maria_version == "5.5" ]; then
+	add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/5.5/debian wheezy main'
+elif [ $maria_version == "10.0" ]; then
+	add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/10.0/debian wheezy main'
+fi
+
+echo "mysql-server mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+
+cat > /etc/apt/preferences.d/mariadb.pref <<EOF
+Package: *
+Pin: release o=MariaDB
+Pin-Priority: 1000
+EOF
+
+apt-get update
 
 apt-get install -y mariadb-server 
 apt-get install -y mariadb-client

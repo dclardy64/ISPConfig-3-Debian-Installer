@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ###############################################################################################
 # Complete ISPConfig setup script for Debian/Ubuntu Systems         						  #
 # Drew Clardy												                                  # 
@@ -12,31 +14,29 @@ ubuntu.install_Repos (){
 #Updates server and install commonly used utilities
 cp /etc/apt/sources.list /etc/apt/sources.list.backup
 cat > /etc/apt/sources.list <<EOF
-#############################################################
-################### OFFICIAL UBUNTU REPOS ###################
-#############################################################
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates main restricted
 
-###### Ubuntu Main Repos
-deb http://02.archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse
-deb-src http://02.archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty universe
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty universe
 
-###### Ubuntu Update Repos
-deb http://02.archive.ubuntu.com/ubuntu/ saucy-security main restricted universe multiverse
-deb http://02.archive.ubuntu.com/ubuntu/ saucy-updates main restricted universe multiverse
-deb http://02.archive.ubuntu.com/ubuntu/ saucy-proposed main restricted universe multiverse
-deb http://02.archive.ubuntu.com/ubuntu/ saucy-backports main restricted universe multiverse
-deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-updates main restricted universe multiverse
-deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-proposed main restricted universe multiverse
-deb-src http://02.archive.ubuntu.com/ubuntu/ saucy-backports main restricted universe multiverse
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates universe
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates universe
 
-###### Ubuntu Partner Repo
-deb http://archive.canonical.com/ubuntu saucy partner
-deb-src http://archive.canonical.com/ubuntu saucy partner
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty multiverse
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty multiverse
 
-###### Ubuntu Extras Repo
-deb http://extras.ubuntu.com/ubuntu saucy main
-deb-src http://extras.ubuntu.com/ubuntu saucy main
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates multiverse
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates multiverse
 
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-backports main restricted universe multiverse
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-backports main restricted universe multiverse
+
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted
+
+deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security universe
+deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-security universe
 EOF
 
 } #end function ubuntu.install_Repos
@@ -51,41 +51,54 @@ apt-get -y remove apparmor apparmor-utils
 
 ubuntu.install_MySQL (){
 
-#Install MySQL, phpMyAdmin
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+#Install MySQL
+echo "mysql-server-5.6 mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server-5.6 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
 
 apt-get -y install mysql-client mysql-server
 apt-get -y install php5-cli php5-mysql php5-mcrypt mcrypt
     
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
-sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
-/etc/init.d/mysql restart
+sed -i 's/bind-address/#bind-address' /etc/mysql/my.cnf
+
+service mysql restart
 
 } #end function ubuntu.install_MySQL
 
 ubuntu.install_MariaDB (){
 
-#Add MariaDB Repos
-apt-get -y install software-properties-common
+apt-get install -y software-properties-common python-software-properties
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
-add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu precise main'
+
+if [ $maria_version == "5.5" ]; then
+    add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/5.5/ubuntu saucy main'
+fi
+if [ $maria_version == "10.0" ]; then
+    add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu saucy main'
+fi
+
+echo "mysql-server mysql-server/root_password password $mysql_pass" | debconf-set-selections
+echo "mysql-server mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
+
+cat > /etc/apt/preferences.d/mariadb.pref <<EOF
+Package: *
+Pin: release o=MariaDB
+Pin-Priority: 1000
+EOF
+
 apt-get update
 
-#Install Postfix, Courier, Saslauthd, MySQL, phpMyAdmin, rkhunter, binutils
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_pass" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_pass" | debconf-set-selections
-
-apt-get -y install mariadb-client mariadb-server
+apt-get install -y mariadb-server 
+apt-get install -y mariadb-client
 apt-get -y install php5-cli php5-mysqlnd php5-mcrypt mcrypt
-    
+
 #Allow MySQL to listen on all interfaces
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.backup
 sed -i 's/bind-address           = 127.0.0.1/#bind-address           = 127.0.0.1/' /etc/mysql/my.cnf
 /etc/init.d/mysql restart
 
-} #end function ubuntu.install_MariaDBCourier
+} #end function ubuntu.install_MariaDB
 
 ubuntu.install_Courier (){
 
@@ -96,6 +109,7 @@ echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 echo "courier-base courier-base/webadmin-configmode boolean false" | debconf-set-selections
 echo "courier-ssl courier-ssl/certnotice note" | debconf-set-selections
 
+service sendmail stop; update-rc.d -f sendmail remove
 apt-get install -y postfix  postfix-doc courier-authdaemon courier-authlib-mysql courier-pop courier-pop-ssl courier-imap courier-imap-ssl libsasl2-2 libsasl2-modules libsasl2-modules-sql sasl2-bin libpam-mysql openssl courier-maildrop getmail4
 
 
@@ -118,6 +132,7 @@ ubuntu.install_Dovecot (){
 echo "postfix postfix/main_mailer_type select Internet Site" | debconf-set-selections
 echo "postfix postfix/mailname string $HOSTNAMEFQDN" | debconf-set-selections
 
+service sendmail stop; update-rc.d -f sendmail remove
 apt-get install -y postfix postfix-mysql postfix-doc openssl getmail4 dovecot-imapd dovecot-pop3d dovecot-mysql dovecot-sieve 
 
 #Uncommenting some Postfix configuration files
@@ -144,9 +159,8 @@ ubuntu.install_Virus (){
 #Install Amavisd-new, SpamAssassin, And Clamav
 apt-get -y install amavisd-new spamassassin clamav clamav-daemon zoo unzip bzip2 arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl zip libnet-dns-perl
 
-#Stop SpamAssassin. ISPConfig 3 uses amavisd
-/etc/init.d/spamassassin stop
-insserv -rf spamassassin
+service spamassassin stop
+update-rc.d -f spamassassin remove
 
 } #end function ubuntu.install_Virus
 
@@ -159,7 +173,7 @@ echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf
 #echo 'phpmyadmin      phpmyadmin/dbconfig-reinstall   boolean false' | debconf-set-selections
 #echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-set-selections
 
-apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5-common php5-gd php5-imap phpmyadmin php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby libapache2-mod-python php5-curl php5-intl php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
+apt-get install apache2 apache2-doc apache2-utils libapache2-mod-php5 php5 php5-common php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-python php5-curl php5-intl php5-memcache php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl memcached
 
 a2enmod suexec rewrite ssl actions include
 a2enmod dav_fs dav auth_digest
@@ -201,7 +215,7 @@ sed -i "s/x-ruby                             rb/x-ruby                          
 #Install X-Cache
 apt-get -y install php5-xcache
 
-/etc/init.d/apache2 restart
+service apache2 restart
 
 } #end function ubuntu.install_Apache2
 
@@ -215,10 +229,10 @@ echo 'phpmyadmin      phpmyadmin/dbconfig-install     boolean false' | debconf-s
 
 apt-get -y install nginx
 
-/etc/init.d/apache2 stop
+service apache2 stop
 update-rc.d -f apache2 remove
 
-/etc/init.d/nginx start
+service nginx start
 
 apt-get -y install php5-fpm php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
 apt-get -y install php-apc
@@ -229,9 +243,9 @@ apt-get -y install fcgiwrap
 apt-get -y install phpmyadmin
 
 #Remove the Apache2 Stuff for NginX
-/etc/init.d/apache2 stop
-insserv -r apache2
-/etc/init.d/nginx start
+service apache2 stop
+update-rc.d -f apache2 remove
+service nginx start
 
 #Fix Ming Error
 rm /etc/php5/cli/conf.d/ming.ini
@@ -364,12 +378,12 @@ filter   = pureftpd
 logpath  = /var/log/syslog
 maxretry = 3
 
-[sasl]
+[postfix-sasl]
 enabled  = true
 port     = smtp
 filter   = sasl
 logpath  = /var/log/mail.log
-maxretry = 5
+maxretry = 3
 
 [courierpop3]
 enabled  = true
@@ -451,10 +465,10 @@ action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps",
 logpath = /var/log/mail.log
 maxretry = 5
 
-[sasl]
+[postfix-sasl]
 enabled  = true
 port     = smtp
-filter   = sasl
+filter   = postfix-sasl
 logpath  = /var/log/mail.log
 maxretry = 3
 EOF
@@ -471,7 +485,9 @@ failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted logi
 ignoreregex =
 EOF
 
-/etc/init.d/fail2ban restart
+echo "ignoreregex =" >> /etc/fail2ban/filter.d/postfix-sasl.conf
+
+service fail2ban restart
 
 } # end function ubuntu.install_Fail2BanRuleDovecot
 

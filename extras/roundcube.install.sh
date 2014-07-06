@@ -1,7 +1,7 @@
 ###############################################################################################
-# Complete ISPConfig setup script for Debian/Ubuntu Systems         			      #
-# Drew Clardy										      # 
-# http://drewclardy.com				                                              #
+# Complete ISPConfig setup script for Debian/Ubuntu Systems         			                    #
+# Drew Clardy										                                                              # 
+# http://drewclardy.com				                                                                #
 # http://github.com/dclardy64/ISPConfig-3-Debian-Install                                      #
 ###############################################################################################
 
@@ -116,12 +116,12 @@ mkdir -p /var/www/roundcube
 
 #RoundCube Download
 cd /tmp
-wget http://downloads.sourceforge.net/project/roundcubemail/roundcubemail/0.9.5/roundcubemail-0.9.5.tar.gz
-tar xvfz roundcubemail-0.9.5.tar.gz
-cd roundcubemail-0.9.5/
+wget http://downloads.sourceforge.net/project/roundcubemail/roundcubemail/1.0.1/roundcubemail-1.0.1.tar.gz
+tar xvfz roundcubemail-1.0.1.tar.gz
+cd roundcubemail-1.0.1/
 mv * /var/www/roundcube/
 
-chown -R www-data:www-data /var/www/roundcube
+chown -R ispapps:ispapps /var/www/roundcube
 
 mysql -uroot -p$mysql_pass -e "CREATE DATABASE $roundcube_db;"
 mysql -uroot -p$mysql_pass -e "GRANT ALL PRIVILEGES ON $roundcube_db.* TO '$roundcube_user'@'localhost' IDENTIFIED BY '$roundcube_pass';"
@@ -168,7 +168,7 @@ cat > /etc/nginx/sites-available/webmail.vhost <<"EOF"
       location ~ \.php$ {
           try_files $uri =404;
           include /etc/nginx/fastcgi_params;
-          fastcgi_pass unix://var/run/php5-fpm.sock;
+          fastcgi_pass unix://var/lib/php5-fpm/apps.sock;
           fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
           fastcgi_index index.php;
       }
@@ -181,15 +181,14 @@ ln -s /etc/nginx/sites-available/webmail.vhost webmail.vhost
 /etc/init.d/nginx reload
 
 cd /var/www/roundcube/config
-mv db.inc.php.dist db.inc.php
-mv main.inc.php.dist main.inc.php
+mv config.inc.php.sample config.inc.php
 
-sed -i "s|mysql://roundcube:pass@localhost/roundcubemail|mysqli://$roundcube_user:$roundcube_pass@localhost/$roundcube_db|" /var/www/roundcube/config/db.inc.php
+sed -i "s|mysql://roundcube:pass@localhost/roundcubemail|mysqli://$roundcube_user:$roundcube_pass@localhost/$roundcube_db|" /var/www/roundcube/config/config.inc.php
 
-sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /var/www/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/roundcube/config/main.inc.php
+sed -i "s|^\(\$config\['default_host'\] =\).*$|\1 \'%s\';|" /var/www/roundcube/config/config.inc.php
+sed -i "s|^\(\$config\['smtp_server'\] =\).*$|\1 \'%h\';|" /var/www/roundcube/config/config.inc.php
+sed -i "s|^\(\$config\['smtp_user'\] =\).*$|\1 \'%u\';|" /var/www/roundcube/config/config.inc.php
+sed -i "s|^\(\$config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/roundcube/config/config.inc.php
 
 rm -rf /var/www/roundcube/installer
 }

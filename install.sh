@@ -66,16 +66,19 @@ done
 if [ $ISPConfig_Installed = "No" ]; then
 	install_Questions
 	$DISTRIBUTION.install_Repos
+	header "Installing Basics..."
 	install_Basic
-	if [ $DISTRIBUTION == "ubuntu"]; then
+	if [ $DISTRIBUTION == "ubuntu" ]; then
 		ubuntu.install_DisableAppArmor
 	fi
+	header "Installing Database Selection..."
 	if [ $sql_server == "MySQL" ]; then
 		$DISTRIBUTION.install_MySQL
 	fi
 	if [ $sql_server == "MariaDB" ]; then
 		$DISTRIBUTION.install_MariaDB
 	fi
+	header "Installing Mail Server Selection..."
 	if [ $install_mail_server == "Yes" ]; then
 		if [ $mail_server == "Courier" ]; then
 			$DISTRIBUTION.install_Courier
@@ -84,6 +87,7 @@ if [ $ISPConfig_Installed = "No" ]; then
 		fi
 		$DISTRIBUTION.install_Virus
 	fi
+	header "Installing Web Server Selection..."
 	if [ $install_web_server == "Yes" ]; then
 		if [ $web_server == "Apache" ]; then
 			$DISTRIBUTION.install_Apache
@@ -93,20 +97,26 @@ if [ $ISPConfig_Installed = "No" ]; then
 		$DISTRIBUTION.install_Stats
 	fi
 	if [ $mailman == "Yes" ]; then
+		header "Installing Mailman..."
 		$DISTRIBUTION.install_Mailman
 	fi
 	if [ $install_ftp_server == "Yes" ]; then
+		header "Installing FTP Server..."
 		$DISTRIBUTION.install_PureFTPD
 	fi
 	if [ $install_dns_server == "Yes" ]; then
+		header "Installing DNS Server..."
 		$DISTRIBUTION.install_Bind
 	fi
 	if [ $quota == "Yes" ]; then
+		header "Installing Quota..."
 		$DISTRIBUTION.install_Quota
 	fi
 	if [ $jailkit == "Yes" ]; then
+		header "Installing Jailkit..."
 		$DISTRIBUTION.install_Jailkit
 	fi
+	header "Installing Fail2Ban..."
 	$DISTRIBUTION.install_Fail2Ban
 	if [ $mail_server == "Courier" ]; then
 		$DISTRIBUTION.install_Fail2BanRulesCourier
@@ -114,7 +124,9 @@ if [ $ISPConfig_Installed = "No" ]; then
 	if [ $mail_server == "Dovecot" ]; then
 		$DISTRIBUTION.install_Fail2BanRulesDovecot
 	fi
+	header "Installing SquirrelMail..."
 	$DISTRIBUTION.install_SquirrelMail
+	header "Installing ISPConfig3..."
 	install_ISPConfig
 elif [ $ISPConfig_Installed == "Yes" ]; then
 	warning "ISPConfig 3 already installed! Asking about extra installation scripts."
@@ -135,6 +147,3 @@ elif [ $ISPConfig_Installed == "Yes" ]; then
 		fi
 	fi
 fi
-
-
-
