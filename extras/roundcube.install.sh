@@ -116,9 +116,9 @@ mkdir -p /var/www/roundcube
 
 #RoundCube Download
 cd /tmp
-wget http://downloads.sourceforge.net/project/roundcubemail/roundcubemail/1.0.1/roundcubemail-1.0.1.tar.gz
-tar xvfz roundcubemail-1.0.1.tar.gz
-cd roundcubemail-1.0.1/
+wget http://downloads.sourceforge.net/project/roundcubemail/roundcubemail/1.0.2/roundcubemail-1.0.2.tar.gz
+tar xvfz roundcubemail-1.0.2.tar.gz
+cd roundcubemail-1.0.2/
 mv * /var/www/roundcube/
 
 chown -R ispapps:ispapps /var/www/roundcube
