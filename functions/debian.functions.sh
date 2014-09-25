@@ -66,9 +66,9 @@ apt-get install -y python-software-properties
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 
 if [ $maria_version == "5.5" ]; then
-	add-apt-repository 'deb http://ftp.ddg.lth.se/mariadb/repo/5.5/debian wheezy main'
+	add-apt-repository 'deb http://nyc2.mirrors.digitalocean.com/mariadb/repo/5.5/debian wheezy main'
 elif [ $maria_version == "10.0" ]; then
-	add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/10.0/debian wheezy main'
+	add-apt-repository 'deb http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.0/debian wheezy main'
 fi
 
 echo "mysql-server mysql-server/root_password password $mysql_pass" | debconf-set-selections
