@@ -35,12 +35,14 @@ wget http://www.dotdeb.org/dotdeb.gpg
 cat dotdeb.gpg | apt-key add - 
 
 apt-get update
-apt-get install netselect-apt
-
-cd /tmp
-netselect-apt -s -n
-mv sources.list /etc/apt/sources.list
-
+####REMOVED DUE TO ISSUES WITH NETSELECT####
+#
+#apt-get install netselect-apt####
+#
+#cd /tmp####
+#netselect-apt -s -n####
+#mv sources.list /etc/apt/sources.list####
+#
 } #end function debian.install_Repos
 
 debian.install_MySQL () {
