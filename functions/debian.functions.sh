@@ -11,18 +11,8 @@ debian.install_Repos (){
 
 #Updates server and install commonly used utilities
 cp /etc/apt/sources.list /etc/apt/sources.list.backup
-cat > /etc/apt/sources.list <<EOF
-deb http://ftp.us.debian.org/debian/ wheezy main contrib non-free
-deb-src http://ftp.us.debian.org/debian/ wheezy main contrib non-free
-
-deb http://security.debian.org/ wheezy/updates main contrib non-free
-deb-src http://security.debian.org/ wheezy/updates main contrib non-free
-
-# wheezy-updates, previously known as 'volatile'
-deb http://ftp.us.debian.org/debian/ wheezy-updates main contrib non-free
-deb-src http://ftp.us.debian.org/debian/ wheezy-updates main contrib non-free
-
-EOF
+echo '' >> /etc/apt/sources.list
+sed -i ':a;N;$!ba;s/main\n/main contrib non-free\n/g' /etc/apt/sources.list
 
 cat > /etc/apt/sources.list.d/dotdeb.list <<EOF
 # DotDeb
@@ -35,14 +25,6 @@ wget http://www.dotdeb.org/dotdeb.gpg
 cat dotdeb.gpg | apt-key add - 
 
 apt-get update
-####REMOVED DUE TO ISSUES WITH NETSELECT####
-#
-#apt-get install netselect-apt####
-#
-#cd /tmp####
-#netselect-apt -s -n####
-#mv sources.list /etc/apt/sources.list####
-#
 } #end function debian.install_Repos
 
 debian.install_MySQL () {
