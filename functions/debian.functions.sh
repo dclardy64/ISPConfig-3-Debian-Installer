@@ -68,6 +68,7 @@ apt-get update
 
 apt-get install -y mariadb-server 
 apt-get install -y mariadb-client
+apt-get install -y mysql-client
 apt-get -y install php5-cli php5-mysqlnd php5-mcrypt mcrypt
 
 #Allow MySQL to listen on all interfaces
